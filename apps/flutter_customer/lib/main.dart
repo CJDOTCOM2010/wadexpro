@@ -120,6 +120,22 @@ class _AppGate extends ConsumerWidget {
     final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
     final authState = ref.watch(authProvider);
 
+    // WADEX-Guard: Smart Routing Engine
+    // 1. If user is authenticated, always take them to Home immediately
+    if (authState.status == AuthStatus.authenticated) {
+      // Connect Socket if authenticated
+      Future.microtask(() {
+        ref.read(socketServiceProvider).connect(AppConfig.instance.socketUrl, '/rider');
+      });
+      return const MainDashboardScreen();
+    }
+
+    // 2. If session is still loading, wait on splash (handled by SplashScreen, but guard here too)
+    if (authState.status == AuthStatus.loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    // 3. If they haven't seen onboarding and aren't logged in, show onboarding
     if (!hasSeenOnboarding) {
       return OnboardingScreen(
         onComplete: () {
@@ -130,12 +146,7 @@ class _AppGate extends ConsumerWidget {
       );
     }
 
-    ref.listen(authProvider, (previous, next) {
-      if (next.status == AuthStatus.authenticated && previous?.status != AuthStatus.authenticated) {
-        ref.read(socketServiceProvider).connect(AppConfig.instance.socketUrl, '/rider');
-      }
-    });
-
+    // 4. Otherwise, handle normal auth flows (Login, OTP, Error)
     return _buildAuthHome(authState);
   }
 

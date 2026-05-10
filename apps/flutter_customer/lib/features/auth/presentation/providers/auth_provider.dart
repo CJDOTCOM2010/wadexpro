@@ -24,14 +24,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> _checkInitialAuth() async {
     String? token;
     try {
-      token = await _storage.read(key: 'access_token').timeout(const Duration(seconds: 2));
+      // WADEX-Guard: Redundant session check for Web/Mobile persistence
+      token = await _storage.read(key: 'access_token');
     } catch (e) {
-      print('SecureStorage read bypassed/timeout: $e');
+      debugPrint('WADEXPRO: Session retrieval warning: $e');
     }
 
-    if (token != null) {
+    if (token != null && token.isNotEmpty) {
+      debugPrint('WADEXPRO: Valid session detected. Synchronizing state.');
       state = state.copyWith(status: AuthStatus.authenticated);
     } else {
+      debugPrint('WADEXPRO: No active session found.');
       state = state.copyWith(status: AuthStatus.unauthenticated);
     }
   }

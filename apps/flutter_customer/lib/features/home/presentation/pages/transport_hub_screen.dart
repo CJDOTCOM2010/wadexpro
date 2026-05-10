@@ -237,37 +237,3 @@ class TransportHubScreen extends StatelessWidget {
     );
   }
 }
-
-  Widget _buildOptionCard(BuildContext context, String title, String subtitle, String price, IconData icon) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(12)),
-            child: Icon(icon, color: Colors.black87, size: 28),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(color: Colors.grey, fontSize: 13)),
-              ],
-            ),
-          ),
-          Text(price, style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.black, fontSize: 15)),
-        ],
-      ),
-    );
-  }
-}

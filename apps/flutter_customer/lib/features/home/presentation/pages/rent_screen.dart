@@ -25,13 +25,13 @@ class RentScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               children: [
                 _buildVehicleCategory('Economy', 'Starting from ₵25/day'),
-                _buildVehicleCard('Toyota Vitz', 'Manual/Auto • 5 Seats', '₵28/day', 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=2070'),
-                _buildVehicleCard('Honda Fit', 'Automatic • 5 Seats', '₵32/day', 'https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&q=80&w=2069'),
+                _buildVehicleCard('Toyota Vitz', 'Manual/Auto • 5 Seats', '₵28/day', 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=2070&auto=format&fit=crop'),
+                _buildVehicleCard('Honda Fit', 'Automatic • 5 Seats', '₵32/day', 'https://images.unsplash.com/photo-1590362891991-f776e747a588?q=80&w=2069&auto=format&fit=crop'),
                 
                 const SizedBox(height: 24),
                 _buildVehicleCategory('Premium & SUV', 'Starting from ₵65/day'),
-                _buildVehicleCard('Range Rover Vogue', 'Luxury • 4x4', '₵150/day', 'https://images.unsplash.com/photo-1563720223185-11003d516905?auto=format&fit=crop&q=80&w=2070'),
-                _buildVehicleCard('Toyota Land Cruiser', 'Off-road • 7 Seats', '₵120/day', 'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&q=80&w=2070'),
+                _buildVehicleCard('Range Rover Vogue', 'Luxury • 4x4', '₵150/day', 'https://images.unsplash.com/photo-1541348263662-e0c8de42d1ee?q=80&w=1974&auto=format&fit=crop'),
+                _buildVehicleCard('Toyota Land Cruiser', 'Off-road • 7 Seats', '₵120/day', 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop'),
               ],
             ),
           ),

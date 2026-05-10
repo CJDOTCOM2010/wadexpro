@@ -27,8 +27,10 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Required CMS Seedings
+        // Required Platform & CMS Seedings
         $this->call([
+            SystemSettingConsolidationSeeder::class,
+            GoogleAuthSettingsSeeder::class,
             CmsLandingPageSeeder::class,
             MenuSeeder::class,
             OnboardingSlideSeeder::class,

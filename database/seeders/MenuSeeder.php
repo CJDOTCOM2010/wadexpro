@@ -13,16 +13,20 @@ class MenuSeeder extends Seeder
         /* ════════════════════════════════════════════════
          * MAIN NAVIGATION (Header)
          * ════════════════════════════════════════════════ */
-        $mainNav = Menu::create([
-            'id'       => (string) \Illuminate\Support\Str::uuid(),
-            'name'     => 'Main Navigation',
-            'slug'     => 'main-nav',
-            'location' => 'header',
-        ]);
+        $mainNav = Menu::updateOrCreate(
+            ['slug' => 'main-nav'],
+            [
+                'name'     => 'Main Navigation',
+                'location' => 'header',
+            ]
+        );
+
+        // Clear existing items for clean re-seed
+        $mainNav->allItems()->delete();
 
         // ── Ride (Mega Menu Group) ──
         $ride = MenuItem::create([
-            'id'         => (string) \Illuminate\Support\Str::uuid(),
+            
             'menu_id'    => $mainNav->id,
             'label'      => 'Ride',
             'url'        => '#ride',
@@ -248,11 +252,16 @@ class MenuSeeder extends Seeder
         /* ════════════════════════════════════════════════
          * FOOTER NAVIGATION
          * ════════════════════════════════════════════════ */
-        $footer = Menu::create([
-            'name'     => 'Footer Navigation',
-            'slug'     => 'footer-nav',
-            'location' => 'footer',
-        ]);
+        $footer = Menu::updateOrCreate(
+            ['slug' => 'footer-nav'],
+            [
+                'name'     => 'Footer Navigation',
+                'location' => 'footer',
+            ]
+        );
+
+        // Clear existing items for clean re-seed
+        $footer->allItems()->delete();
 
         // Company Group
         $co = MenuItem::create(['menu_id' => $footer->id, 'label' => 'Company', 'type' => 'group', 'group_label' => 'Company', 'sort_order' => 1]);

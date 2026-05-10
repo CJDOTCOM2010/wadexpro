@@ -13,6 +13,8 @@ class MarketplaceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final categoryData = _getCategorySpecificData(serviceName);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -49,8 +51,8 @@ class MarketplaceScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20),
-                image: const DecorationImage(
-                  image: NetworkImage('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070&auto=format&fit=crop'),
+                image: DecorationImage(
+                  image: NetworkImage(categoryData['bannerImage']),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -68,12 +70,12 @@ class MarketplaceScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '30% OFF',
-                      style: TextStyle(color: AppColors.primaryGold, fontSize: 32, fontWeight: FontWeight.w900),
+                      'WADEX PICK',
+                      style: TextStyle(color: AppColors.secondaryGold, fontSize: 24, fontWeight: FontWeight.w900),
                     ),
-                    const Text(
-                      'On your first order',
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    Text(
+                      'Top Recommended ${serviceName}',
+                      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -82,7 +84,7 @@ class MarketplaceScreen extends StatelessWidget {
             // Categories
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text('Categories', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              child: Text('Specialties', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -90,30 +92,75 @@ class MarketplaceScreen extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  _buildCategoryItem('Popular', Icons.star),
-                  _buildCategoryItem('Deals', Icons.percent),
-                  _buildCategoryItem('New', Icons.fiber_new),
-                  _buildCategoryItem('Organic', Icons.eco),
-                  _buildCategoryItem('Local', Icons.location_on),
-                ],
+                children: (categoryData['subCategories'] as List<Map<String, dynamic>>).map((sub) {
+                  return _buildCategoryItem(sub['name'], sub['icon']);
+                }).toList(),
               ),
             ),
             const SizedBox(height: 32),
-            // Featured Items
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text('Featured Stores', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            // Recommended Stores
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  const Icon(Icons.verified, color: Colors.blue, size: 20),
+                  const SizedBox(width: 8),
+                  Text('Wadex Recommended $serviceName', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
-            _buildStoreCard('Wadex Select', '4.9 • 15-25 min', 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=1974&auto=format&fit=crop'),
-            _buildStoreCard('Premium Express', '4.8 • 10-20 min', 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=1974&auto=format&fit=crop'),
-            _buildStoreCard('Local Hub', '4.7 • 20-30 min', 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?q=80&w=2070&auto=format&fit=crop'),
+            ...(categoryData['stores'] as List<Map<String, dynamic>>).map((store) {
+              return _buildStoreCard(store['name'], store['meta'], store['image']);
+            }).toList(),
             const SizedBox(height: 40),
           ],
         ),
       ),
     );
+  }
+
+  Map<String, dynamic> _getCategorySpecificData(String name) {
+    switch (name) {
+      case 'Restaurants':
+        return {
+          'bannerImage': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop',
+          'subCategories': [
+            {'name': 'Local', 'icon': Icons.soup_kitchen},
+            {'name': 'Pizza', 'icon': Icons.local_pizza},
+            {'name': 'Burgers', 'icon': Icons.lunch_dining},
+            {'name': 'Seafood', 'icon': Icons.set_meal},
+          ],
+          'stores': [
+            {'name': 'Accra Continental Hub', 'meta': '4.9 • 20-30 min', 'image': 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop'},
+            {'name': 'Wadex Kitchen Elite', 'meta': '4.8 • 15-25 min', 'image': 'https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=2070&auto=format&fit=crop'},
+          ]
+        };
+      case 'Pharmacy':
+        return {
+          'bannerImage': 'https://images.unsplash.com/photo-1587854692152-cbe660dbbb88?q=80&w=2069&auto=format&fit=crop',
+          'subCategories': [
+            {'name': 'Meds', 'icon': Icons.medication},
+            {'name': 'Care', 'icon': Icons.health_and_safety},
+            {'name': 'Baby Care', 'icon': Icons.child_care},
+          ],
+          'stores': [
+            {'name': 'HealthPlus Ghana', 'meta': 'Verified • 24/7', 'image': 'https://images.unsplash.com/photo-1631549916768-4119b295f78b?q=80&w=2000&auto=format&fit=crop'},
+            {'name': 'MedExpress ₵', 'meta': 'Fast Delivery', 'image': 'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?q=80&w=1974&auto=format&fit=crop'},
+          ]
+        };
+      default:
+        return {
+          'bannerImage': 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070&auto=format&fit=crop',
+          'subCategories': [
+            {'name': 'Wadex Select', 'icon': Icons.auto_awesome},
+            {'name': 'Fresh', 'icon': Icons.eco},
+          ],
+          'stores': [
+            {'name': 'WADEX Premium Market', 'meta': 'Certified Store', 'image': 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=1974&auto=format&fit=crop'},
+          ]
+        };
+    }
   }
 
   Widget _buildCategoryItem(String name, IconData icon) {

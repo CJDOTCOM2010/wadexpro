@@ -228,10 +228,18 @@ class OnboardingController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Invalid app type'], 400);
         }
 
-        $slides = OnboardingSlide::forApp($appType)
-            ->active()
-            ->ordered()
-            ->get(['id', 'title', 'description', 'button_text', 'button_type', 'image_url', 'layout_style', 'sort_order', 'bg_color', 'text_color', 'button_color', 'media_type']);
+        try {
+            $slides = OnboardingSlide::forApp($appType)
+                ->active()
+                ->ordered()
+                ->get(['id', 'title', 'description', 'button_text', 'button_type', 'image_url', 'layout_style', 'sort_order', 'bg_color', 'text_color', 'button_color', 'media_type']);
+        } catch (\Exception $e) {
+            // WADEX-Guard: Fallback to basic columns if extended schema is not yet migrated
+            $slides = OnboardingSlide::forApp($appType)
+                ->active()
+                ->ordered()
+                ->get(['id', 'title', 'description', 'image_url', 'sort_order']);
+        }
 
         return response()->json([
             'status' => 'success',

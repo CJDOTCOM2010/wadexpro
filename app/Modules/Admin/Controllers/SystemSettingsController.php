@@ -90,12 +90,19 @@ class SystemSettingsController extends Controller
      */
     public function publicSettings(): JsonResponse
     {
-        $settings = Cache::remember('system:public_settings', 300, fn () =>
-            SystemSetting::where('is_public', true)
-                ->get()
+        try {
+            $settings = Cache::remember('system:public_settings', 300, fn () =>
+                SystemSetting::where('is_public', true)
+                    ->get()
+                    ->mapWithKeys(fn ($s) => [$s->key => $s->castValue()])
+                    ->toArray()
+            );
+        } catch (\Exception $e) {
+            // WADEX-Guard: Fallback if is_public column is not yet migrated
+            $settings = SystemSetting::get()
                 ->mapWithKeys(fn ($s) => [$s->key => $s->castValue()])
-                ->toArray()
-        );
+                ->toArray();
+        }
 
         return $this->success($settings, 'Public settings retrieved.');
     }

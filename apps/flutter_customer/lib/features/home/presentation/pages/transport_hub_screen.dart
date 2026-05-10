@@ -122,11 +122,19 @@ class TransportHubScreen extends StatelessWidget {
     switch (name) {
       case 'Rent':
         return {
-          'headerImage': 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop',
+          'headerImage': 'https://images.unsplash.com/photo-1550355291-bbee04a92027?q=80&w=2072&auto=format&fit=crop',
           'tagline': 'Premium car rentals across major cities',
           'hubs': [
             {'name': 'Accra Airport Hub', 'address': 'Kotoka Intl Airport, Accra', 'phone': '+233 24 555 1001', 'info': 'Sedans, SUVs, Luxury'},
             {'name': 'Kumasi City Hub', 'address': 'Asokwa, Kumasi', 'phone': '+233 24 555 1002', 'info': 'Economy & Mid-range'},
+          ]
+        };
+      case '2-Wheels':
+        return {
+          'headerImage': 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=2070&auto=format&fit=crop',
+          'tagline': 'Express bike delivery and transit',
+          'hubs': [
+            {'name': 'Wadex Moto Hub', 'address': 'Kwame Nkrumah Circle, Accra', 'phone': '+233 24 555 5001', 'info': 'Express Delivery'},
           ]
         };
       case 'Transit':

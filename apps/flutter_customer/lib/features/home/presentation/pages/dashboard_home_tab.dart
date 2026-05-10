@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:wadexpro_customer/features/home/presentation/pages/new_delivery_screen.dart';
-import 'search_screen.dart'; // We'll link this to the existing search screen
+import 'ride_booking_map_screen.dart';
+import 'reserve_screen.dart';
+import 'rent_screen.dart';
+import 'hourly_screen.dart';
+import 'search_screen.dart';
 
 class DashboardHomeTab extends StatelessWidget {
   const DashboardHomeTab({super.key});
@@ -149,14 +153,28 @@ class DashboardHomeTab extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildSuggestionCard(context, 'Ride', Icons.directions_car, true),
-            _buildSuggestionCard(context, 'Package', Icons.inventory_2, false, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewDeliveryScreen()))),
-            _buildSuggestionCard(context, 'Reserve', Icons.calendar_month, false),
-            _buildSuggestionCard(context, 'Rent', Icons.key, false),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              _buildSuggestionCard(context, 'Ride', Icons.directions_car, true, 
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RideBookingMapScreen()))),
+              const SizedBox(width: 12),
+              _buildSuggestionCard(context, 'Package', Icons.inventory_2, false, 
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewDeliveryScreen()))),
+              const SizedBox(width: 12),
+              _buildSuggestionCard(context, 'Reserve', Icons.calendar_month, false, 
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReserveScreen()))),
+              const SizedBox(width: 12),
+              _buildSuggestionCard(context, 'Rent', Icons.key, false, 
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RentScreen()))),
+              const SizedBox(width: 12),
+              _buildSuggestionCard(context, 'Hourly', Icons.timer, false, 
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HourlyScreen()))),
+              const SizedBox(width: 16),
+            ],
+          ),
         ),
       ],
     );

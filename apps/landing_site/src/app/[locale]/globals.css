@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+
+  --color-primary-navy: #0F172A;
+  --color-primary-gold: #EAB308;
+  --color-accent-blue: #2563EB;
+  
+  --breakpoint-3xl: 1920px;
+}
+
+@layer base {
+  body {
+    @apply font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-primary-navy text-white rounded-xl font-bold hover:bg-zinc-800 transition-all shadow-lg shadow-black/10;
+  }
+  .btn-accent {
+    @apply px-6 py-3 bg-accent-blue text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20;
+  }
+  .section-container {
+    @apply max-w-7xl mx-auto px-6 py-20 lg:py-32;
+  }
+  
+  /* Vibrant Corporate Decorators */
+  .swoosh-divider {
+    @apply absolute left-0 right-0 h-24 pointer-events-none overflow-hidden;
+  }
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20 shadow-xl;
+  }
+}
+
+/* Custom Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}

@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Core\Traits;
+
+use Illuminate\Support\Str;
+
+/**
+ * Automatically generates UUID primary keys for Eloquent models.
+ */
+trait HasUuid
+{
+    public function getIncrementing(): bool
+    {
+        return false;
+    }
+
+    public function getKeyType(): string
+    {
+        return 'string';
+    }
+
+    protected static function bootHasUuid(): void
+    {
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = (string) Str::uuid();
+            }
+        });
+    }
+}

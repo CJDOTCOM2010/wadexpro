@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>WADEXPRO Customer</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>WADEXPRO Customer needs access to your location to find the nearest drivers and provide accurate pickup points.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>WADEXPRO Customer needs access to your location to provide real-time updates while your ride is in progress.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>WADEXPRO Customer needs access to your location to find drivers and provide accurate ride tracking.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>WADEXPRO Customer needs access to your camera to allow you to take profile photos and for SOS incident reporting.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>WADEXPRO Customer needs access to your photo library to allow you to upload profile photos.</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+</dict>
+</plist>

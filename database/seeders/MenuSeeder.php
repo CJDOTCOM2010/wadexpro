@@ -14,6 +14,7 @@ class MenuSeeder extends Seeder
          * MAIN NAVIGATION (Header)
          * ════════════════════════════════════════════════ */
         $mainNav = Menu::create([
+            'id'       => (string) \Illuminate\Support\Str::uuid(),
             'name'     => 'Main Navigation',
             'slug'     => 'main-nav',
             'location' => 'header',
@@ -21,6 +22,7 @@ class MenuSeeder extends Seeder
 
         // ── Ride (Mega Menu Group) ──
         $ride = MenuItem::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'menu_id'    => $mainNav->id,
             'label'      => 'Ride',
             'url'        => '#ride',

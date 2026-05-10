@@ -15,6 +15,7 @@ class CmsLandingPageSeeder extends Seeder
         $page = CmsPage::updateOrCreate(
             ['slug' => 'home'],
             [
+                'id'               => (string) \Illuminate\Support\Str::uuid(),
                 'title'            => ['en' => 'Home', 'fr' => 'Accueil'],
                 'meta_description' => ['en' => 'WADEXP – Enterprise mobility & logistics for Africa.'],
                 'status'           => 'published',

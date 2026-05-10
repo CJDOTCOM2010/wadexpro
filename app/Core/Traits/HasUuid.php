@@ -9,21 +9,17 @@ use Illuminate\Support\Str;
  */
 trait HasUuid
 {
-    public function getIncrementing(): bool
+    public function initializeHasUuid(): void
     {
-        return false;
-    }
-
-    public function getKeyType(): string
-    {
-        return 'string';
+        $this->incrementing = false;
+        $this->keyType = 'string';
     }
 
     protected static function bootHasUuid(): void
     {
         static::creating(function ($model) {
             if (empty($model->{$model->getKeyName()})) {
-                $model->{$model->getKeyName()} = (string) Str::uuid();
+                $model->{$model->getKeyName()} = (string) \Illuminate\Support\Str::uuid();
             }
         });
     }

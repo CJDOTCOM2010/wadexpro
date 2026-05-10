@@ -195,7 +195,7 @@ class _ReserveScreenState extends State<ReserveScreen> {
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 56),
-          shape: BorderRadius.circular(16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,
         ),
         child: const Text('Reserve WADEXPRO', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),

@@ -37,7 +37,7 @@ class HourlyScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 minimumSize: const Size(double.infinity, 56),
-                shape: BorderRadius.circular(16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               child: const Text('Book Hourly Chauffeur', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),

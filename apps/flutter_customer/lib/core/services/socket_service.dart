@@ -7,6 +7,7 @@ class SocketService {
   final _storage = const FlutterSecureStorage();
 
   IO.Socket get socket => _socket!;
+  bool get isConnected => _socket?.connected ?? false;
 
   Future<void> connect(String url, String namespace) async {
     final token = await _storage.read(key: 'access_token');

@@ -113,9 +113,7 @@ class OnboardingSlideSeeder extends Seeder
         ];
 
         foreach ($slides as $slide) {
-            OnboardingSlide::create(array_merge($slide, [
-                'id' => (string) \Illuminate\Support\Str::uuid()
-            ]));
+            OnboardingSlide::create($slide);
         }
     }
 }

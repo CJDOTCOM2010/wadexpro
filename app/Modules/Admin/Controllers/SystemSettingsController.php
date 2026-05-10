@@ -98,10 +98,15 @@ class SystemSettingsController extends Controller
                     ->toArray()
             );
         } catch (\Exception $e) {
-            // WADEX-Guard: Fallback if is_public column is not yet migrated
-            $settings = SystemSetting::get()
-                ->mapWithKeys(fn ($s) => [$s->key => $s->castValue()])
-                ->toArray();
+            // WADEX-Guard: Ultra-Resilience mode — Provide hardcoded Ghana defaults if DB is completely out of sync
+            $settings = [
+                'default_country' => 'GH',
+                'default_currency' => 'GHS',
+                'default_currency_symbol' => '₵',
+                'default_country_code' => '+233',
+                'app_name' => 'WADEXPRO',
+                'resilience_active' => true
+            ];
         }
 
         return $this->success($settings, 'Public settings retrieved.');

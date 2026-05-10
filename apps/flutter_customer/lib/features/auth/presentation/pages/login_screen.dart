@@ -204,15 +204,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 40),
                     
                     // Social Dividers
-                    Row(
-                      children: [
-                        const Expanded(child: Divider(color: Colors.white10)),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('OR CONNECT WITH', style: GoogleFonts.outfit(fontSize: 11, color: Colors.white24, letterSpacing: 1)),
-                        ),
-                        const Expanded(child: Divider(color: Colors.white10)),
-                      ],
+                    FittedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(width: 40, height: 1, color: Colors.white10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text('OR CONNECT WITH', style: GoogleFonts.outfit(fontSize: 10, color: Colors.white24, letterSpacing: 1)),
+                          ),
+                          Container(width: 40, height: 1, color: Colors.white10),
+                        ],
+                      ),
                     ),
                     
                     const SizedBox(height: 40),

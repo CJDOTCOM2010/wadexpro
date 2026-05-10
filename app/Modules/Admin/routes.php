@@ -5,6 +5,7 @@ use App\Modules\Admin\Controllers\RoleController;
 use App\Modules\Admin\Controllers\SystemSettingsController;
 use App\Modules\Admin\Controllers\UserManagementController;
 use App\Modules\Admin\Controllers\DispatchController;
+use App\Modules\Admin\Controllers\CmsController;
 use Illuminate\Support\Facades\Route;
 
 /*

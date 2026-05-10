@@ -50,10 +50,13 @@ class SystemSettingConsolidationSeeder extends Seeder
         ];
 
         foreach ($settings as $setting) {
+            $isPublic = in_array($setting['group'], ['manifest', 'authentication']);
+            
             DB::table('system_settings')->updateOrInsert(
                 ['key' => $setting['key']],
                 array_merge($setting, [
                     'id' => Str::uuid(),
+                    'is_public' => $isPublic,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ])

@@ -16,7 +16,7 @@ class EnvironmentConfig {
       case Environment.staging:
         return 'https://staging-api.wadexpro.com/api/v1';
       case Environment.production:
-        return 'https://api.wadexpro.com/api/v1';
+        return 'https://wadexpro-4rexnj1k.on-forge.com/api/v1';
     }
   }
 
@@ -27,7 +27,7 @@ class EnvironmentConfig {
       case Environment.staging:
         return 'https://staging-ws.wadexpro.com';
       case Environment.production:
-        return 'https://ws.wadexpro.com';
+        return 'https://wadexpro-4rexnj1k.on-forge.com:3000';
     }
   }
 

@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import '../../../../core/config/app_config.dart';
@@ -24,14 +27,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> _checkInitialAuth() async {
     String? token;
     try {
-      // WADEX-Guard: Redundant session check for Web/Mobile persistence
-      token = await _storage.read(key: 'access_token');
+      if (kIsWeb) {
+        // WADEX-Guard: High-speed localStorage check for Web
+        token = html.window.localStorage['wadex_access_token'];
+      } else {
+        // Standard SecureStorage for Mobile
+        token = await _storage.read(key: 'access_token');
+      }
     } catch (e) {
       print('WADEXPRO: Session retrieval warning: $e');
     }
 
     if (token != null && token.isNotEmpty) {
-      print('WADEXPRO: Valid session detected. Synchronizing state.');
+      print('WADEXPRO: Valid session detected ($token). Synchronizing state.');
       state = state.copyWith(status: AuthStatus.authenticated);
     } else {
       print('WADEXPRO: No active session found.');
@@ -72,12 +80,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
 
       try {
-        await Future.wait([
-          _storage.write(key: 'access_token', value: tokens['access_token']?.toString()),
-          _storage.write(key: 'refresh_token', value: tokens['refresh_token']?.toString()),
-        ]).timeout(const Duration(seconds: 2));
+        if (kIsWeb) {
+          html.window.localStorage['wadex_access_token'] = tokens['access_token']?.toString() ?? '';
+          html.window.localStorage['wadex_refresh_token'] = tokens['refresh_token']?.toString() ?? '';
+        } else {
+          await Future.wait([
+            _storage.write(key: 'access_token', value: tokens['access_token']?.toString()),
+            _storage.write(key: 'refresh_token', value: tokens['refresh_token']?.toString()),
+          ]).timeout(const Duration(seconds: 2));
+        }
       } catch (e) {
-        print('SecureStorage write bypassed/timeout: $e');
+        print('WADEXPRO: Session write bypassed: $e');
       }
       
       state = state.copyWith(
@@ -94,9 +107,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> logout() async {
     try {
-      await _storage.deleteAll().timeout(const Duration(seconds: 2));
+      if (kIsWeb) {
+        html.window.localStorage.remove('wadex_access_token');
+        html.window.localStorage.remove('wadex_refresh_token');
+      } else {
+        await _storage.deleteAll().timeout(const Duration(seconds: 2));
+      }
     } catch (e) {
-      print('SecureStorage deleteAll bypassed/timeout: $e');
+      print('WADEXPRO: Logout cleanup bypassed: $e');
     }
     state = AuthState(status: AuthStatus.unauthenticated);
   }
@@ -133,12 +151,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
 
       try {
-        await Future.wait([
-          _storage.write(key: 'access_token', value: tokens['access_token']?.toString()),
-          _storage.write(key: 'refresh_token', value: tokens['refresh_token']?.toString()),
-        ]).timeout(const Duration(seconds: 2));
+        if (kIsWeb) {
+          html.window.localStorage['wadex_access_token'] = tokens['access_token']?.toString() ?? '';
+          html.window.localStorage['wadex_refresh_token'] = tokens['refresh_token']?.toString() ?? '';
+        } else {
+          await Future.wait([
+            _storage.write(key: 'access_token', value: tokens['access_token']?.toString()),
+            _storage.write(key: 'refresh_token', value: tokens['refresh_token']?.toString()),
+          ]).timeout(const Duration(seconds: 2));
+        }
       } catch (e) {
-        print('SecureStorage write failure in Google flow: $e');
+        print('WADEXPRO: Social session write failure: $e');
       }
 
       state = state.copyWith(
@@ -172,8 +195,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
         if (tokens == null) throw Exception('WADEXPRO: Authentication succeeded but session sync failed.');
 
-        await _storage.write(key: 'access_token', value: tokens['access_token']?.toString());
-        await _storage.write(key: 'refresh_token', value: tokens['refresh_token']?.toString());
+        if (kIsWeb) {
+          html.window.localStorage['wadex_access_token'] = tokens['access_token']?.toString() ?? '';
+          html.window.localStorage['wadex_refresh_token'] = tokens['refresh_token']?.toString() ?? '';
+        } else {
+          await _storage.write(key: 'access_token', value: tokens['access_token']?.toString());
+          await _storage.write(key: 'refresh_token', value: tokens['refresh_token']?.toString());
+        }
 
         state = state.copyWith(
           status: AuthStatus.authenticated,

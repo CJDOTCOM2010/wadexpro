@@ -134,7 +134,8 @@ class MarketplaceScreen extends StatelessWidget {
             {'name': 'Care', 'icon': Icons.health_and_safety},
           ],
           'stores': [
-            {'name': 'HealthPlus Ghana', 'meta': 'Verified • 24/7', 'image': 'https://images.unsplash.com/photo-1631549916768-4119b295f78b?q=80&w=2000&auto=format&fit=crop', 'address': 'Spintex Rd, Accra', 'phone': '+233 24 555 9999'},
+            {'name': 'HealthPlus Ghana', 'meta': 'Verified • 24/7', 'image': 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop', 'address': 'Spintex Rd, Accra', 'phone': '+233 24 555 9999'},
+            {'name': 'MedExpress ₵', 'meta': 'Fast Delivery', 'image': 'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?q=80&w=1974&auto=format&fit=crop', 'address': 'East Legon, Accra', 'phone': '+233 24 555 0000'},
           ]
         };
       case 'Grocery':

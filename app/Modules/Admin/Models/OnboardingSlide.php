@@ -2,12 +2,12 @@
 
 namespace App\Modules\Admin\Models;
 
-use App\Core\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class OnboardingSlide extends Model
 {
-    use HasUuid;
+    use HasUuids;
 
     protected $fillable = [
         'app_type',

@@ -32,6 +32,7 @@ class CmsLandingPageSeeder extends Seeder
 
         // ── 2. Hero Section ──────────────────────────────────────
         $hero = CmsSection::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'page_id'    => $page->id,
             'type'       => 'hero',
             'title'      => 'Hero',
@@ -39,13 +40,14 @@ class CmsLandingPageSeeder extends Seeder
             'is_visible' => true,
         ]);
 
-        CmsBlock::create(['section_id' => $hero->id, 'type' => 'heading', 'key' => 'title', 'content' => 'Move People. Deliver Everything.', 'sort_order' => 1]);
-        CmsBlock::create(['section_id' => $hero->id, 'type' => 'paragraph', 'key' => 'subtitle', 'content' => 'Ghana\'s #1 enterprise-grade ride-hailing and courier platform. Fast pickups, safe rides, and seamless deliveries — all in one app.', 'sort_order' => 2]);
-        CmsBlock::create(['section_id' => $hero->id, 'type' => 'button', 'key' => 'cta_ride', 'content' => 'Request a Ride', 'link_url' => '/ride', 'sort_order' => 3]);
-        CmsBlock::create(['section_id' => $hero->id, 'type' => 'button', 'key' => 'cta_driver', 'content' => 'Become a Driver', 'link_url' => '/drive', 'sort_order' => 4]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $hero->id, 'type' => 'heading', 'key' => 'title', 'content' => 'Move People. Deliver Everything.', 'sort_order' => 1]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $hero->id, 'type' => 'paragraph', 'key' => 'subtitle', 'content' => 'Ghana\'s #1 enterprise-grade ride-hailing and courier platform. Fast pickups, safe rides, and seamless deliveries — all in one app.', 'sort_order' => 2]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $hero->id, 'type' => 'button', 'key' => 'cta_ride', 'content' => 'Request a Ride', 'link_url' => '/ride', 'sort_order' => 3]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $hero->id, 'type' => 'button', 'key' => 'cta_driver', 'content' => 'Become a Driver', 'link_url' => '/drive', 'sort_order' => 4]);
 
         // ── 3. Services Section ──────────────────────────────────
         $services = CmsSection::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'page_id'    => $page->id,
             'type'       => 'services',
             'title'      => 'What We Offer',
@@ -61,6 +63,7 @@ class CmsLandingPageSeeder extends Seeder
 
         foreach ($serviceItems as $i => $item) {
             CmsBlock::create([
+                'id'         => (string) \Illuminate\Support\Str::uuid(),
                 'section_id' => $services->id,
                 'type'       => 'icon_card',
                 'key'        => 'service_' . ($i + 1),
@@ -72,6 +75,7 @@ class CmsLandingPageSeeder extends Seeder
 
         // ── 4. How It Works Section ──────────────────────────────
         $howItWorks = CmsSection::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'page_id'    => $page->id,
             'type'       => 'how_it_works',
             'title'      => 'How It Works',
@@ -87,6 +91,7 @@ class CmsLandingPageSeeder extends Seeder
 
         foreach ($steps as $i => $step) {
             CmsBlock::create([
+                'id'         => (string) \Illuminate\Support\Str::uuid(),
                 'section_id' => $howItWorks->id,
                 'type'       => 'step',
                 'key'        => 'step_' . ($i + 1),
@@ -98,6 +103,7 @@ class CmsLandingPageSeeder extends Seeder
 
         // ── 5. Benefits Section ──────────────────────────────────
         $benefits = CmsSection::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'page_id'    => $page->id,
             'type'       => 'benefits',
             'title'      => 'Why Choose WADEXP',
@@ -114,6 +120,7 @@ class CmsLandingPageSeeder extends Seeder
 
         foreach ($benefitItems as $i => $item) {
             CmsBlock::create([
+                'id'         => (string) \Illuminate\Support\Str::uuid(),
                 'section_id' => $benefits->id,
                 'type'       => 'icon_card',
                 'key'        => 'benefit_' . ($i + 1),
@@ -125,6 +132,7 @@ class CmsLandingPageSeeder extends Seeder
 
         // ── 6. Driver Onboarding Section ─────────────────────────
         $driverSection = CmsSection::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'page_id'    => $page->id,
             'type'       => 'driver_onboarding',
             'title'      => 'Drive With WADEXP',
@@ -132,9 +140,9 @@ class CmsLandingPageSeeder extends Seeder
             'is_visible' => true,
         ]);
 
-        CmsBlock::create(['section_id' => $driverSection->id, 'type' => 'heading', 'key' => 'title', 'content' => 'Earn on Your Own Schedule', 'sort_order' => 1]);
-        CmsBlock::create(['section_id' => $driverSection->id, 'type' => 'paragraph', 'key' => 'subtitle', 'content' => 'Join thousands of driver-partners across Ghana. Set your own hours, keep most of your earnings, and grow with us.', 'sort_order' => 2]);
-        CmsBlock::create(['section_id' => $driverSection->id, 'type' => 'button', 'key' => 'cta', 'content' => 'Start Driving Today', 'link_url' => '/drive', 'sort_order' => 3]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $driverSection->id, 'type' => 'heading', 'key' => 'title', 'content' => 'Earn on Your Own Schedule', 'sort_order' => 1]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $driverSection->id, 'type' => 'paragraph', 'key' => 'subtitle', 'content' => 'Join thousands of driver-partners across Ghana. Set your own hours, keep most of your earnings, and grow with us.', 'sort_order' => 2]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $driverSection->id, 'type' => 'button', 'key' => 'cta', 'content' => 'Start Driving Today', 'link_url' => '/drive', 'sort_order' => 3]);
 
         $driverStats = [
             ['GH₵ 2,500+', 'Avg. Monthly Earnings'],
@@ -144,6 +152,7 @@ class CmsLandingPageSeeder extends Seeder
 
         foreach ($driverStats as $i => $stat) {
             CmsBlock::create([
+                'id'         => (string) \Illuminate\Support\Str::uuid(),
                 'section_id' => $driverSection->id,
                 'type'       => 'stat',
                 'key'        => 'stat_' . ($i + 1),
@@ -155,6 +164,7 @@ class CmsLandingPageSeeder extends Seeder
 
         // ── 7. Business / Enterprise Section ─────────────────────
         $business = CmsSection::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'page_id'    => $page->id,
             'type'       => 'business',
             'title'      => 'WADEXP for Business',
@@ -162,12 +172,13 @@ class CmsLandingPageSeeder extends Seeder
             'is_visible' => true,
         ]);
 
-        CmsBlock::create(['section_id' => $business->id, 'type' => 'heading', 'key' => 'title', 'content' => 'Enterprise Mobility Solutions', 'sort_order' => 1]);
-        CmsBlock::create(['section_id' => $business->id, 'type' => 'paragraph', 'key' => 'description', 'content' => 'Streamline employee transportation, manage fleet operations, and optimize logistics costs with our enterprise dashboard. Trusted by leading organizations across West Africa.', 'sort_order' => 2]);
-        CmsBlock::create(['section_id' => $business->id, 'type' => 'button', 'key' => 'cta', 'content' => 'Contact Sales', 'link_url' => '/business', 'sort_order' => 3]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $business->id, 'type' => 'heading', 'key' => 'title', 'content' => 'Enterprise Mobility Solutions', 'sort_order' => 1]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $business->id, 'type' => 'paragraph', 'key' => 'description', 'content' => 'Streamline employee transportation, manage fleet operations, and optimize logistics costs with our enterprise dashboard. Trusted by leading organizations across West Africa.', 'sort_order' => 2]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $business->id, 'type' => 'button', 'key' => 'cta', 'content' => 'Contact Sales', 'link_url' => '/business', 'sort_order' => 3]);
 
         // ── 8. Testimonials Section ──────────────────────────────
         $testimonials = CmsSection::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'page_id'    => $page->id,
             'type'       => 'testimonials',
             'title'      => 'What Our Users Say',
@@ -183,6 +194,7 @@ class CmsLandingPageSeeder extends Seeder
 
         foreach ($reviews as $i => $review) {
             CmsBlock::create([
+                'id'         => (string) \Illuminate\Support\Str::uuid(),
                 'section_id' => $testimonials->id,
                 'type'       => 'testimonial',
                 'key'        => 'testimonial_' . ($i + 1),
@@ -194,6 +206,7 @@ class CmsLandingPageSeeder extends Seeder
 
         // ── 9. FAQ Section ───────────────────────────────────────
         $faq = CmsSection::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'page_id'    => $page->id,
             'type'       => 'faq',
             'title'      => 'Frequently Asked Questions',
@@ -210,6 +223,7 @@ class CmsLandingPageSeeder extends Seeder
 
         foreach ($faqs as $i => $item) {
             CmsBlock::create([
+                'id'         => (string) \Illuminate\Support\Str::uuid(),
                 'section_id' => $faq->id,
                 'type'       => 'faq_item',
                 'key'        => 'faq_' . ($i + 1),
@@ -221,6 +235,7 @@ class CmsLandingPageSeeder extends Seeder
 
         // ── 10. App Download Section ─────────────────────────────
         $appDownload = CmsSection::create([
+            'id'         => (string) \Illuminate\Support\Str::uuid(),
             'page_id'    => $page->id,
             'type'       => 'app_download',
             'title'      => 'Get the App',
@@ -228,8 +243,8 @@ class CmsLandingPageSeeder extends Seeder
             'is_visible' => true,
         ]);
 
-        CmsBlock::create(['section_id' => $appDownload->id, 'type' => 'heading', 'key' => 'title', 'content' => 'Download WADEXP Today', 'sort_order' => 1]);
-        CmsBlock::create(['section_id' => $appDownload->id, 'type' => 'paragraph', 'key' => 'subtitle', 'content' => 'Available on iOS and Android. Start riding or delivering in minutes.', 'sort_order' => 2]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $appDownload->id, 'type' => 'heading', 'key' => 'title', 'content' => 'Download WADEXP Today', 'sort_order' => 1]);
+        CmsBlock::create(['id' => (string) \Illuminate\Support\Str::uuid(), 'section_id' => $appDownload->id, 'type' => 'paragraph', 'key' => 'subtitle', 'content' => 'Available on iOS and Android. Start riding or delivering in minutes.', 'sort_order' => 2]);
 
         $this->command->info('✅ CMS Landing Page seeded with 10 sections and full content blocks.');
     }

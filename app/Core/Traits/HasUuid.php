@@ -2,25 +2,13 @@
 
 namespace App\Core\Traits;
 
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 /**
  * Automatically generates UUID primary keys for Eloquent models.
+ * Wrapper around Laravel's native HasUuids concern for project-wide consistency.
  */
 trait HasUuid
 {
-    public function initializeHasUuid(): void
-    {
-        $this->incrementing = false;
-        $this->keyType = 'string';
-    }
-
-    protected static function bootHasUuid(): void
-    {
-        static::creating(function ($model) {
-            if (empty($model->{$model->getKeyName()})) {
-                $model->{$model->getKeyName()} = (string) \Illuminate\Support\Str::uuid();
-            }
-        });
-    }
+    use HasUuids;
 }

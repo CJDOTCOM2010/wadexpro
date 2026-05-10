@@ -2,14 +2,14 @@
 
 namespace App\Modules\CMS\Models;
 
-use App\Core\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CmsSection extends Model
 {
-    use HasUuid;
+    use HasUuids;
 
     protected $fillable = [
         'page_id', 'type', 'title', 'sort_order', 'is_visible', 'settings',

@@ -2,13 +2,13 @@
 
 namespace App\Modules\CMS\Models;
 
-use App\Core\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CmsBlock extends Model
 {
-    use HasUuid;
+    use HasUuids;
 
     protected $fillable = [
         'section_id', 'type', 'key', 'content', 'media_url',

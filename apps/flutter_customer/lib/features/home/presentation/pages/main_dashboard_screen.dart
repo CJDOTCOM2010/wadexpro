@@ -1,37 +1,33 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dashboard_home_tab.dart';
 import 'services_catalog_tab.dart';
 import 'package:wadexpro_customer/features/activity/presentation/pages/activity_tab.dart';
 import 'package:wadexpro_customer/features/profile/presentation/pages/account_tab.dart';
+import '../../../../core/providers/dashboard_provider.dart';
 
-class MainDashboardScreen extends StatefulWidget {
+class MainDashboardScreen extends ConsumerWidget {
   const MainDashboardScreen({super.key});
 
-  @override
-  State<MainDashboardScreen> createState() => _MainDashboardScreenState();
-}
-
-class _MainDashboardScreenState extends State<MainDashboardScreen> {
-  int _currentIndex = 0;
-
-  final List<Widget> _tabs = [
-    const DashboardHomeTab(),
-    const ServicesCatalogTab(),
-    const ActivityTab(),
-    const AccountTab(),
+  final List<Widget> _tabs = const [
+    DashboardHomeTab(),
+    ServicesCatalogTab(),
+    ActivityTab(),
+    AccountTab(),
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(dashboardIndexProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: IndexedStack(
-        index: _currentIndex,
+        index: currentIndex,
         children: _tabs,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        currentIndex: currentIndex,
+        onTap: (index) => ref.read(dashboardIndexProvider.notifier).state = index,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         selectedItemColor: Colors.black,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/dashboard_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:wadexpro_customer/features/home/presentation/pages/new_delivery_screen.dart';
 import 'ride_booking_map_screen.dart';
@@ -8,11 +10,11 @@ import 'hourly_screen.dart';
 import 'search_screen.dart';
 import '../widgets/story_slider.dart';
 
-class DashboardHomeTab extends StatelessWidget {
+class DashboardHomeTab extends ConsumerWidget {
   const DashboardHomeTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -236,7 +238,7 @@ class DashboardHomeTab extends StatelessWidget {
           children: [
             const Text('Suggestions', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             TextButton(
-              onPressed: () {},
+              onPressed: () => ref.read(dashboardIndexProvider.notifier).state = 1,
               child: const Text('See all', style: TextStyle(color: Colors.black)),
             ),
           ],

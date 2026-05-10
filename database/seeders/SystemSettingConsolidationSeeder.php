@@ -39,6 +39,8 @@ class SystemSettingConsolidationSeeder extends Seeder
             ['key' => 'facebook_client_token', 'value' => '', 'type' => 'string', 'group' => 'authentication', 'label' => 'Facebook Client Token'],
 
             // --- Versioning / Manifest ---
+            ['key' => 'flutter_api_url', 'value' => 'https://wadexpro-4rexnj1k.on-forge.com', 'type' => 'string', 'group' => 'manifest', 'label' => 'Mobile API Base URL'],
+            ['key' => 'flutter_rtc_url', 'value' => 'https://wadexpro-4rexnj1k.on-forge.com:3000', 'type' => 'string', 'group' => 'manifest', 'label' => 'Mobile Socket/RTC URL'],
             ['key' => 'min_customer_app_version', 'value' => '1.0.0', 'type' => 'string', 'group' => 'manifest', 'label' => 'Min Customer Version'],
             ['key' => 'play_store_customer_link', 'value' => 'https://play.google.com/store/apps/details?id=com.wadexpro.customer', 'type' => 'string', 'group' => 'manifest', 'label' => 'Customer Play Store'],
             ['key' => 'app_store_customer_link', 'value' => 'https://apps.apple.com/app/wadexpro-customer', 'type' => 'string', 'group' => 'manifest', 'label' => 'Customer App Store'],

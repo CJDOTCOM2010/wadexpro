@@ -25,6 +25,8 @@ class ConfigController extends Controller
                 'facebook_client_token' => SystemSetting::get('facebook_client_token'),
                 
                 'manifest' => [
+                    'api_url'              => SystemSetting::get('flutter_api_url'),
+                    'rtc_url'              => SystemSetting::get('flutter_rtc_url'),
                     'min_customer_version' => SystemSetting::get('min_customer_app_version', '1.0.0'),
                     'min_driver_version'   => SystemSetting::get('min_driver_app_version', '1.0.0'),
                     'customer_play_store'  => SystemSetting::get('play_store_customer_link'),

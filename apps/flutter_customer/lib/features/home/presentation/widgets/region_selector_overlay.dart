@@ -66,29 +66,11 @@ class RegionSelectorOverlay extends ConsumerWidget {
             const Text('Switching region will update pricing and available services.', style: TextStyle(color: AppColors.textMuted)),
             const SizedBox(height: 24),
             _RegionTile(
-              name: 'Ghana (Accra)',
+              name: 'Ghana (Greater Accra)',
               code: 'GHS',
               symbol: 'GH₵',
               onTap: () {
                 ref.read(localizationProvider.notifier).setRegion({'currency_code': 'GHS', 'currency_symbol': 'GH₵'});
-                Navigator.pop(context);
-              },
-            ),
-            _RegionTile(
-              name: 'Ghana (Accra)',
-              code: 'GHS',
-              symbol: 'GH₵',
-              onTap: () {
-                ref.read(localizationProvider.notifier).setRegion({'currency_code': 'GHS', 'currency_symbol': 'GH₵'});
-                Navigator.pop(context);
-              },
-            ),
-            _RegionTile(
-              name: 'USA / International',
-              code: 'USD',
-              symbol: '\$',
-              onTap: () {
-                ref.read(localizationProvider.notifier).setRegion({'currency_code': 'USD', 'currency_symbol': '\$'});
                 Navigator.pop(context);
               },
             ),

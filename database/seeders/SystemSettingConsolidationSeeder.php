@@ -18,6 +18,10 @@ class SystemSettingConsolidationSeeder extends Seeder
             // --- General Branding ---
             ['key' => 'enterprise_name', 'value' => 'WADEXPRO Logistics Hub', 'type' => 'string', 'group' => 'general', 'label' => 'Enterprise Name'],
             ['key' => 'support_email', 'value' => 'ops@wadexpro.com', 'type' => 'string', 'group' => 'general', 'label' => 'Support Email'],
+            ['key' => 'default_country', 'value' => 'GH', 'type' => 'string', 'group' => 'general', 'label' => 'Default Country'],
+            ['key' => 'default_currency', 'value' => 'GHS', 'type' => 'string', 'group' => 'general', 'label' => 'Default Currency'],
+            ['key' => 'default_currency_symbol', 'value' => '₵', 'type' => 'string', 'group' => 'general', 'label' => 'Currency Symbol'],
+            ['key' => 'default_country_code', 'value' => '+233', 'type' => 'string', 'group' => 'general', 'label' => 'Default Dial Code'],
             
             // --- Maps & Location ---
             ['key' => 'google_maps_api_key', 'value' => '', 'type' => 'string', 'group' => 'general', 'label' => 'Google Maps API Key'],
@@ -50,7 +54,7 @@ class SystemSettingConsolidationSeeder extends Seeder
         ];
 
         foreach ($settings as $setting) {
-            $isPublic = in_array($setting['group'], ['manifest', 'authentication']);
+            $isPublic = in_array($setting['group'], ['manifest', 'authentication', 'general']);
             
             DB::table('system_settings')->updateOrInsert(
                 ['key' => $setting['key']],

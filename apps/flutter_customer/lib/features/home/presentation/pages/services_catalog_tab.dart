@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'new_delivery_screen.dart';
+import 'reserve_screen.dart';
+import 'rent_screen.dart';
+import 'ride_booking_map_screen.dart';
+import 'hourly_screen.dart';
 
 class ServicesCatalogTab extends StatelessWidget {
   const ServicesCatalogTab({super.key});
@@ -42,11 +46,11 @@ class ServicesCatalogTab extends StatelessWidget {
       crossAxisSpacing: 16,
       childAspectRatio: 0.85,
       children: [
-        _buildServiceIcon(context, 'Ride', Icons.directions_car),
+        _buildServiceIcon(context, 'Ride', Icons.directions_car, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RideBookingMapScreen()))),
         _buildServiceIcon(context, 'Package', Icons.inventory_2, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewDeliveryScreen()))),
-        _buildServiceIcon(context, 'Reserve', Icons.calendar_month),
-        _buildServiceIcon(context, 'Hourly', Icons.schedule),
-        _buildServiceIcon(context, 'Rent', Icons.key),
+        _buildServiceIcon(context, 'Reserve', Icons.calendar_month, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReserveScreen()))),
+        _buildServiceIcon(context, 'Hourly', Icons.schedule, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HourlyScreen()))),
+        _buildServiceIcon(context, 'Rent', Icons.key, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RentScreen()))),
         _buildServiceIcon(context, '2-Wheels', Icons.electric_scooter),
         _buildServiceIcon(context, 'Transit', Icons.directions_transit),
         _buildServiceIcon(context, 'Charter', Icons.bus_alert),

@@ -133,7 +133,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         filled: true,
                         fillColor: Colors.white.withOpacity(0.05),
                         prefixIcon: const Icon(Icons.phone_iphone_rounded, color: AppColors.secondaryGold, size: 22),
-                        prefixText: '+234 ',
+                        prefixText: '+233 ',
                         prefixStyle: GoogleFonts.outfit(color: AppColors.secondaryGold, fontWeight: FontWeight.w900, fontSize: 18),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                         border: OutlineInputBorder(

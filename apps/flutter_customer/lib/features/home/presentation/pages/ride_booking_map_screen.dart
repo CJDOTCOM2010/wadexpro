@@ -33,7 +33,7 @@ class _RideBookingMapScreenState extends ConsumerState<RideBookingMapScreen> {
   BitmapDescriptor? _driverIcon;
 
   static const CameraPosition _initialPosition = CameraPosition(
-    target: LatLng(9.0820, 8.6753),
+    target: LatLng(5.6037, -0.1870),
     zoom: 14.4746,
   );
 

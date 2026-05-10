@@ -37,20 +37,17 @@ class AppConfig {
       case Environment.prod:
         instance = AppConfig(
           environment: environment,
-          apiBaseUrl: 'https://api.wadexp.com/api/v1',
-          socketUrl: 'https://socket.wadexp.com',
+          apiBaseUrl: 'https://wadexpro-4rexnj1k.on-forge.com/api/v1',
+          socketUrl: 'https://wadexpro-4rexnj1k.on-forge.com:3000',
         );
         break;
       case Environment.dev:
       default:
-        // WADEX-Guard: Select network gateway based on platform context
-        final String host = kIsWeb ? 'wadexpro.test' : '10.0.2.2';
-        final String protocol = kIsWeb ? 'https' : 'http';
-        final String port = kIsWeb ? '' : ':8000';
+        // WADEX-Guard: Redirecting development traffic to the live production gateway
         instance = AppConfig(
           environment: environment,
-          apiBaseUrl: '$protocol://$host$port/api/v1',
-          socketUrl: 'http://$host:3002',
+          apiBaseUrl: 'https://wadexpro-4rexnj1k.on-forge.com/api/v1',
+          socketUrl: 'https://wadexpro-4rexnj1k.on-forge.com:3000',
         );
         break;
     }

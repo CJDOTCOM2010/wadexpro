@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import 'store_detail_screen.dart';
 
 class MarketplaceScreen extends StatelessWidget {
   final String serviceName;
@@ -28,16 +29,6 @@ class MarketplaceScreen extends StatelessWidget {
           serviceName,
           style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -111,7 +102,7 @@ class MarketplaceScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ...(categoryData['stores'] as List<Map<String, dynamic>>).map((store) {
-              return _buildStoreCard(store['name'], store['meta'], store['image']);
+              return _buildStoreCard(context, store);
             }).toList(),
             const SizedBox(height: 40),
           ],
@@ -129,11 +120,10 @@ class MarketplaceScreen extends StatelessWidget {
             {'name': 'Local', 'icon': Icons.soup_kitchen},
             {'name': 'Pizza', 'icon': Icons.local_pizza},
             {'name': 'Burgers', 'icon': Icons.lunch_dining},
-            {'name': 'Seafood', 'icon': Icons.set_meal},
           ],
           'stores': [
-            {'name': 'Accra Continental Hub', 'meta': '4.9 • 20-30 min', 'image': 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop'},
-            {'name': 'Wadex Kitchen Elite', 'meta': '4.8 • 15-25 min', 'image': 'https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=2070&auto=format&fit=crop'},
+            {'name': 'Accra Continental Hub', 'meta': '4.9 • 20 min', 'image': 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop', 'address': '12 Independence Ave, Accra', 'phone': '+233 24 555 0123'},
+            {'name': 'Wadex Kitchen Elite', 'meta': '4.8 • 15 min', 'image': 'https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=2070&auto=format&fit=crop', 'address': 'Oxford St, Osu, Accra', 'phone': '+233 24 555 0456'},
           ]
         };
       case 'Pharmacy':
@@ -142,22 +132,41 @@ class MarketplaceScreen extends StatelessWidget {
           'subCategories': [
             {'name': 'Meds', 'icon': Icons.medication},
             {'name': 'Care', 'icon': Icons.health_and_safety},
-            {'name': 'Baby Care', 'icon': Icons.child_care},
           ],
           'stores': [
-            {'name': 'HealthPlus Ghana', 'meta': 'Verified • 24/7', 'image': 'https://images.unsplash.com/photo-1631549916768-4119b295f78b?q=80&w=2000&auto=format&fit=crop'},
-            {'name': 'MedExpress ₵', 'meta': 'Fast Delivery', 'image': 'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?q=80&w=1974&auto=format&fit=crop'},
+            {'name': 'HealthPlus Ghana', 'meta': 'Verified • 24/7', 'image': 'https://images.unsplash.com/photo-1631549916768-4119b295f78b?q=80&w=2000&auto=format&fit=crop', 'address': 'Spintex Rd, Accra', 'phone': '+233 24 555 9999'},
+          ]
+        };
+      case 'Grocery':
+        return {
+          'bannerImage': 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070&auto=format&fit=crop',
+          'subCategories': [
+            {'name': 'Fresh', 'icon': Icons.eco},
+            {'name': 'Meat', 'icon': Icons.kebab_dining},
+          ],
+          'stores': [
+            {'name': 'WADEX Fresh Mart', 'meta': 'Daily Fresh', 'image': 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=1974&auto=format&fit=crop', 'address': 'Airport Residential, Accra', 'phone': '+233 24 555 7777'},
+          ]
+        };
+      case 'Alcohol':
+        return {
+          'bannerImage': 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?q=80&w=2069&auto=format&fit=crop',
+          'subCategories': [
+            {'name': 'Wine', 'icon': Icons.wine_bar},
+            {'name': 'Beer', 'icon': Icons.sports_bar},
+          ],
+          'stores': [
+            {'name': 'Premium Spirits Hub', 'meta': 'Elite Choice', 'image': 'https://images.unsplash.com/photo-1569937756447-1d44f657dc69?q=80&w=1974&auto=format&fit=crop', 'address': 'Labone, Accra', 'phone': '+233 24 555 8888'},
           ]
         };
       default:
         return {
-          'bannerImage': 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070&auto=format&fit=crop',
+          'bannerImage': 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=2070&auto=format&fit=crop',
           'subCategories': [
             {'name': 'Wadex Select', 'icon': Icons.auto_awesome},
-            {'name': 'Fresh', 'icon': Icons.eco},
           ],
           'stores': [
-            {'name': 'WADEX Premium Market', 'meta': 'Certified Store', 'image': 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=1974&auto=format&fit=crop'},
+            {'name': 'WADEX General Store', 'meta': 'All-in-one', 'image': 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?q=80&w=2070&auto=format&fit=crop', 'address': 'East Legon, Accra', 'phone': '+233 24 555 1111'},
           ]
         };
     }
@@ -183,35 +192,44 @@ class MarketplaceScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStoreCard(String name, String meta, String imageUrl) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 160,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.cover),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(8)),
-                child: Text(meta, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12)),
+  Widget _buildStoreCard(BuildContext context, Map<String, dynamic> store) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => StoreDetailScreen(
+        name: store['name'],
+        meta: store['meta'],
+        image: store['image'],
+        address: store['address'],
+        phone: store['phone'],
+      ))),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 160,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: DecorationImage(image: NetworkImage(store['image']), fit: BoxFit.cover),
               ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          const Text('₵5.00 Delivery Fee • Free over ₵50', style: TextStyle(color: Colors.grey, fontSize: 14)),
-        ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(store['name'], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(8)),
+                  child: Text(store['meta'], style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(store['address'], style: const TextStyle(color: Colors.grey, fontSize: 14)),
+          ],
+        ),
       ),
     );
   }

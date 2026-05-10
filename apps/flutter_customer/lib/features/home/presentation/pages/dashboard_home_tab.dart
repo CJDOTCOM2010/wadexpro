@@ -6,6 +6,7 @@ import 'reserve_screen.dart';
 import 'rent_screen.dart';
 import 'hourly_screen.dart';
 import 'search_screen.dart';
+import '../widgets/story_slider.dart';
 
 class DashboardHomeTab extends StatelessWidget {
   const DashboardHomeTab({super.key});
@@ -25,6 +26,8 @@ class DashboardHomeTab extends StatelessWidget {
               _buildSearchBox(context),
               const SizedBox(height: 16),
               _buildSavedPlaces(),
+              const SizedBox(height: 32),
+              _buildStorySection(context),
               const SizedBox(height: 32),
               _buildSuggestionsSection(context),
               const SizedBox(height: 32),
@@ -194,6 +197,34 @@ class DashboardHomeTab extends StatelessWidget {
     );
   }
 
+  Widget _buildStorySection(BuildContext context) {
+    return StorySlider(
+      stories: [
+        StoryData(
+          title: 'Arrive in Comfort',
+          subtitle: 'Experience premium logistics with our luxury fleet.',
+          imagePath: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop',
+          ctaText: 'Request now',
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RideBookingMapScreen())),
+        ),
+        StoryData(
+          title: 'Safety First',
+          subtitle: 'Our new 24/7 support and real-time tracking is now active.',
+          imagePath: 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop',
+          ctaText: 'Learn more',
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RideBookingMapScreen())),
+        ),
+        StoryData(
+          title: 'Go Green',
+          subtitle: 'Try our new electric scooters for short urban trips.',
+          imagePath: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=2072&auto=format&fit=crop',
+          ctaText: 'Explore fleet',
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RideBookingMapScreen())),
+        ),
+      ],
+    );
+  }
+
   Widget _buildSuggestionsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,5 +345,4 @@ class _PromoCardData {
     required this.imagePath,
     required this.onTap,
   });
-}
 }

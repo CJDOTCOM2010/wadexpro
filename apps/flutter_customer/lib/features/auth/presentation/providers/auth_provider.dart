@@ -27,14 +27,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
       // WADEX-Guard: Redundant session check for Web/Mobile persistence
       token = await _storage.read(key: 'access_token');
     } catch (e) {
-      debugPrint('WADEXPRO: Session retrieval warning: $e');
+      print('WADEXPRO: Session retrieval warning: $e');
     }
 
     if (token != null && token.isNotEmpty) {
-      debugPrint('WADEXPRO: Valid session detected. Synchronizing state.');
+      print('WADEXPRO: Valid session detected. Synchronizing state.');
       state = state.copyWith(status: AuthStatus.authenticated);
     } else {
-      debugPrint('WADEXPRO: No active session found.');
+      print('WADEXPRO: No active session found.');
       state = state.copyWith(status: AuthStatus.unauthenticated);
     }
   }

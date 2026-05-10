@@ -28,7 +28,63 @@ class DashboardHomeTab extends StatelessWidget {
               const SizedBox(height: 32),
               _buildSuggestionsSection(context),
               const SizedBox(height: 32),
-              _buildWaysToPlanSection(),
+              _buildPromoSection(
+                context, 
+                'Save every day', 
+                [
+                  _PromoCardData(
+                    title: 'Add a stop or 5',
+                    subtitle: 'Pick something up along the way',
+                    imagePath: 'https://images.unsplash.com/photo-1524613032530-449a5d94c285?q=80&w=2070&auto=format&fit=crop',
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RideBookingMapScreen())),
+                  ),
+                  _PromoCardData(
+                    title: 'Wadex Moto trips',
+                    subtitle: 'Affordable motorcycle rides',
+                    imagePath: 'https://images.unsplash.com/photo-1558981403-c5f91cbba527?q=80&w=2070&auto=format&fit=crop',
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RideBookingMapScreen())),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              _buildPromoSection(
+                context, 
+                'Deliver with courier', 
+                [
+                  _PromoCardData(
+                    title: 'Send a package',
+                    subtitle: 'Same-day delivery to your door',
+                    imagePath: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop',
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewDeliveryScreen())),
+                  ),
+                  _PromoCardData(
+                    title: 'Forgotten something?',
+                    subtitle: 'Forgot your wallet? We can help.',
+                    imagePath: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1974&auto=format&fit=crop',
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewDeliveryScreen())),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              _buildPromoSection(
+                context, 
+                'More ways to use WADEXPRO', 
+                [
+                  _PromoCardData(
+                    title: 'Reserve a ride',
+                    subtitle: 'Advance booking for peace of mind',
+                    imagePath: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop',
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReserveScreen())),
+                  ),
+                  _PromoCardData(
+                    title: 'Rent a car',
+                    subtitle: 'Flexible hourly and daily rentals',
+                    imagePath: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop',
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RentScreen())),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -203,51 +259,60 @@ class DashboardHomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildWaysToPlanSection() {
+  Widget _buildPromoSection(BuildContext context, String title, List<_PromoCardData> cards) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Ways to plan with WADEXPRO', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
           child: Row(
-            children: [
-              _buildPlanCard('Reserve a ride', Icons.calendar_today, 'Tap to book'),
-              const SizedBox(width: 16),
-              _buildPlanCard('Explore local', Icons.location_city, 'Find out more'),
-            ],
+            children: cards.map((card) => Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: GestureDetector(
+                onTap: card.onTap,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 280,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: NetworkImage(card.imagePath),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(card.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    const SizedBox(height: 4),
+                    Text(card.subtitle, style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                  ],
+                ),
+              ),
+            )).toList(),
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildPlanCard(String title, IconData icon, String subtitle) {
-    return Container(
-      width: 250,
-      height: 140,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: Colors.white, size: 32),
-          const Spacer(),
-          Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text(subtitle, style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14)),
-              const SizedBox(width: 4),
-              Icon(Icons.arrow_forward, color: Colors.white.withOpacity(0.8), size: 16),
-            ],
-          )
-        ],
-      ),
-    );
-  }
+class _PromoCardData {
+  final String title;
+  final String subtitle;
+  final String imagePath;
+  final VoidCallback onTap;
+
+  _PromoCardData({
+    required this.title,
+    required this.subtitle,
+    required this.imagePath,
+    required this.onTap,
+  });
+}
 }

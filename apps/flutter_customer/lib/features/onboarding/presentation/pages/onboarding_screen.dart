@@ -65,7 +65,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           child: CircularProgressIndicator(color: AppColors.secondaryGold),
         ),
         error: (_, _) => _buildFallbackError(),
-        data: (config) => _buildOnboarding(config),
+        data: (config) {
+          if (config.pages.isEmpty) {
+            // WADEX-Guard: Auto-complete if no slides found
+            WidgetsBinding.instance.addPostFrameCallback((_) => _completeOnboarding());
+            return const Center(child: CircularProgressIndicator(color: AppColors.secondaryGold));
+          }
+          return _buildOnboarding(config);
+        },
       ),
     );
   }

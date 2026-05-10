@@ -5,6 +5,8 @@ import 'reserve_screen.dart';
 import 'rent_screen.dart';
 import 'ride_booking_map_screen.dart';
 import 'hourly_screen.dart';
+import 'marketplace_screen.dart';
+import 'transport_hub_screen.dart';
 
 class ServicesCatalogTab extends StatelessWidget {
   const ServicesCatalogTab({super.key});
@@ -51,11 +53,11 @@ class ServicesCatalogTab extends StatelessWidget {
         _buildServiceIcon(context, 'Reserve', Icons.calendar_month, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReserveScreen()))),
         _buildServiceIcon(context, 'Hourly', Icons.schedule, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HourlyScreen()))),
         _buildServiceIcon(context, 'Rent', Icons.key, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RentScreen()))),
-        _buildServiceIcon(context, '2-Wheels', Icons.electric_scooter),
-        _buildServiceIcon(context, 'Transit', Icons.directions_transit),
-        _buildServiceIcon(context, 'Charter', Icons.bus_alert),
-        _buildServiceIcon(context, 'Explore', Icons.explore),
-        _buildServiceIcon(context, 'Travel', Icons.flight),
+        _buildServiceIcon(context, '2-Wheels', Icons.electric_scooter, onTap: () => _openTransport(context, '2-Wheels', Icons.electric_scooter)),
+        _buildServiceIcon(context, 'Transit', Icons.directions_transit, onTap: () => _openTransport(context, 'Transit', Icons.directions_transit)),
+        _buildServiceIcon(context, 'Charter', Icons.bus_alert, onTap: () => _openTransport(context, 'Charter', Icons.bus_alert)),
+        _buildServiceIcon(context, 'Explore', Icons.explore, onTap: () => _openMarketplace(context, 'Explore', Icons.explore)),
+        _buildServiceIcon(context, 'Travel', Icons.flight, onTap: () => _openTransport(context, 'Travel', Icons.flight)),
       ],
     );
   }
@@ -69,16 +71,24 @@ class ServicesCatalogTab extends StatelessWidget {
       crossAxisSpacing: 16,
       childAspectRatio: 0.85,
       children: [
-        _buildServiceIcon(context, 'Restaurants', Icons.restaurant),
-        _buildServiceIcon(context, 'Grocery', Icons.shopping_basket),
-        _buildServiceIcon(context, 'Convenience', Icons.local_convenience_store),
-        _buildServiceIcon(context, 'Alcohol', Icons.local_bar),
-        _buildServiceIcon(context, 'Pharmacy', Icons.local_pharmacy),
-        _buildServiceIcon(context, 'Baby', Icons.child_care),
-        _buildServiceIcon(context, 'Pet', Icons.pets),
-        _buildServiceIcon(context, 'Flowers', Icons.local_florist),
+        _buildServiceIcon(context, 'Restaurants', Icons.restaurant, onTap: () => _openMarketplace(context, 'Restaurants', Icons.restaurant)),
+        _buildServiceIcon(context, 'Grocery', Icons.shopping_basket, onTap: () => _openMarketplace(context, 'Grocery', Icons.shopping_basket)),
+        _buildServiceIcon(context, 'Convenience', Icons.local_convenience_store, onTap: () => _openMarketplace(context, 'Convenience', Icons.local_convenience_store)),
+        _buildServiceIcon(context, 'Alcohol', Icons.local_bar, onTap: () => _openMarketplace(context, 'Alcohol', Icons.local_bar)),
+        _buildServiceIcon(context, 'Pharmacy', Icons.local_pharmacy, onTap: () => _openMarketplace(context, 'Pharmacy', Icons.local_pharmacy)),
+        _buildServiceIcon(context, 'Baby', Icons.child_care, onTap: () => _openMarketplace(context, 'Baby', Icons.child_care)),
+        _buildServiceIcon(context, 'Pet', Icons.pets, onTap: () => _openMarketplace(context, 'Pet', Icons.pets)),
+        _buildServiceIcon(context, 'Flowers', Icons.local_florist, onTap: () => _openMarketplace(context, 'Flowers', Icons.local_florist)),
       ],
     );
+  }
+
+  void _openMarketplace(BuildContext context, String name, IconData icon) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => MarketplaceScreen(serviceName: name, icon: icon)));
+  }
+
+  void _openTransport(BuildContext context, String name, IconData icon) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => TransportHubScreen(serviceName: name, icon: icon)));
   }
 
   Widget _buildServiceIcon(BuildContext context, String title, IconData icon, {VoidCallback? onTap}) {

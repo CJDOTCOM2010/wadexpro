@@ -29,7 +29,7 @@ class DashboardHomeTab extends ConsumerWidget {
               const SizedBox(height: 16),
               _buildSavedPlaces(),
               const SizedBox(height: 32),
-              _buildSuggestionsSection(context),
+              _buildSuggestionsSection(context, ref),
               const SizedBox(height: 32),
               _buildPromoSection(
                 context, 
@@ -229,7 +229,7 @@ class DashboardHomeTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildSuggestionsSection(BuildContext context) {
+  Widget _buildSuggestionsSection(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

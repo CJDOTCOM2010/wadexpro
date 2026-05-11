@@ -116,7 +116,7 @@
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                     <span class="text-sm font-semibold whitespace-nowrap">Infrastructure Hub</span>
                 </a>
-                <a href="{{ route('orchestrator.modules') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition text-white/60 hover:text-white">
+                <a href="{{ route('orchestrator.modules') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.modules') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a2 2 0 01-2 2H3a2 2 0 01-2-2V4a2 2 0 114 0v1a2 2 0 012 2h4a2 2 0 012-2V4z"/></svg>
                     <span class="text-sm font-semibold whitespace-nowrap">Module Hardening</span>
                 </a>

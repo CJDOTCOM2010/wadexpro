@@ -1,3 +1,4 @@
+@extends('admin.layout')
 @section('title', 'Global Entity Node Matrix')
 @section('content')
 

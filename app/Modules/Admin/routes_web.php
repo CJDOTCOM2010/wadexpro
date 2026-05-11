@@ -27,8 +27,8 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::get('/dispatcher', fn() => view('admin.dispatcher'))->name('orchestrator.dispatcher');
         
         // Logistics Engine
-        Route::get('/drivers', fn() => view('admin.users'))->name('orchestrator.drivers');
-        Route::get('/orders', fn() => view('admin.dashboard'))->name('orchestrator.orders');
+        Route::get('/drivers', fn() => view('admin.asset_registry'))->name('orchestrator.drivers');
+        Route::get('/orders', fn() => view('admin.global_queue'))->name('orchestrator.orders');
         Route::get('/financials', fn() => view('admin.financials'))->name('orchestrator.financials');
         
         // CMS & Platform
@@ -50,6 +50,6 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::post('/settings/onboarding/splash', [\App\Modules\Admin\Controllers\OnboardingController::class, 'updateSplash'])->name('orchestrator.onboarding.splash.update');
 
         Route::get('/infrastructure', fn() => view('admin.infrastructure'))->name('orchestrator.infrastructure');
-        Route::get('/modules', fn() => view('admin.dashboard'))->name('orchestrator.modules');
+        Route::get('/modules', fn() => view('admin.module_hardening'))->name('orchestrator.modules');
     });
 });

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../config/environment_config.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import '../utils/local_storage.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -18,10 +20,13 @@ class ApiClient {
         options.headers['Accept-Language'] = _locale;
         String? token;
         try {
-          // WADEX-Guard: Secure storage can hang on Web HTTP localhost. Fail-safed.
-          token = await _storage.read(key: 'access_token').timeout(const Duration(seconds: 2));
+          if (kIsWeb) {
+            token = getLocalStorage('wadex_access_token');
+          } else {
+            token = await _storage.read(key: 'access_token').timeout(const Duration(seconds: 2));
+          }
         } catch (e) {
-          print('SecureStorage read failed: $e');
+          print('Token read failed: $e');
         }
         
         if (token != null) {

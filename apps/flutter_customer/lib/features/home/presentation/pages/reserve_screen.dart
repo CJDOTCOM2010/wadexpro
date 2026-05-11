@@ -11,17 +11,18 @@ class ReserveScreen extends StatefulWidget {
 class _ReserveScreenState extends State<ReserveScreen> {
   DateTime selectedDate = DateTime.now().add(const Duration(days: 1));
   TimeOfDay selectedTime = const TimeOfDay(hour: 9, minute: 0);
+  bool _isBooking = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.obsidianDark,
       appBar: AppBar(
-        title: const Text('Reserve a Trip', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
+        title: const Text('Reserve a Trip', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -56,12 +57,12 @@ class _ReserveScreenState extends State<ReserveScreen> {
       children: [
         const Text(
           'Choose your time',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: -0.5),
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -0.5),
         ),
         const SizedBox(height: 8),
         Text(
           'Book at least 2 hours in advance to ensure availability.',
-          style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 15),
+          style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 15),
         ),
       ],
     );
@@ -71,7 +72,7 @@ class _ReserveScreenState extends State<ReserveScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('DATE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey, letterSpacing: 1.2)),
+        const Text('DATE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white54, letterSpacing: 1.2)),
         const SizedBox(height: 12),
         InkWell(
           onTap: () async {
@@ -80,25 +81,30 @@ class _ReserveScreenState extends State<ReserveScreen> {
               initialDate: selectedDate,
               firstDate: DateTime.now(),
               lastDate: DateTime.now().add(const Duration(days: 30)),
+              builder: (context, child) => Theme(
+                data: ThemeData.dark().copyWith(colorScheme: const ColorScheme.dark(primary: Colors.white, surface: Color(0xFF1A1A2E))),
+                child: child!,
+              ),
             );
             if (picked != null) setState(() => selectedDate = picked);
           },
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white12,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white12),
             ),
             child: Row(
               children: [
-                const Icon(Icons.calendar_today, color: AppColors.primary),
+                const Icon(Icons.calendar_today, color: Colors.white),
                 const SizedBox(width: 16),
                 Text(
                   '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                 ),
                 const Spacer(),
-                const Icon(Icons.edit, size: 18, color: Colors.grey),
+                const Icon(Icons.edit, size: 18, color: Colors.white54),
               ],
             ),
           ),
@@ -111,32 +117,37 @@ class _ReserveScreenState extends State<ReserveScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('TIME', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey, letterSpacing: 1.2)),
+        const Text('TIME', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white54, letterSpacing: 1.2)),
         const SizedBox(height: 12),
         InkWell(
           onTap: () async {
             final TimeOfDay? picked = await showTimePicker(
               context: context,
               initialTime: selectedTime,
+              builder: (context, child) => Theme(
+                data: ThemeData.dark().copyWith(colorScheme: const ColorScheme.dark(primary: Colors.white, surface: Color(0xFF1A1A2E))),
+                child: child!,
+              ),
             );
             if (picked != null) setState(() => selectedTime = picked);
           },
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white12,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white12),
             ),
             child: Row(
               children: [
-                const Icon(Icons.access_time, color: AppColors.primary),
+                const Icon(Icons.access_time, color: Colors.white),
                 const SizedBox(width: 16),
                 Text(
                   selectedTime.format(context),
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                 ),
                 const Spacer(),
-                const Icon(Icons.edit, size: 18, color: Colors.grey),
+                const Icon(Icons.edit, size: 18, color: Colors.white54),
               ],
             ),
           ),
@@ -149,15 +160,15 @@ class _ReserveScreenState extends State<ReserveScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.05),
+        color: Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+        border: Border.all(color: Colors.white12),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), shape: BoxShape.circle),
             child: const Icon(Icons.info_outline, color: Colors.white, size: 24),
           ),
           const SizedBox(width: 16),
@@ -165,9 +176,9 @@ class _ReserveScreenState extends State<ReserveScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Reservation Perk', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text('Reservation Perk', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
                 SizedBox(height: 4),
-                Text('Includes 15 mins of free wait time at pickup.', style: TextStyle(fontSize: 13, color: Colors.black54)),
+                Text('Includes 15 mins of free wait time at pickup.', style: TextStyle(fontSize: 13, color: Colors.white54)),
               ],
             ),
           ),
@@ -180,25 +191,37 @@ class _ReserveScreenState extends State<ReserveScreen> {
     return Container(
       padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(context).padding.bottom + 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
+        color: AppColors.obsidianDark,
+        border: const Border(top: BorderSide(color: Colors.white12)),
       ),
       child: ElevatedButton(
-        onPressed: () {
-          // Action for booking
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Reservation scheduled successfully!')),
-          );
-          Navigator.pop(context);
+        onPressed: _isBooking ? null : () async {
+          setState(() => _isBooking = true);
+          await Future.delayed(const Duration(seconds: 2));
+          if (mounted) {
+            setState(() => _isBooking = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Trip reserved for ${selectedDate.day}/${selectedDate.month} at ${selectedTime.format(context)}!'),
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            );
+            Navigator.pop(context);
+          }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          backgroundColor: Colors.white,
+          disabledBackgroundColor: Colors.white24,
+          foregroundColor: Colors.black,
           minimumSize: const Size(double.infinity, 56),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,
         ),
-        child: const Text('Reserve WADEXPRO', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        child: _isBooking
+            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2))
+            : const Text('Reserve WADEXPRO', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }

@@ -1,19 +1,49 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
-class HourlyScreen extends StatelessWidget {
+class HourlyScreen extends StatefulWidget {
   const HourlyScreen({super.key});
 
   @override
+  State<HourlyScreen> createState() => _HourlyScreenState();
+}
+
+class _HourlyScreenState extends State<HourlyScreen> {
+  int _selectedHours = 4;
+  bool _isBooking = false;
+
+  final List<int> _hourOptions = [1, 2, 3, 4, 6, 8];
+
+  void _bookHourly() async {
+    setState(() => _isBooking = true);
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      setState(() => _isBooking = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$_selectedHours-Hour Chauffeur Booking Confirmed! A driver will be assigned shortly.'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      Navigator.pop(context);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final estimatedCost = (_selectedHours * 45.0).toStringAsFixed(2);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.obsidianDark,
       appBar: AppBar(
-        title: const Text('Hourly Booking', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
+        title: const Text('Hourly Booking', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -22,24 +52,72 @@ class HourlyScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Keep a driver for hours', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900)),
+            const Text('Keep a driver for hours', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white)),
             const SizedBox(height: 8),
-            const Text('Perfect for errands, meetings, or sightseeing.', style: TextStyle(fontSize: 16, color: Colors.grey)),
+            const Text('Perfect for errands, meetings, or sightseeing.', style: TextStyle(fontSize: 16, color: Colors.white54)),
             const SizedBox(height: 40),
+
+            const Text('SELECT DURATION', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white54, letterSpacing: 1.2)),
+            const SizedBox(height: 16),
             _buildHourSelector(),
+
+            const SizedBox(height: 32),
+
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Estimated Cost', style: TextStyle(color: Colors.white54, fontSize: 13)),
+                      const SizedBox(height: 4),
+                      Text('GHS $estimatedCost', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white)),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Text('Duration', style: TextStyle(color: Colors.white54, fontSize: 13)),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$_selectedHours ${_selectedHours == 1 ? 'Hour' : 'Hours'}',
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
             const SizedBox(height: 32),
             _buildFeatureRow(Icons.timer, 'Flexible Time', 'Extend your booking at any time from the app.'),
             const SizedBox(height: 16),
             _buildFeatureRow(Icons.pin_drop, 'Unlimited Stops', 'The driver is yours for the entire duration.'),
+            const SizedBox(height: 16),
+            _buildFeatureRow(Icons.shield_outlined, 'Fully Insured', 'All trips are covered by WADEXPRO insurance.'),
             const Spacer(),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: _isBooking ? null : _bookHourly,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: Colors.white,
+                disabledBackgroundColor: Colors.white24,
+                foregroundColor: Colors.black,
                 minimumSize: const Size(double.infinity, 56),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
-              child: const Text('Book Hourly Chauffeur', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: _isBooking
+                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2))
+                  : Text(
+                      'Book $_selectedHours-Hour Chauffeur • GHS $estimatedCost',
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
             ),
           ],
         ),
@@ -48,45 +126,45 @@ class HourlyScreen extends StatelessWidget {
   }
 
   Widget _buildHourSelector() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildHourOption('2', 'Hrs'),
-        _buildHourOption('4', 'Hrs', isSelected: true),
-        _buildHourOption('8', 'Hrs'),
-      ],
-    );
-  }
-
-  Widget _buildHourOption(String value, String label, {bool isSelected = false}) {
-    return Container(
-      width: 80,
-      height: 100,
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.primary : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: isSelected ? Colors.white : Colors.black)),
-          Text(label, style: TextStyle(fontSize: 14, color: isSelected ? Colors.white70 : Colors.grey)),
-        ],
-      ),
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: _hourOptions.map((hours) {
+        final isSelected = _selectedHours == hours;
+        return GestureDetector(
+          onTap: () => setState(() => _selectedHours = hours),
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.white : Colors.white12,
+              borderRadius: BorderRadius.circular(20),
+              border: isSelected ? Border.all(color: Colors.white, width: 2) : Border.all(color: Colors.white12),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('$hours', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: isSelected ? Colors.black : Colors.white)),
+                Text(hours == 1 ? 'Hr' : 'Hrs', style: TextStyle(fontSize: 14, color: isSelected ? Colors.black54 : Colors.white54)),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
   Widget _buildFeatureRow(IconData icon, String title, String subtitle) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.primary),
+        Icon(icon, color: Colors.white),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+              Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.white54)),
             ],
           ),
         ),

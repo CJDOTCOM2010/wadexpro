@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../providers/activity_provider.dart';
+import 'package:wadexpro_customer/features/home/presentation/pages/search_screen.dart';
 
 class ActivityTab extends ConsumerWidget {
   const ActivityTab({super.key});
@@ -11,42 +12,43 @@ class ActivityTab extends ConsumerWidget {
     final activityState = ref.watch(activityProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.obsidianDark,
       appBar: AppBar(
-        title: const Text('Activity', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.black)),
-        backgroundColor: Colors.white,
+        title: const Text('Activity', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white)),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
       ),
       body: activityState.isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(child: CircularProgressIndicator(color: Colors.white))
           : activityState.pastTrips.isEmpty
               ? _buildEmptyState()
               : RefreshIndicator(
                   onRefresh: () => ref.read(activityProvider.notifier).refreshHistory(),
-                  color: AppColors.primary,
+                  color: Colors.white,
+                  backgroundColor: AppColors.obsidianDark,
                   child: ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: activityState.pastTrips.length,
                     itemBuilder: (context, index) {
                       final trip = activityState.pastTrips[index];
-                      return _buildTripCard(trip);
+                      return _buildTripCard(context, trip);
                     },
                   ),
                 ),
     );
   }
 
-  Widget _buildTripCard(TripModel trip) {
+  Widget _buildTripCard(BuildContext context, TripModel trip) {
     final isCanceled = trip.status == 'Canceled';
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: Colors.white12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,12 +58,12 @@ class ActivityTab extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: const Color(0xFF6C63FF).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   trip.vehicleType.contains('Package') ? Icons.inventory_2 : Icons.directions_car,
-                  color: AppColors.primary,
+                  color: const Color(0xFF6C63FF),
                   size: 24,
                 ),
               ),
@@ -70,13 +72,13 @@ class ActivityTab extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(trip.pickupAddress, 
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    Text(trip.pickupAddress,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
-                    Text(trip.date, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                    Text(trip.date, style: const TextStyle(color: Colors.white54, fontSize: 13)),
                   ],
                 ),
               ),
@@ -86,7 +88,7 @@ class ActivityTab extends ConsumerWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: isCanceled ? Colors.grey : Colors.black,
+                  color: isCanceled ? Colors.white38 : Colors.white,
                   decoration: isCanceled ? TextDecoration.lineThrough : null,
                 ),
               ),
@@ -99,7 +101,7 @@ class ActivityTab extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(trip.status).withOpacity(0.1),
+                  color: _getStatusColor(trip.status).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -112,13 +114,17 @@ class ActivityTab extends ConsumerWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SearchScreen(fromDashboard: true, isPlanningLater: false)),
+                  );
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  backgroundColor: Colors.grey.shade100,
+                  backgroundColor: Colors.white.withOpacity(0.1),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
-                child: const Text('Rebook', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold)),
+                child: const Text('Rebook', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -131,11 +137,11 @@ class ActivityTab extends ConsumerWidget {
     switch (status) {
       case 'Completed':
       case 'Delivered':
-        return Colors.green;
+        return const Color(0xFF00D4AA);
       case 'Canceled':
-        return Colors.red;
+        return const Color(0xFFFF6B6B);
       default:
-        return Colors.grey;
+        return Colors.white54;
     }
   }
 
@@ -144,17 +150,17 @@ class ActivityTab extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long_outlined, size: 80, color: Colors.grey.shade200),
+          Icon(Icons.receipt_long_outlined, size: 80, color: Colors.white.withOpacity(0.15)),
           const SizedBox(height: 24),
           const Text(
             "You haven't taken a trip yet",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           const SizedBox(height: 8),
           const Text(
             "Book your first WADEXPRO ride and it will appear here.",
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: Colors.white54),
           ),
         ],
       ),

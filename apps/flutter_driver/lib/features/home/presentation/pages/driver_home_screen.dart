@@ -12,6 +12,7 @@ import '../widgets/active_trip_panel.dart';
 import '../widgets/sos_button.dart';
 import '../../../wallet/presentation/pages/wallet_screen.dart';
 import '../../../profile/presentation/pages/profile_screen.dart';
+import '../../../../core/widgets/dynamic_glass_card.dart';
 
 class DriverHomeScreen extends ConsumerStatefulWidget {
   const DriverHomeScreen({super.key});
@@ -95,14 +96,8 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
               top: 60,
               left: 20,
               right: 20,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
+              child: DynamicGlassCard(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryNavy,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10)],
-                ),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -114,8 +109,8 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
                       child: Hero(
                         tag: 'driver_avatar',
                         child: CircleAvatar(
-                          backgroundColor: Colors.white12,
-                          child: Icon(Icons.person, color: Colors.white),
+                          backgroundColor: AppColors.primaryNavy.withOpacity(0.1),
+                          child: const Icon(Icons.person, color: AppColors.primaryNavy),
                         ),
                       ),
                     ),
@@ -123,13 +118,13 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('STATUS', style: TextStyle(color: Colors.white54, fontSize: 10, letterSpacing: 1)),
+                        const Text('STATUS', style: TextStyle(color: AppColors.textMuted, fontSize: 10, letterSpacing: 1, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 2),
                         Text(
                           statusState.isOnline ? 'ONLINE' : 'OFFLINE',
                           style: TextStyle(
-                            color: statusState.isOnline ? Colors.greenAccent : Colors.white70,
-                            fontWeight: FontWeight.bold,
+                            color: statusState.isOnline ? Colors.green.shade700 : AppColors.obsidianDark,
+                            fontWeight: FontWeight.w900,
                             fontSize: 18,
                           ),
                         ),
@@ -138,7 +133,10 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
                     const Spacer(),
                     Switch(
                       value: statusState.isOnline,
-                      activeThumbColor: AppColors.accent,
+                      activeThumbColor: Colors.green.shade600,
+                      activeTrackColor: Colors.green.shade200,
+                      inactiveThumbColor: AppColors.textMuted,
+                      inactiveTrackColor: Colors.grey.shade300,
                       onChanged: (val) {
                         HapticFeedback.mediumImpact();
                         ref.read(driverStatusProvider.notifier).toggleStatus();
@@ -161,44 +159,42 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
           if (!isTripActive)
             Align(
               alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStatColumn(context, 'EARNINGS', 'GH₵0.00', onTap: () {
-                          HapticFeedback.selectionClick();
-                          // Wallet Navigation
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => WalletScreen()));
-                        }),
-                        const VerticalDivider(width: 40),
-                        _buildStatColumn(context, 'RATING', '5.0 ★'),
-                        const VerticalDivider(width: 40),
-                        _buildStatColumn(context, 'TRIPS', '0'),
-                      ],
-                    ),
-                    if (!statusState.isOnline) ...[
-                      const SizedBox(height: 24),
-                      const Text(
-                        'You are currently offline. Toggle the switch to start receiving ride requests.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.textMuted),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: DynamicGlassCard(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildStatColumn(context, 'EARNINGS', 'GH₵0.00', onTap: () {
+                            HapticFeedback.selectionClick();
+                            // Wallet Navigation
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => WalletScreen()));
+                          }),
+                          const VerticalDivider(width: 40, color: Colors.black12),
+                          _buildStatColumn(context, 'RATING', '5.0 ★'),
+                          const VerticalDivider(width: 40, color: Colors.black12),
+                          _buildStatColumn(context, 'TRIPS', '0'),
+                        ],
                       ),
-                    ] else ...[
-                       const SizedBox(height: 24),
-                       const LinearProgressIndicator(color: AppColors.accent, backgroundColor: AppColors.background),
-                       const SizedBox(height: 8),
-                       const Text('Searching for requests...', style: TextStyle(color: AppColors.primaryNavy, fontWeight: FontWeight.bold)),
-                    ]
-                  ],
+                      if (!statusState.isOnline) ...[
+                        const SizedBox(height: 24),
+                        const Text(
+                          'You are currently offline. Toggle the switch to start receiving ride requests.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors.obsidianDark, fontWeight: FontWeight.w500),
+                        ),
+                      ] else ...[
+                         const SizedBox(height: 24),
+                         const LinearProgressIndicator(color: AppColors.primaryNavy, backgroundColor: Colors.white54),
+                         const SizedBox(height: 12),
+                         const Text('Searching for requests...', style: TextStyle(color: AppColors.primaryNavy, fontWeight: FontWeight.bold)),
+                      ]
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -8,6 +8,7 @@ import 'features/onboarding/presentation/pages/splash_screen.dart';
 import 'features/onboarding/presentation/pages/onboarding_screen.dart';
 
 import 'features/auth/presentation/pages/otp_screen.dart';
+import 'features/auth/presentation/pages/kyc_screen.dart';
 
 import 'core/config/app_config.dart';
 import 'core/theme/app_colors.dart';
@@ -134,28 +135,33 @@ class _AppGate extends ConsumerWidget {
       );
     }
 
-    ref.listen(authProvider, (previous, next) {
-      if (next.status == AuthStatus.authenticated && previous?.status != AuthStatus.authenticated) {
-        ref.read(socketServiceProvider).connect(AppConfig.instance.socketUrl, '/driver');
-      }
-    });
-
-    return _buildAuthHome(authState);
+    return _buildAuthScreen(authState);
   }
 
-  Widget _buildAuthHome(AuthState authState) {
+  Widget _buildAuthScreen(AuthState authState) {
     switch (authState.status) {
       case AuthStatus.authenticated:
+        // Once authenticated, go straight to the home screen.
+        // KYC onboarding is handled separately from the main auth gate.
         return const DriverHomeScreen();
+        
       case AuthStatus.otpSent:
         return const OtpScreen();
-      case AuthStatus.loading:
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        
       case AuthStatus.error:
+        // If phone is known, keep them on OTP screen so they can retry
         if (authState.phone != null) return const OtpScreen();
         return const LoginScreen();
+        
+      case AuthStatus.loading:
+        if (authState.phone != null) {
+          // Loading after OTP was sent — stay on OTP screen
+          return const OtpScreen();
+        }
+        return const LoginScreen();
+        
+      case AuthStatus.initial:
+      case AuthStatus.unauthenticated:
       default:
         return const LoginScreen();
     }
@@ -172,15 +178,20 @@ class _AuthGate extends ConsumerWidget {
     switch (authState.status) {
       case AuthStatus.authenticated:
         return const DriverHomeScreen();
+        
       case AuthStatus.otpSent:
         return const OtpScreen();
-      case AuthStatus.loading:
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        
       case AuthStatus.error:
         if (authState.phone != null) return const OtpScreen();
         return const LoginScreen();
+        
+      case AuthStatus.loading:
+        if (authState.phone != null) return const OtpScreen();
+        return const LoginScreen();
+        
+      case AuthStatus.initial:
+      case AuthStatus.unauthenticated:
       default:
         return const LoginScreen();
     }

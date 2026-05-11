@@ -130,6 +130,7 @@ class _RideBookingMapScreenState extends ConsumerState<RideBookingMapScreen> {
             top: 50,
             left: 20,
             child: FloatingActionButton(
+              heroTag: 'map_back_button',
               mini: true,
               backgroundColor: Colors.white,
               child: const Icon(Icons.arrow_back, color: Colors.black),
@@ -191,6 +192,7 @@ class _RideBookingMapScreenState extends ConsumerState<RideBookingMapScreen> {
       floatingActionButton: (isSearching || isMatched) ? null : Padding(
         padding: EdgeInsets.only(bottom: (bookingState.status == BookingStatus.ready && liveRideState.status == LiveRideStatus.idle) ? 180 : 20),
         child: FloatingActionButton(
+          heroTag: 'map_my_location_button',
           onPressed: _setInitialLocation,
           backgroundColor: Colors.white,
           child: const Icon(Icons.my_location, color: AppColors.primary),

@@ -25,24 +25,38 @@ class AuthRepository {
       final response = await _apiClient.instance.post('/auth/login/otp', data: {
         'phone': phone,
         'code': code,
+        'user_type': 'driver',
       });
 
-      final result = response.data['data'];
-      final tokens = result['tokens'];
+      final responseData = response.data;
+      if (responseData == null || responseData['data'] == null) {
+        throw 'Unexpected server response. Please try again.';
+      }
+
+      final result = Map<String, dynamic>.from(responseData['data'] as Map);
+      final tokens = result['tokens'] as Map?;
       
-      try {
-        await Future.wait([
-          _storage.write(key: 'access_token', value: tokens['access_token']),
-          _storage.write(key: 'refresh_token', value: tokens['refresh_token']),
-          _storage.write(key: 'driver_data', value: result['user'].toString()),
-        ]).timeout(const Duration(seconds: 2));
-      } catch (e) {
-        print('SecureStorage write bypassed/timeout on Web Localhost: $e');
+      if (tokens != null) {
+        try {
+          await Future.wait([
+            _storage.write(key: 'access_token', value: tokens['access_token']?.toString() ?? ''),
+            _storage.write(key: 'refresh_token', value: tokens['refresh_token']?.toString() ?? ''),
+            _storage.write(key: 'driver_data', value: result['user']?.toString() ?? ''),
+          ]).timeout(const Duration(seconds: 2));
+        } catch (e) {
+          print('SecureStorage write bypassed/timeout: $e');
+        }
       }
       
       return result;
     } on DioException catch (e) {
-      throw e.response?.data['message'] ?? 'OTP verification failed';
+      final message = e.response?.data is Map 
+          ? e.response?.data['message'] 
+          : null;
+      throw message ?? 'OTP verification failed. Please check your code and try again.';
+    } catch (e) {
+      if (e is String) rethrow;
+      throw 'Connection error. Please check your internet and try again.';
     }
   }
 

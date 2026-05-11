@@ -62,14 +62,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       backgroundColor: Colors.black,
       body: configAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.secondaryGold),
+          child: CircularProgressIndicator(color: Color(0xFFFFCC00)),
         ),
         error: (_, _) => _buildFallbackError(),
         data: (config) {
           if (config.pages.isEmpty) {
             // WADEX-Guard: Auto-complete if no slides found
             WidgetsBinding.instance.addPostFrameCallback((_) => _completeOnboarding());
-            return const Center(child: CircularProgressIndicator(color: AppColors.secondaryGold));
+            return const Center(child: CircularProgressIndicator(color: Color(0xFFFFCC00)));
           }
           return _buildOnboarding(config);
         },
@@ -90,7 +90,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ElevatedButton(
             onPressed: _completeOnboarding,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.secondaryGold,
+              backgroundColor: const Color(0xFFFFCC00),
               foregroundColor: AppColors.primaryNavy,
             ),
             child: const Text('Continue to App'),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/dynamic_glass_card.dart';
 import '../providers/live_ride_provider.dart';
+import 'dart:ui';
 
 class SearchingOverlay extends ConsumerStatefulWidget {
   const SearchingOverlay({super.key});
@@ -32,12 +34,14 @@ class _SearchingOverlayState extends ConsumerState<SearchingOverlay> with Single
   Widget build(BuildContext context) {
     final liveRideState = ref.watch(liveRideProvider);
 
-    return Container(
-      color: Colors.black.withOpacity(0.85),
-      width: double.infinity,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+      child: Container(
+        color: AppColors.obsidianDark.withOpacity(0.7),
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
           // Pulsing Radar
           Stack(
             alignment: Alignment.center,
@@ -151,19 +155,21 @@ class _SearchingOverlayState extends ConsumerState<SearchingOverlay> with Single
           const SizedBox(height: 80),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: TextButton(
-              onPressed: () => ref.read(liveRideProvider.notifier).cancelRide(),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white.withOpacity(0.6),
-                minimumSize: const Size(double.infinity, 56),
+            child: GestureDetector(
+              onTap: () => ref.read(liveRideProvider.notifier).cancelRide(),
+              child: DynamicGlassCard(
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                child: const Center(
+                  child: Text(
+                    'CANCEL REQUEST',
+                    style: TextStyle(letterSpacing: 1.5, fontWeight: FontWeight.bold, color: Colors.white70),
+                  ),
+                ),
               ),
-              child: const Text(
-                'CANCEL REQUEST',
-                style: TextStyle(letterSpacing: 1.5, fontWeight: FontWeight.bold),
-              ),
-            ),
           ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -108,9 +108,12 @@ class _SOSButtonState extends ConsumerState<SOSButton> with SingleTickerProvider
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: _isHolding ? Colors.red : Colors.white,
+              color: _isHolding ? Colors.redAccent : Colors.red.withOpacity(0.15),
               shape: BoxShape.circle,
-              boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10)],
+              border: Border.all(color: Colors.redAccent.withOpacity(0.5), width: 2),
+              boxShadow: [
+                BoxShadow(color: Colors.redAccent.withOpacity(0.3), blurRadius: 15, spreadRadius: 2)
+              ],
             ),
             child: Icon(
               Icons.shield,

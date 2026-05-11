@@ -8,6 +8,7 @@ class UserModel {
   final String userType;
   final String? referralCode;
   final double walletBalance;
+  final double rating;
   final Map<String, dynamic>? driverProfile;
 
   UserModel({
@@ -20,6 +21,7 @@ class UserModel {
     required this.userType,
     this.referralCode,
     required this.walletBalance,
+    this.rating = 5.0,
     this.driverProfile,
   });
 
@@ -34,6 +36,7 @@ class UserModel {
       userType: json['user_type'] ?? 'customer',
       referralCode: json['referral_code'],
       walletBalance: (json['wallet_balance'] as num?)?.toDouble() ?? 0.0,
+      rating: (json['rating'] as num?)?.toDouble() ?? 5.0,
       driverProfile: json['driver_profile'] as Map<String, dynamic>?,
     );
   }
@@ -49,7 +52,36 @@ class UserModel {
       'user_type': userType,
       'referral_code': referralCode,
       'wallet_balance': walletBalance,
+      'rating': rating,
       'driver_profile': driverProfile,
     };
+  }
+
+  UserModel copyWith({
+    String? id,
+    String? uuid,
+    String? name,
+    String? email,
+    String? phone,
+    String? avatarUrl,
+    String? userType,
+    String? referralCode,
+    double? walletBalance,
+    double? rating,
+    Map<String, dynamic>? driverProfile,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      userType: userType ?? this.userType,
+      referralCode: referralCode ?? this.referralCode,
+      walletBalance: walletBalance ?? this.walletBalance,
+      rating: rating ?? this.rating,
+      driverProfile: driverProfile ?? this.driverProfile,
+    );
   }
 }

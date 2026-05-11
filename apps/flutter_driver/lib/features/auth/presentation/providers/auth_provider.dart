@@ -18,7 +18,7 @@ class AuthState {
   final AuthStatus status;
   final String? phone;
   final String? errorMessage;
-  final dynamic driver;
+  final Map<String, dynamic>? driver;
 
   AuthState({
     this.status = AuthStatus.initial,
@@ -31,12 +31,13 @@ class AuthState {
     AuthStatus? status,
     String? phone,
     String? errorMessage,
-    dynamic driver,
+    Map<String, dynamic>? driver,
+    bool clearError = false,
   }) {
     return AuthState(
       status: status ?? this.status,
       phone: phone ?? this.phone,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       driver: driver ?? this.driver,
     );
   }
@@ -48,28 +49,57 @@ class AuthNotifier extends StateNotifier<AuthState> {
   AuthNotifier(this._repository) : super(AuthState());
 
   Future<void> login(String phone) async {
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    state = AuthState(status: AuthStatus.loading, phone: phone);
     try {
       await _repository.login(phone);
-      state = state.copyWith(status: AuthStatus.otpSent, phone: phone);
+      state = AuthState(status: AuthStatus.otpSent, phone: phone);
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.error, errorMessage: e.toString());
+      state = AuthState(
+        status: AuthStatus.error, 
+        phone: phone,
+        errorMessage: e.toString(),
+      );
     }
   }
 
   Future<void> verifyOtp(String code) async {
-    if (state.phone == null) return;
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    final currentPhone = state.phone;
+    if (currentPhone == null) {
+      state = AuthState(status: AuthStatus.error, errorMessage: 'Phone number missing. Please go back and re-enter.');
+      return;
+    }
+    
+    state = AuthState(status: AuthStatus.loading, phone: currentPhone);
     try {
-      final data = await _repository.verifyOtp(state.phone!, code);
-      state = state.copyWith(status: AuthStatus.authenticated, driver: data['user']);
+      final data = await _repository.verifyOtp(currentPhone, code);
+      
+      // Extract user data — handle both nested and flat response shapes
+      Map<String, dynamic>? userData;
+      if (data['user'] is Map) {
+        userData = Map<String, dynamic>.from(data['user'] as Map);
+      } else {
+        userData = {'phone': currentPhone, 'status': 'pending'};
+      }
+      
+      print('WADEXPRO-DEBUG: OTP verified. User data: $userData');
+      
+      state = AuthState(
+        status: AuthStatus.authenticated, 
+        phone: currentPhone,
+        driver: userData,
+      );
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.error, errorMessage: e.toString());
+      print('WADEXPRO-DEBUG: OTP verification error: $e');
+      state = AuthState(
+        status: AuthStatus.error, 
+        phone: currentPhone,
+        errorMessage: e.toString(),
+      );
     }
   }
 
   Future<void> signInWithGoogle() async {
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    state = state.copyWith(status: AuthStatus.loading, clearError: true);
     try {
       final googleSignIn = GoogleSignIn(
         clientId: AppConfig.googleWebClientId,
@@ -107,7 +137,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> signInWithFacebook() async {
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    state = state.copyWith(status: AuthStatus.loading, clearError: true);
     try {
       final LoginResult result = await FacebookAuth.instance.login(
         permissions: ['public_profile', 'email'],

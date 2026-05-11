@@ -1,8 +1,8 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import '../../../../core/utils/local_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import '../../../../core/config/app_config.dart';
@@ -29,7 +29,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       if (kIsWeb) {
         // WADEX-Guard: High-speed localStorage check for Web
-        token = html.window.localStorage['wadex_access_token'];
+        token = getLocalStorage('wadex_access_token');
       } else {
         // Standard SecureStorage for Mobile
         token = await _storage.read(key: 'access_token');
@@ -40,7 +40,25 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
     if (token != null && token.isNotEmpty) {
       print('WADEXPRO: Valid session detected ($token). Synchronizing state.');
-      state = state.copyWith(status: AuthStatus.authenticated);
+      
+      // Load cached user data
+      String? userJson;
+      if (kIsWeb) {
+        userJson = getLocalStorage('wadex_user_data');
+      } else {
+        userJson = await _storage.read(key: 'user_data');
+      }
+
+      UserModel? user;
+      if (userJson != null) {
+        try {
+          user = UserModel.fromJson(jsonDecode(userJson));
+        } catch (e) {
+          print('WADEXPRO: User data corruption: $e');
+        }
+      }
+
+      state = state.copyWith(status: AuthStatus.authenticated, user: user);
     } else {
       print('WADEXPRO: No active session found.');
       state = state.copyWith(status: AuthStatus.unauthenticated);
@@ -81,8 +99,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       try {
         if (kIsWeb) {
-          html.window.localStorage['wadex_access_token'] = tokens['access_token']?.toString() ?? '';
-          html.window.localStorage['wadex_refresh_token'] = tokens['refresh_token']?.toString() ?? '';
+          setLocalStorage('wadex_access_token', tokens['access_token']?.toString() ?? '');
+          setLocalStorage('wadex_refresh_token', tokens['refresh_token']?.toString() ?? '');
         } else {
           await Future.wait([
             _storage.write(key: 'access_token', value: tokens['access_token']?.toString()),
@@ -93,9 +111,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
         print('WADEXPRO: Session write bypassed: $e');
       }
       
+      final user = userJson != null ? UserModel.fromJson(userJson) : null;
+      if (user != null) {
+        final encodedUser = jsonEncode(user.toJson());
+        if (kIsWeb) {
+          setLocalStorage('wadex_user_data', encodedUser);
+        } else {
+          await _storage.write(key: 'user_data', value: encodedUser);
+        }
+      }
+
       state = state.copyWith(
         status: AuthStatus.authenticated,
-        user: userJson != null ? UserModel.fromJson(userJson) : null,
+        user: user,
       );
     } catch (e) {
       state = state.copyWith(
@@ -108,8 +136,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> logout() async {
     try {
       if (kIsWeb) {
-        html.window.localStorage.remove('wadex_access_token');
-        html.window.localStorage.remove('wadex_refresh_token');
+        removeLocalStorage('wadex_access_token');
+        removeLocalStorage('wadex_refresh_token');
+        removeLocalStorage('wadex_user_data');
       } else {
         await _storage.deleteAll().timeout(const Duration(seconds: 2));
       }
@@ -117,6 +146,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
       print('WADEXPRO: Logout cleanup bypassed: $e');
     }
     state = AuthState(status: AuthStatus.unauthenticated);
+  }
+
+  Future<void> deleteAccount() async {
+    // In a real app, this would call _repository.deleteAccount() first
+    await logout();
   }
 
   Future<void> signInWithGoogle() async {
@@ -152,8 +186,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       try {
         if (kIsWeb) {
-          html.window.localStorage['wadex_access_token'] = tokens['access_token']?.toString() ?? '';
-          html.window.localStorage['wadex_refresh_token'] = tokens['refresh_token']?.toString() ?? '';
+          setLocalStorage('wadex_access_token', tokens['access_token']?.toString() ?? '');
+          setLocalStorage('wadex_refresh_token', tokens['refresh_token']?.toString() ?? '');
         } else {
           await Future.wait([
             _storage.write(key: 'access_token', value: tokens['access_token']?.toString()),
@@ -164,9 +198,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
         print('WADEXPRO: Social session write failure: $e');
       }
 
+      final user = userJson != null ? UserModel.fromJson(userJson) : null;
+      if (user != null) {
+        final encodedUser = jsonEncode(user.toJson());
+        if (kIsWeb) {
+          setLocalStorage('wadex_user_data', encodedUser);
+        } else {
+          await _storage.write(key: 'user_data', value: encodedUser);
+        }
+      }
+
       state = state.copyWith(
         status: AuthStatus.authenticated,
-        user: userJson != null ? UserModel.fromJson(userJson) : null,
+        user: user,
       );
     } catch (e) {
       state = state.copyWith(
@@ -196,16 +240,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
         if (tokens == null) throw Exception('WADEXPRO: Authentication succeeded but session sync failed.');
 
         if (kIsWeb) {
-          html.window.localStorage['wadex_access_token'] = tokens['access_token']?.toString() ?? '';
-          html.window.localStorage['wadex_refresh_token'] = tokens['refresh_token']?.toString() ?? '';
+          setLocalStorage('wadex_access_token', tokens['access_token']?.toString() ?? '');
+          setLocalStorage('wadex_refresh_token', tokens['refresh_token']?.toString() ?? '');
         } else {
           await _storage.write(key: 'access_token', value: tokens['access_token']?.toString());
           await _storage.write(key: 'refresh_token', value: tokens['refresh_token']?.toString());
         }
 
+        final user = userJson != null ? UserModel.fromJson(userJson) : null;
+        if (user != null) {
+          final encodedUser = jsonEncode(user.toJson());
+          if (kIsWeb) {
+            setLocalStorage('wadex_user_data', encodedUser);
+          } else {
+            await _storage.write(key: 'user_data', value: encodedUser);
+          }
+        }
+
         state = state.copyWith(
           status: AuthStatus.authenticated,
-          user: userJson != null ? UserModel.fromJson(userJson) : null,
+          user: user,
         );
       } else if (result.status == LoginStatus.cancelled) {
         state = state.copyWith(status: AuthStatus.unauthenticated);
@@ -217,6 +271,82 @@ class AuthNotifier extends StateNotifier<AuthState> {
         status: AuthStatus.error,
         errorMessage: e.toString(),
       );
+    }
+  }
+
+  Future<bool> updateProfile({String? name, String? email, String? gender}) async {
+    if (state.user == null) return false;
+    
+    try {
+      final Map<String, dynamic> data = {};
+      if (name != null) data['name'] = name;
+      if (email != null) data['email'] = email;
+      if (gender != null) data['gender'] = gender;
+
+      final response = await _repository.updateProfile(data);
+      final updatedUserJson = response['data']?['user'] ?? response['user'];
+      
+      if (updatedUserJson != null) {
+        state = state.copyWith(user: UserModel.fromJson(updatedUserJson));
+      } else {
+        state = state.copyWith(
+          user: state.user!.copyWith(
+            name: name,
+            email: email,
+          ),
+        );
+      }
+
+      // Persist update
+      final encodedUser = jsonEncode(state.user!.toJson());
+      if (kIsWeb) {
+        setLocalStorage('wadex_user_data', encodedUser);
+      } else {
+        await _storage.write(key: 'user_data', value: encodedUser);
+      }
+
+      return true;
+    } catch (e) {
+      print('WADEXPRO: Profile update error: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updateProfileImage(String filePath, {List<int>? bytes}) async {
+    try {
+      // Ensure we have a user object to work with (create placeholder if needed)
+      UserModel currentUser = state.user ?? UserModel(
+        id: 'local_user',
+        name: 'WADEXPRO User',
+        userType: 'customer',
+        walletBalance: 0.0,
+      );
+
+      String finalUrl = filePath;
+      
+      try {
+        final response = await _repository.updateProfilePhoto(filePath, bytes: bytes);
+        final avatarUrl = response['data']?['avatar_url'] ?? response['avatar_url'];
+        if (avatarUrl != null) finalUrl = avatarUrl;
+      } catch (e) {
+        print('WADEXPRO: Backend photo upload failed, using local fallback: $e');
+      }
+
+      final updatedUser = currentUser.copyWith(avatarUrl: finalUrl);
+      state = state.copyWith(user: updatedUser);
+      
+      // Persist update locally
+      final encodedUser = jsonEncode(updatedUser.toJson());
+      if (kIsWeb) {
+        setLocalStorage('wadex_user_data', encodedUser);
+      } else {
+        await _storage.write(key: 'user_data', value: encodedUser);
+      }
+
+      return true;
+    } catch (e) {
+      print('WADEXPRO: Fatal photo update error: $e');
+      return false;
     }
   }
 }

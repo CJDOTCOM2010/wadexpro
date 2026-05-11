@@ -8,11 +8,9 @@ class EnvironmentConfig {
   static String get baseUrl {
     switch (environment) {
       case Environment.develop:
-        // WADEX-Guard: Select network gateway based on platform context
-        final String host = kIsWeb ? 'wadexpro.test' : '10.0.2.2';
-        final String protocol = kIsWeb ? 'https' : 'http';
-        final String port = kIsWeb ? '' : ':8000';
-        return '$protocol://$host$port/api/v1';
+        final String host = 'wadexpro-4rexnj1k.on-forge.com';
+        final String protocol = 'https';
+        return '$protocol://$host/api/v1';
       case Environment.staging:
         return 'https://staging-api.wadexpro.com/api/v1';
       case Environment.production:
@@ -23,7 +21,7 @@ class EnvironmentConfig {
   static String get socketUrl {
     switch (environment) {
       case Environment.develop:
-        return 'http://localhost:3000';
+        return 'https://wadexpro-4rexnj1k.on-forge.com:3000';
       case Environment.staging:
         return 'https://staging-ws.wadexpro.com';
       case Environment.production:

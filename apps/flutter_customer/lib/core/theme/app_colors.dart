@@ -28,4 +28,9 @@ class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+
+  // Premium UI Additions
+  static const Color obsidianDark = Color(0xFF0B0C10);
+  static const Color glassWhite = Color(0x1AFFFFFF); // ~10% white for frosted glass
+  static const Color glassDark = Color(0x33000000);  // ~20% black for dark frosted glass
 }

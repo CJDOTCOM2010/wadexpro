@@ -1,9 +1,11 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../providers/auth_provider.dart';
 import '../../../../core/theme/app_colors.dart';
-
 import '../../../../core/config/app_config.dart';
+import 'otp_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -12,133 +14,232 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _phoneController = TextEditingController();
+class _LoginScreenState extends ConsumerState<LoginScreen> with SingleTickerProviderStateMixin {
+  final TextEditingController _phoneController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  int _selectedTabIndex = 0; 
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
+    _fadeController.forward();
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _fadeController.dispose();
+    super.dispose();
+  }
+
+  void _handleAuthAction() {
+    if (_formKey.currentState!.validate()) {
+      FocusScope.of(context).unfocus();
+      final phone = _phoneController.text.trim();
+      ref.read(authProvider.notifier).login(phone);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
-    final isLoading = authState.status == AuthStatus.loading;
 
     ref.listen(authProvider, (previous, next) {
-      debugPrint('Driver Auth Status Change: ${previous?.status} -> ${next.status}');
-      if (next.status == AuthStatus.error) {
-        debugPrint('Driver Auth Error: ${next.errorMessage}');
+      if (next.status == AuthStatus.otpSent) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OtpScreen()));
+      } else if (next.status == AuthStatus.error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next.errorMessage ?? 'An error occurred'),
+            content: Text(next.errorMessage ?? 'Authentication failed'),
             backgroundColor: AppColors.error,
-            duration: const Duration(seconds: 4),
+            behavior: SnackBarBehavior.floating,
           ),
         );
       }
     });
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 60),
-                const Icon(Icons.drive_eta, size: 64, color: AppColors.primary),
-                const SizedBox(height: 24),
-                Text(
-                  'Drive with WADEXPRO',
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 32, color: AppColors.primary),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Your premium logistics journey starts here. Enter your phone number to continue.',
-                  style: TextStyle(color: AppColors.textMuted, fontSize: 16),
-                ),
-                const SizedBox(height: 48),
-                TextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    hintText: '+233...',
-                    prefixIcon: const Icon(Icons.phone),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () => ref.read(authProvider.notifier).login(_phoneController.text),
-                  child: isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Get Started'),
-                ),
-
-                if (AppConfig.googleAuthEnabled) ...[
-                  const SizedBox(height: 16),
-                  OutlinedButton.icon(
-                    onPressed: isLoading ? null : () => ref.read(authProvider.notifier).signInWithGoogle(),
-                    icon: Image.network(
-                      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_Color_Icon.svg/1200px-Google_Color_Icon.svg.png',
-                      height: 22,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.g_mobiledata,
-                        color: AppColors.primary,
-                        size: 24,
-                      ),
-                    ),
-                    label: const Text('Continue with Google', style: TextStyle(fontWeight: FontWeight.bold)),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 56),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      side: BorderSide(color: Colors.grey.shade200),
-                    ),
-                  ),
-                ],
-
-                if (AppConfig.facebookAuthEnabled) ...[
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: isLoading ? null : () => ref.read(authProvider.notifier).signInWithFacebook(),
-                    icon: const Icon(Icons.facebook, color: Colors.white, size: 28),
-                    label: const Text('Continue with Facebook', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1877F2),
-                      minimumSize: const Size(double.infinity, 56),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      elevation: 0,
-                    ),
-                  ),
-                ],
-
-                const SizedBox(height: 40),
-                
-                // Find My Account (Device Fingerprint Recovery)
-                Center(
-                  child: TextButton.icon(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Scanning device fingerprint for linked driver accounts...'),
-                          backgroundColor: AppColors.primary,
-                          duration: Duration(seconds: 3),
+      backgroundColor: const Color(0xFF000000), // Solid Black for max contrast
+      body: Stack(
+        children: [
+          // Background accents (Moved behind everything)
+          Positioned(
+            top: -50,
+            right: -50,
+            child: Container(
+              width: 250,
+              height: 250,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withOpacity(0.2),
+              ),
+            ),
+          ),
+          
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    // Logo Header
+                    Row(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.local_shipping, color: Colors.white),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.screen_search_desktop_outlined, color: AppColors.textMuted, size: 20),
-                    label: const Text(
-                      'Lost access? Find my account',
-                      style: TextStyle(
-                        color: AppColors.textMuted,
-                        decoration: TextDecoration.underline,
-                        fontSize: 14,
+                        const SizedBox(width: 15),
+                        Text(
+                          'WADEXPRO',
+                          style: GoogleFonts.outfit(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 40),
+                    
+                    // Switcher
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.white12,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          _buildTabButton('Sign In', 0),
+                          _buildTabButton('Apply', 1),
+                        ],
                       ),
                     ),
-                  ),
+                    
+                    const SizedBox(height: 40),
+                    
+                    Text(
+                      _selectedTabIndex == 0 ? 'Welcome Back' : 'Join the Team',
+                      style: GoogleFonts.outfit(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Enter your phone number to proceed.',
+                      style: GoogleFonts.outfit(fontSize: 16, color: Colors.white70),
+                    ),
+                    
+                    const SizedBox(height: 40),
+                    
+                    // HIGH CONTRAST INPUT FIELD
+                    Text(
+                      'PHONE NUMBER',
+                      style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.eliteGold, letterSpacing: 1.5),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white, // SOLID WHITE BOX FOR 100% VISIBILITY
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.accent, width: 2),
+                      ),
+                      child: TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        autofocus: true,
+                        style: const TextStyle(
+                          color: Colors.black, // BLACK TEXT
+                          fontSize: 22, 
+                          fontWeight: FontWeight.w900,
+                        ),
+                        decoration: const InputDecoration(
+                          filled: false,
+                          hintText: '000 000 0000',
+                          hintStyle: TextStyle(color: Colors.black26),
+                          prefixIcon: Icon(Icons.phone, color: AppColors.primary),
+                          prefixText: '+233 ',
+                          prefixStyle: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900, fontSize: 22),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                        validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 30),
+                    
+                    // BRIGHT ACTION BUTTON
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: authState.status == AuthStatus.loading ? null : _handleAuthAction,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          elevation: 8,
+                        ),
+                        child: authState.status == AuthStatus.loading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                _selectedTabIndex == 0 ? 'LOGIN' : 'START APPLICATION',
+                                style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w900),
+                              ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 40),
+                    Center(
+                      child: Text(
+                        'WADEXPRO v${AppConfig.currentAppVersion}',
+                        style: const TextStyle(color: Colors.white24, fontSize: 12),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 40),
-              ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabButton(String label, int index) {
+    bool selected = _selectedTabIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedTabIndex = index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: selected ? AppColors.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: GoogleFonts.outfit(
+                color: selected ? Colors.white : Colors.white60,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),

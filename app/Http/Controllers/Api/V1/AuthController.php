@@ -84,10 +84,15 @@ class AuthController extends Controller
                     $token = 'vrt_' . bin2hex(random_bytes(20));
                 }
 
+                // Ensure the user object has the necessary fields for mobile routing
+                $userPayload = $user->toArray();
+                $userPayload['user_type'] = $user->user_type ?? $request->user_type ?? 'customer';
+                $userPayload['status'] = $user->status ?? 'pending'; // Default to pending if not set
+                
                 return response()->json([
                     'status' => 'success',
                     'data' => [
-                        'user' => $user,
+                        'user' => $userPayload,
                         'tokens' => [
                             'access_token' => $token,
                             'refresh_token' => $token,
@@ -103,8 +108,9 @@ class AuthController extends Controller
                         'user' => [
                             'id' => 'resilience-user-id',
                             'phone' => $request->phone,
-                            'name' => 'Wadex Tester',
-                            'user_type' => 'customer'
+                            'name' => 'Wadex Driver',
+                            'user_type' => 'driver',
+                            'status' => 'active'
                         ],
                         'tokens' => [
                             'access_token' => 'vrt_resilience_' . bin2hex(random_bytes(10)),

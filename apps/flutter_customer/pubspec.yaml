@@ -57,6 +57,10 @@ dependencies:
   package_info_plus: ^8.0.0
   video_player: ^2.11.1
   chewie: ^1.13.1
+  flutter_animate: ^4.5.0
+  shared_preferences: ^2.2.3
+  image_picker: ^1.1.2
+  image_cropper: ^12.2.1
 
 dev_dependencies:
   flutter_test:

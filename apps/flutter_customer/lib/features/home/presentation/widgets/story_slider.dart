@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 
 class StorySlider extends StatefulWidget {
   final List<StoryData> stories;
@@ -77,19 +76,44 @@ class _StorySliderState extends State<StorySlider> {
           _nextStory();
         }
       },
-      child: Container(
-        height: 400,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          image: DecorationImage(
-            image: NetworkImage(story.imagePath),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.darken),
-          ),
-        ),
-        child: Stack(
-          children: [
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: SizedBox(
+          height: 400,
+          width: double.infinity,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.network(
+                story.imagePath,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.white10,
+                    child: const Icon(Icons.image_not_supported, color: Colors.white24, size: 64),
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    color: Colors.white10,
+                    child: const Center(child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white24)),
+                  );
+                },
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.4),
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7),
+                    ],
+                  ),
+                ),
+              ),
             // Progress Bars
             Position(
               top: 16,
@@ -166,7 +190,7 @@ class _StorySliderState extends State<StorySlider> {
           ],
         ),
       ),
-    );
+    ),);
   }
 }
 

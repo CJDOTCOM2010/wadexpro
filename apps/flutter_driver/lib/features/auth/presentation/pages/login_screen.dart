@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../providers/auth_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/config/app_config.dart';
+import '../../../../core/config/brand_config.dart';
 import 'otp_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -103,7 +104,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with SingleTickerProv
                         ),
                         const SizedBox(width: 15),
                         Text(
-                          'WADEXPRO',
+                          BrandConfig.appName,
                           style: GoogleFonts.outfit(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -208,7 +209,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with SingleTickerProv
                     const SizedBox(height: 40),
                     Center(
                       child: Text(
-                        'WADEXPRO v${AppConfig.currentAppVersion}',
+                        '${BrandConfig.appName} v${AppConfig.currentAppVersion}',
                         style: const TextStyle(color: Colors.white24, fontSize: 12),
                       ),
                     ),

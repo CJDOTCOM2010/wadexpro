@@ -11,6 +11,7 @@ import 'features/auth/presentation/pages/otp_screen.dart';
 import 'features/auth/presentation/pages/kyc_screen.dart';
 
 import 'core/config/app_config.dart';
+import 'core/config/brand_config.dart';
 import 'core/theme/app_colors.dart';
 import 'core/network/providers.dart';
 
@@ -43,7 +44,7 @@ class WadexproDriverApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      title: 'WADEXPRO Driver',
+      title: BrandConfig.driverAppName,
       theme: AppTheme.light,
       debugShowCheckedModeBanner: false,
       home: SplashScreen(
@@ -76,7 +77,7 @@ class VersionGate extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'A critical update for WADEXPRO Driver is available. Please update to version ${AppConfig.minAppVersion} to continue working.',
+                  'A critical update for ${BrandConfig.driverAppName} is available. Please update to version ${AppConfig.minAppVersion} to continue working.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey.shade600, height: 1.5),
                 ),

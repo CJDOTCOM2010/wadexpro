@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/dynamic_glass_card.dart';
+import '../../../../core/config/brand_config.dart';
 import '../providers/wallet_provider.dart';
 import '../widgets/weekly_earnings_chart.dart';
 import 'package:intl/intl.dart';
@@ -131,9 +132,9 @@ class WalletScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Invite other drivers to WADEXPRO. Get a bonus for every driver who completes their first 10 trips.',
-            style: TextStyle(color: Colors.white70, fontSize: 14),
+          Text(
+            'Invite other drivers to ${BrandConfig.appName}. Get a bonus for every driver who completes their first 10 trips.',
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 20),
           Container(

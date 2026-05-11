@@ -18,6 +18,19 @@ class SystemSettingConsolidationSeeder extends Seeder
             // --- General Branding ---
             ['key' => 'enterprise_name', 'value' => 'WADEXPRO Logistics Hub', 'type' => 'string', 'group' => 'general', 'label' => 'Enterprise Name'],
             ['key' => 'support_email', 'value' => 'ops@wadexpro.com', 'type' => 'string', 'group' => 'general', 'label' => 'Support Email'],
+
+            // --- Mobile App Branding ---
+            ['key' => 'brand_name', 'value' => 'WADEXPRO', 'type' => 'string', 'group' => 'branding', 'label' => 'Brand Name'],
+            ['key' => 'brand_short_name', 'value' => 'WADEX', 'type' => 'string', 'group' => 'branding', 'label' => 'Brand Short Name'],
+            ['key' => 'brand_tagline', 'value' => 'Move. Deliver. Thrive.', 'type' => 'string', 'group' => 'branding', 'label' => 'Brand Tagline'],
+            ['key' => 'brand_logo_url', 'value' => '', 'type' => 'string', 'group' => 'branding', 'label' => 'Brand Logo URL'],
+            ['key' => 'brand_primary_color', 'value' => '#156400', 'type' => 'string', 'group' => 'branding', 'label' => 'Primary Brand Color'],
+            ['key' => 'brand_accent_color', 'value' => '#FFCC00', 'type' => 'string', 'group' => 'branding', 'label' => 'Accent/Gold Color'],
+            ['key' => 'brand_dark_color', 'value' => '#0A0A0A', 'type' => 'string', 'group' => 'branding', 'label' => 'Dark Background Color'],
+            ['key' => 'brand_secondary_color', 'value' => '#0D4000', 'type' => 'string', 'group' => 'branding', 'label' => 'Secondary Color'],
+            ['key' => 'customer_app_display_name', 'value' => 'WADEXPRO', 'type' => 'string', 'group' => 'branding', 'label' => 'Customer App Name'],
+            ['key' => 'driver_app_display_name', 'value' => 'WADEXPRO Driver', 'type' => 'string', 'group' => 'branding', 'label' => 'Driver App Name'],
+            ['key' => 'brand_support_phone', 'value' => '', 'type' => 'string', 'group' => 'branding', 'label' => 'Support Phone Number'],
             ['key' => 'default_country', 'value' => 'GH', 'type' => 'string', 'group' => 'general', 'label' => 'Default Country'],
             ['key' => 'default_currency', 'value' => 'GHS', 'type' => 'string', 'group' => 'general', 'label' => 'Default Currency'],
             ['key' => 'default_currency_symbol', 'value' => '₵', 'type' => 'string', 'group' => 'general', 'label' => 'Currency Symbol'],
@@ -54,7 +67,7 @@ class SystemSettingConsolidationSeeder extends Seeder
         ];
 
         foreach ($settings as $setting) {
-            $isPublic = in_array($setting['group'], ['manifest', 'authentication', 'general']);
+            $isPublic = in_array($setting['group'], ['manifest', 'authentication', 'general', 'branding']);
             
             DB::table('system_settings')->updateOrInsert(
                 ['key' => $setting['key']],

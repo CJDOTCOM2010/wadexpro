@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/models/onboarding_config.dart';
 import '../../../../core/widgets/platform_media_widget.dart';
+import '../../../../core/config/brand_config.dart';
 import '../providers/onboarding_provider.dart';
 
 /// Stores whether first launch has occurred.
@@ -140,7 +141,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             child: Text.rich(
               TextSpan(children: [
                 TextSpan(
-                  text: 'WADEX',
+                  text: BrandConfig.shortName,
                   style: TextStyle(
                     color: textColor,
                     fontSize: 22,
@@ -148,15 +149,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     letterSpacing: -0.5,
                   ),
                 ),
-                TextSpan(
-                  text: 'PRO',
-                  style: TextStyle(
-                    color: AppColors.accent,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
+                if (BrandConfig.appName.length > BrandConfig.shortName.length)
+                  TextSpan(
+                    text: BrandConfig.appName.substring(BrandConfig.shortName.length),
+                    style: TextStyle(
+                      color: AppColors.accent,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                    ),
                   ),
-                ),
               ]),
             ),
           ),

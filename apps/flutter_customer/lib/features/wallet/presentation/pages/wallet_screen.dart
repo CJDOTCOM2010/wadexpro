@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/config/brand_config.dart';
 import '../providers/wallet_provider.dart';
 
 class WalletScreen extends ConsumerWidget {
@@ -16,7 +17,7 @@ class WalletScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.obsidianDark,
       appBar: AppBar(
-        title: const Text('WADEX Wallet', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('${BrandConfig.shortName} Wallet', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -237,7 +238,7 @@ class WalletScreen extends ConsumerWidget {
             decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
             child: GestureDetector(
               onTap: () {
-                Clipboard.setData(ClipboardData(text: state.referralCode ?? 'WADEXPRO'));
+                Clipboard.setData(ClipboardData(text: state.referralCode ?? BrandConfig.appName));
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text('Referral code copied to clipboard!'),
@@ -250,7 +251,7 @@ class WalletScreen extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(state.referralCode ?? 'WADEXPRO', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                  Text(state.referralCode ?? BrandConfig.appName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 2)),
                   const Row(
                     children: [
                       Icon(Icons.copy, color: Colors.white, size: 18),
@@ -289,7 +290,7 @@ class WalletScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('In-Store Top-up', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                Text('Visit any WADEX Office to top up via Cash.', style: TextStyle(fontSize: 11, color: Colors.white54)),
+                Text('Visit any ${BrandConfig.shortName} Office to top up via Cash.', style: TextStyle(fontSize: 11, color: Colors.white54)),
               ],
             ),
           ),

@@ -8,6 +8,7 @@ import '../../../../core/models/splash_config.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/config/environment_config.dart';
 import '../../../../core/widgets/platform_media_widget.dart';
+import '../../../../core/config/brand_config.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   final Widget Function() destinationBuilder;
@@ -166,7 +167,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final showRipple = _config?.showRipple ?? true;
     final showLogo = _config?.showLogo ?? true;
     final showBackground = _config?.showBackground ?? true;
-    final tagline = _config?.tagline ?? 'Drive. Earn. Grow.';
+    final tagline = _config?.tagline ?? BrandConfig.tagline;
 
     return Scaffold(
       body: Stack(
@@ -319,8 +320,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   position: _textSlide,
                   child: FadeTransition(
                     opacity: _textOpacity,
-                    child: const Text(
-                      'WADEXPRO',
+                    child: Text(
+                      BrandConfig.appName,
                       style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.w900,

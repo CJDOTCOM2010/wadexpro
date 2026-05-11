@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'brand_config.dart';
 
 enum Environment { dev, prod }
 
@@ -105,6 +106,10 @@ class AppConfig {
             currentPlatform = 'web';
           }
         }
+
+        // --- Dynamic Branding from Super Admin Dashboard ---
+        final branding = data['branding'];
+        BrandConfig.fromJson(branding);
       }
 
       final packageInfo = await PackageInfo.fromPlatform();

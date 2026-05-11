@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/models/onboarding_config.dart';
 import '../../../../core/network/providers.dart';
 import '../../../../core/config/environment_config.dart';
+import '../../../../core/config/brand_config.dart';
 
 /// Fetches onboarding slides from the API, falling back to hardcoded defaults.
 final onboardingConfigProvider = FutureProvider<OnboardingConfig>((ref) async {
@@ -30,8 +31,8 @@ final onboardingConfigProvider = FutureProvider<OnboardingConfig>((ref) async {
 OnboardingConfig _getFallbackConfig() {
   return OnboardingConfig(
     pages: [
-      const OnboardingPageConfig(
-        title: 'Earn with WADEXPRO',
+      OnboardingPageConfig(
+        title: 'Earn with ${BrandConfig.appName}',
         description: 'Flexible hours, premium rates, and a professional driver support network.',
         imagePath: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop',
         isNetworkImage: true,

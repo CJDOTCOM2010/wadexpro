@@ -19,6 +19,7 @@ import '../providers/ride_booking_provider.dart';
 import 'package:wadexpro_customer/features/auth/presentation/providers/auth_provider.dart';
 import '../../../../core/providers/app_config_provider.dart';
 import '../../../../core/widgets/platform_media_widget.dart';
+import '../../../../core/config/brand_config.dart';
 
 class DashboardHomeTab extends ConsumerStatefulWidget {
   const DashboardHomeTab({super.key});
@@ -287,7 +288,7 @@ class _DashboardHomeTabState extends ConsumerState<DashboardHomeTab> {
               onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RideBookingMapScreen())),
             ),
             _PromoCardData(
-              title: 'Wadex Moto trips',
+              title: '${BrandConfig.shortName} Moto trips',
               subtitle: 'Affordable motorcycle rides',
               imagePath: 'https://images.unsplash.com/photo-1469037464505-842f63625bb3?q=80&w=2070&auto=format&fit=crop',
               onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RideBookingMapScreen())),
@@ -320,7 +321,7 @@ class _DashboardHomeTabState extends ConsumerState<DashboardHomeTab> {
         const SizedBox(height: 32),
         _buildPromoSection(
           context, 
-          'More ways to use WADEXPRO', 
+          'More ways to use ${BrandConfig.appName}', 
           [
             _PromoCardData(
               title: 'Reserve a ride',

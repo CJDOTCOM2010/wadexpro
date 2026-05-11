@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/config/brand_config.dart';
 import '../providers/kyc_provider.dart';
 
 class KYCScreen extends ConsumerStatefulWidget {
@@ -322,7 +323,7 @@ class _KYCScreenState extends ConsumerState<KYCScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('WADEXPRO Standards', style: GoogleFonts.outfit(color: AppColors.accent, fontWeight: FontWeight.bold, fontSize: 18)),
+              Text('${BrandConfig.appName} Standards', style: GoogleFonts.outfit(color: AppColors.accent, fontWeight: FontWeight.bold, fontSize: 18)),
               const SizedBox(height: 8),
               const Text(
                 '1. Zero Tolerance for Discrimination\n2. Maintain a clean and safe vehicle\n3. Follow all local traffic laws\n4. Professional Customer Service is mandatory',

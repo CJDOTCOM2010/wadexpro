@@ -11,6 +11,7 @@ import 'features/onboarding/presentation/pages/onboarding_screen.dart';
 import 'core/network/api_provider.dart';
 import 'core/config/app_config.dart';
 import 'core/theme/app_colors.dart';
+import 'core/config/brand_config.dart';
 
 import 'features/auth/presentation/pages/otp_screen.dart';
 
@@ -45,7 +46,7 @@ class MyApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
-      title: 'WADEXPRO',
+      title: BrandConfig.customerAppName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
@@ -80,7 +81,7 @@ class VersionGate extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'A new version of WADEXPRO is available. Please update to version ${AppConfig.minAppVersion} to continue.',
+                  'A new version of ${BrandConfig.appName} is available. Please update to version ${AppConfig.minAppVersion} to continue.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey.shade600, height: 1.5),
                 ),

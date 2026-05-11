@@ -51,5 +51,28 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
 
         Route::get('/infrastructure', fn() => view('admin.infrastructure'))->name('orchestrator.infrastructure');
         Route::get('/modules', fn() => view('admin.module_hardening'))->name('orchestrator.modules');
+
+        // ── Driver Management Department ──────────────────────────────────────
+        Route::get('/driver-management', fn() => view('admin.driver_management'))->name('orchestrator.driver.management');
+        Route::get('/driver-management/documents', fn() => view('admin.driver_documents'))->name('orchestrator.driver.documents');
+        Route::get('/driver-management/vehicle-types', fn() => view('admin.vehicle_types'))->name('orchestrator.vehicle.types');
+
+        // ── Customer Support Department ───────────────────────────────────────
+        Route::get('/support/tickets', fn() => view('admin.support_tickets'))->name('orchestrator.support.tickets');
+        Route::get('/support/tickets/{id}', fn($id) => view('admin.support_ticket_detail', ['ticketId' => $id]))->name('orchestrator.support.ticket.show');
+
+        // ── Analytics & Reporting Department ─────────────────────────────────
+        Route::get('/analytics', fn() => view('admin.analytics'))->name('orchestrator.analytics');
+
+        // ── Marketing Department ──────────────────────────────────────────────
+        Route::get('/marketing/promotions', fn() => view('admin.marketing_promos'))->name('orchestrator.marketing.promos');
+        Route::get('/marketing/banners', fn() => view('admin.marketing_banners'))->name('orchestrator.marketing.banners');
+
+        // ── CMS Department ────────────────────────────────────────────────────
+        Route::get('/cms/blog', fn() => view('admin.cms_blog'))->name('orchestrator.cms.blog');
+        Route::get('/cms/faq', fn() => view('admin.cms_faq'))->name('orchestrator.cms.faq');
+
+        // ── HR Department ─────────────────────────────────────────────────────
+        Route::get('/hr', fn() => view('admin.hr_management'))->name('orchestrator.hr');
     });
 });

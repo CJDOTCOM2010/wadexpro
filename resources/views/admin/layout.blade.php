@@ -97,16 +97,78 @@
                 </a>
             </div>
 
-            <!-- Section: CMS -->
+            <!-- Section: Driver Management -->
             <div class="space-y-1">
-                <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Experience & Growth</p>
+                <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Driver Management</p>
+                <a href="{{ route('orchestrator.driver.management') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.driver.*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Driver Registry</span>
+                </a>
+                <a href="{{ route('orchestrator.driver.documents') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.driver.documents') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Document Approvals</span>
+                </a>
+                <a href="{{ route('orchestrator.vehicle.types') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.vehicle.*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Vehicle Types</span>
+                </a>
+            </div>
+
+            <!-- Section: Customer Support -->
+            <div class="space-y-1">
+                <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Customer Support</p>
+                <a href="{{ route('orchestrator.support.tickets') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.support.*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Ticket Inbox</span>
+                    <span class="ml-auto text-[9px] font-black bg-red-500 text-white px-2 py-0.5 rounded-full">New</span>
+                </a>
+            </div>
+
+            <!-- Section: Analytics -->
+            <div class="space-y-1">
+                <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Analytics & Reports</p>
+                <a href="{{ route('orchestrator.analytics') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.analytics*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Business Intelligence</span>
+                </a>
+            </div>
+
+            <!-- Section: Marketing -->
+            <div class="space-y-1">
+                <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Marketing</p>
+                <a href="{{ route('orchestrator.marketing.promos') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.marketing.*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Promos & Coupons</span>
+                </a>
+                <a href="{{ route('orchestrator.marketing.banners') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group text-white/60 hover:text-white">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Banner Manager</span>
+                </a>
+            </div>
+
+            <!-- Section: CMS & Content -->
+            <div class="space-y-1">
+                <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Content & CMS</p>
                 <a href="{{ route('orchestrator.menus') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.menus') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     <span class="text-sm font-semibold whitespace-nowrap">Mega Menu Manager</span>
                 </a>
-                <a href="#" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition text-white/60 hover:text-white">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    <span class="text-sm font-semibold whitespace-nowrap">Landing Page CRM</span>
+                <a href="{{ route('orchestrator.cms.blog') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.cms.*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Blog Manager</span>
+                </a>
+                <a href="{{ route('orchestrator.cms.faq') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition text-white/60 hover:text-white">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">FAQ Manager</span>
+                </a>
+            </div>
+
+            <!-- Section: HR -->
+            <div class="space-y-1">
+                <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">HR & Staff</p>
+                <a href="{{ route('orchestrator.hr') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.hr*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Employee Registry</span>
                 </a>
             </div>
 

@@ -40,6 +40,11 @@ Route::prefix('v1')->group(function () {
     Route::get('/logistics/wallet/verify', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'verifyTopUp']);
     Route::post('/payments/wallet/hub/promos/check', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'checkPromo']);
 
+    // Customer Logistics & Service Endpoints
+    Route::get('/logistics/hubs/{serviceType}', [\App\Http\Controllers\Api\V1\CustomerLogisticsController::class, 'getHubs']);
+    Route::get('/logistics/rentals', [\App\Http\Controllers\Api\V1\CustomerLogisticsController::class, 'getRentals']);
+    Route::post('/logistics/book', [\App\Http\Controllers\Api\V1\CustomerLogisticsController::class, 'bookLogistics']);
+
     // Driver Specific Endpoints
     Route::get('/logistics/profile', [\App\Http\Controllers\Api\V1\DriverProfileController::class, 'getProfile']);
     Route::patch('/logistics/profile', [\App\Http\Controllers\Api\V1\DriverProfileController::class, 'updateProfile']);

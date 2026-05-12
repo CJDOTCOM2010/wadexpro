@@ -3,8 +3,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/thumb_reach_bottom_sheet.dart';
+import '../../../../core/network/api_client.dart';
+import 'package:dio/dio.dart';
 
-class TransportHubScreen extends StatelessWidget {
+class TransportHubScreen extends StatefulWidget {
   final String serviceName;
   final IconData icon;
 
@@ -14,9 +16,39 @@ class TransportHubScreen extends StatelessWidget {
     required this.icon,
   });
 
+  @override
+  State<TransportHubScreen> createState() => _TransportHubScreenState();
+}
+
+class _TransportHubScreenState extends State<TransportHubScreen> {
+  bool _isLoading = true;
+  Map<String, dynamic>? _transportData;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchHubs();
+  }
+
+  Future<void> _fetchHubs() async {
+    try {
+      final response = await ApiClient().instance.get('/v1/logistics/hubs/${widget.serviceName}');
+      setState(() {
+        _transportData = response.data['data'];
+        _isLoading = false;
+      });
+    } catch (e) {
+      // Fallback
+      setState(() {
+        _transportData = _getFallbackData(widget.serviceName);
+        _isLoading = false;
+      });
+    }
+  }
+
   // ── Transport theme color ─────────────────────────────────────────────
   Color _accentColor() {
-    switch (serviceName) {
+    switch (widget.serviceName) {
       case '2-Wheels': return const Color(0xFF00D4AA);
       case 'Transit':  return const Color(0xFF74B9FF);
       case 'Charter':  return const Color(0xFFE17055);
@@ -27,7 +59,14 @@ class TransportHubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final transportData = _getTransportSpecificData(serviceName);
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: AppColors.obsidianDark,
+        body: const Center(child: CircularProgressIndicator(color: Colors.white)),
+      );
+    }
+
+    final transportData = _transportData!;
     final accent = _accentColor();
 
     return Scaffold(
@@ -58,10 +97,10 @@ class TransportHubScreen extends StatelessWidget {
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(icon, color: accent, size: 18),
+                  Icon(widget.icon, color: accent, size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    serviceName,
+                    widget.serviceName,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
@@ -75,7 +114,7 @@ class TransportHubScreen extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.network(
-                    transportData['headerImage'],
+                    transportData['headerImage'] ?? '',
                     fit: BoxFit.cover,
                     errorBuilder: (ctx, err, st) => Container(
                       decoration: BoxDecoration(
@@ -85,7 +124,7 @@ class TransportHubScreen extends StatelessWidget {
                           end: Alignment.bottomCenter,
                         ),
                       ),
-                      child: Center(child: Icon(icon, color: Colors.white12, size: 80)),
+                      child: Center(child: Icon(widget.icon, color: Colors.white12, size: 80)),
                     ),
                   ),
                   Container(
@@ -140,7 +179,7 @@ class TransportHubScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    transportData['tagline'],
+                    transportData['tagline'] ?? '',
                     style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16, height: 1.5),
                   ).animate().fadeIn(duration: 400.ms),
                   const SizedBox(height: 24),
@@ -184,7 +223,7 @@ class TransportHubScreen extends StatelessWidget {
                     children: [
                       Container(width: 4, height: 18, decoration: BoxDecoration(color: accent, borderRadius: BorderRadius.circular(2))),
                       const SizedBox(width: 10),
-                      Text('${serviceName.toUpperCase()} HUBS', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white38, letterSpacing: 2)),
+                      Text('${widget.serviceName.toUpperCase()} HUBS', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white38, letterSpacing: 2)),
                       const Spacer(),
                       Text('${(transportData['hubs'] as List).length} locations', style: TextStyle(color: accent.withOpacity(0.7), fontSize: 12, fontWeight: FontWeight.w600)),
                     ],
@@ -217,62 +256,14 @@ class TransportHubScreen extends StatelessWidget {
     );
   }
 
-  Map<String, dynamic> _getTransportSpecificData(String name) {
-    switch (name) {
-      case 'Rent':
-        return {
-          'headerImage': 'https://images.unsplash.com/photo-1550355291-bbee04a92027?q=80&w=2072&auto=format&fit=crop',
-          'tagline': 'Premium car rentals across major cities. Self-drive or chauffeur options with full insurance coverage.',
-          'hubs': [
-            {'name': 'Accra Airport Hub', 'address': 'Kotoka Intl Airport, Accra', 'phone': '+233 24 555 1001', 'info': 'Sedans, SUVs, Luxury'},
-            {'name': 'Kumasi City Hub', 'address': 'Asokwa, Kumasi', 'phone': '+233 24 555 1002', 'info': 'Economy & Mid-range'},
-          ]
-        };
-      case '2-Wheels':
-        return {
-          'headerImage': 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=2070&auto=format&fit=crop',
-          'tagline': 'Express bike delivery and transit for fast city mobility. Beat the traffic with WADEX 2-Wheels.',
-          'hubs': [
-            {'name': 'Wadex Moto Hub', 'address': 'Kwame Nkrumah Circle, Accra', 'phone': '+233 24 555 5001', 'info': 'Express Delivery'},
-            {'name': 'Madina Moto Point', 'address': 'Madina Zongo Junction', 'phone': '+233 24 555 5002', 'info': 'City Shuttle'},
-          ]
-        };
-      case 'Transit':
-        return {
-          'headerImage': 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop',
-          'tagline': 'Inter-city bus and shuttle services connecting all major Ghanaian cities with comfort.',
-          'hubs': [
-            {'name': 'Wadex-STC Terminal', 'address': 'Lamptey Ave, Accra', 'phone': '+233 24 555 2001', 'info': 'Executive Coaches'},
-            {'name': 'VIP Circle Station', 'address': 'Kwame Nkrumah Circle, Accra', 'phone': '+233 24 555 2002', 'info': 'Economy Shuttles'},
-          ]
-        };
-      case 'Charter':
-        return {
-          'headerImage': 'https://images.unsplash.com/photo-1540962351504-03099e0a754b?q=80&w=1974&auto=format&fit=crop',
-          'tagline': 'Private bus and corporate rentals for events, tours, and group transport.',
-          'hubs': [
-            {'name': 'Elite Charter Center', 'address': 'Airport Residential, Accra', 'phone': '+233 24 555 3001', 'info': 'Corporate & Events'},
-            {'name': 'Cape Coast Tours', 'address': 'Castle Road, Cape Coast', 'phone': '+233 24 555 3002', 'info': 'Tour & Excursions'},
-          ]
-        };
-      case 'Travel':
-        return {
-          'headerImage': 'https://images.unsplash.com/photo-1436491865332-7a61a109c0f2?q=80&w=2070&auto=format&fit=crop',
-          'tagline': 'Domestic and regional air travel bookings with WADEX partner airlines.',
-          'hubs': [
-            {'name': 'Kotoka Terminal 3', 'address': 'Kotoka Intl Airport, Accra', 'phone': '+233 24 555 4001', 'info': 'Domestic Flights'},
-            {'name': 'Kumasi Airport', 'address': 'Kumasi Airport, Kumasi', 'phone': '+233 24 555 4002', 'info': 'Regional Flights'},
-          ]
-        };
-      default:
-        return {
-          'headerImage': 'https://images.unsplash.com/photo-1436491865332-7a61a109c0f2?q=80&w=2070&auto=format&fit=crop',
-          'tagline': 'Advanced transportation and logistics solutions.',
-          'hubs': [
-            {'name': 'WADEX Logistics Hub', 'address': 'Tema Harbor Area, Tema', 'phone': '+233 24 555 4001', 'info': 'Full Service Logistics'},
-          ]
-        };
-    }
+  Map<String, dynamic> _getFallbackData(String name) {
+    return {
+      'headerImage': 'https://images.unsplash.com/photo-1436491865332-7a61a109c0f2?q=80&w=2070&auto=format&fit=crop',
+      'tagline': 'Advanced transportation and logistics solutions.',
+      'hubs': [
+        {'name': 'WADEX Logistics Hub', 'address': 'Tema Harbor Area, Tema', 'phone': '+233 24 555 4001', 'info': 'Full Service Logistics'},
+      ]
+    };
   }
 
   // ── Hub card (dark themed, visible text) ──────────────────────────────
@@ -384,7 +375,34 @@ class TransportHubScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           GestureDetector(
-            onTap: () => Navigator.pop(context),
+            onTap: () async {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => const Center(child: CircularProgressIndicator(color: Colors.white)),
+              );
+
+              try {
+                await ApiClient().instance.post('/v1/logistics/book', data: {
+                  'service_type': widget.serviceName,
+                  'item_id': hub['id'] ?? 0,
+                });
+                if (context.mounted) {
+                  Navigator.pop(context); // loading
+                  Navigator.pop(context); // bottom sheet
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Successfully booked at ${hub['name']}')),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Failed to book at this hub')),
+                  );
+                }
+              }
+            },
             child: Container(
               width: double.infinity,
               height: 56,

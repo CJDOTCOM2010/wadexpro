@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/network/api_client.dart';
+import 'package:dio/dio.dart';
 
 class RentScreen extends StatefulWidget {
   const RentScreen({super.key});
@@ -11,6 +13,29 @@ class RentScreen extends StatefulWidget {
 class _RentScreenState extends State<RentScreen> {
   final _pickupController = TextEditingController(text: 'Accra Central');
   String _dateRange = '12 May - 15 May';
+  bool _isLoading = true;
+  Map<String, dynamic> _rentalData = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRentals();
+  }
+
+  Future<void> _fetchRentals() async {
+    try {
+      final response = await ApiClient().instance.get('/v1/logistics/rentals');
+      setState(() {
+        _rentalData = response.data['data'];
+        _isLoading = false;
+      });
+    } catch (e) {
+      // Fallback
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   void _pickDates() async {
     final now = DateTime.now();
@@ -35,7 +60,29 @@ class _RentScreenState extends State<RentScreen> {
     return months[m - 1];
   }
 
-  void _bookVehicle(String name, String price) {
+  void _bookVehicle(String name, String price, int id) async {
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator(color: Colors.white)),
+    );
+
+    try {
+      await ApiClient().instance.post('/v1/logistics/book', data: {
+        'service_type': 'rent',
+        'item_id': id,
+      });
+      if (mounted) Navigator.pop(context); // hide loading
+
+      _showBookingSheet(name, price);
+    } catch (e) {
+      if (mounted) Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to book vehicle')));
+    }
+  }
+
+  void _showBookingSheet(String name, String price) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -123,30 +170,42 @@ class _RentScreenState extends State<RentScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: [
-          _buildSearchHeader(),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(20),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Colors.white))
+          : Column(
               children: [
-                _buildVehicleCategory('Economy', 'Starting from GHS 28/day'),
-                _buildVehicleCard('Toyota Vitz', 'Manual/Auto • 5 Seats', 'GHS 28/day', 'GHS 28',
-                    'https://images.unsplash.com/photo-1550355291-bbee04a92027?q=80&w=2072&auto=format&fit=crop'),
-                _buildVehicleCard('Honda Fit', 'Automatic • 5 Seats', 'GHS 32/day', 'GHS 32',
-                    'https://images.unsplash.com/photo-1590362891991-f776e747a588?q=80&w=2069&auto=format&fit=crop'),
-                const SizedBox(height: 24),
-                _buildVehicleCategory('Premium & SUV', 'Starting from GHS 65/day'),
-                _buildVehicleCard('Range Rover Vogue', 'Luxury • 4x4', 'GHS 150/day', 'GHS 150',
-                    'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop'),
-                _buildVehicleCard('Toyota Land Cruiser', 'Off-road • 7 Seats', 'GHS 120/day', 'GHS 120',
-                    'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop'),
+                _buildSearchHeader(),
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(20),
+                    children: _buildDynamicList(),
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
     );
+  }
+
+  List<Widget> _buildDynamicList() {
+    if (_rentalData.isEmpty) {
+      return [const Center(child: Text('No rentals available', style: TextStyle(color: Colors.white54)))];
+    }
+    List<Widget> children = [];
+    _rentalData.forEach((key, categoryData) {
+      children.add(_buildVehicleCategory(categoryData['category'], categoryData['subtitle']));
+      for (var vehicle in categoryData['vehicles']) {
+        children.add(_buildVehicleCard(
+          vehicle['name'],
+          vehicle['specs'],
+          vehicle['price_display'],
+          vehicle['price_raw'],
+          vehicle['image'],
+          vehicle['id']
+        ));
+      }
+      children.add(const SizedBox(height: 24));
+    });
+    return children;
   }
 
   Widget _buildSearchHeader() {
@@ -242,9 +301,9 @@ class _RentScreenState extends State<RentScreen> {
     );
   }
 
-  Widget _buildVehicleCard(String name, String specs, String price, String rawPrice, String imageUrl) {
+  Widget _buildVehicleCard(String name, String specs, String price, String rawPrice, String imageUrl, int id) {
     return GestureDetector(
-      onTap: () => _bookVehicle(name, rawPrice),
+      onTap: () => _bookVehicle(name, rawPrice, id),
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
@@ -288,7 +347,7 @@ class _RentScreenState extends State<RentScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: ElevatedButton(
-                onPressed: () => _bookVehicle(name, rawPrice),
+                onPressed: () => _bookVehicle(name, rawPrice, id),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,

@@ -188,6 +188,8 @@
                 ]
             });
 
+            window.dispatcherMapInstance = map;
+
             const drivers = @json($activeDrivers);
             drivers.forEach((driver, index) => {
                 const isBusy = index % 3 === 0;
@@ -206,6 +208,44 @@
                 });
             });
         }
+    </script>
+    <script type="module">
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.Echo) {
+                window.Echo.channel('operations-map')
+                    .listen('.driver.location.updated', (e) => {
+                        if (window.dispatcherMapInstance) {
+                            if (!window.dispatcherMarkers) window.dispatcherMarkers = {};
+                            
+                            if (window.dispatcherMarkers[e.driverId]) {
+                                window.dispatcherMarkers[e.driverId].setPosition({ lat: e.latitude, lng: e.longitude });
+                                window.dispatcherMarkers[e.driverId].setIcon({
+                                    path: google.maps.SymbolPath.CIRCLE,
+                                    scale: 5,
+                                    fillColor: e.isBusy ? '#F8B803' : '#22C55E',
+                                    fillOpacity: 1,
+                                    strokeColor: '#0A0A1A',
+                                    strokeWeight: 2,
+                                });
+                            } else {
+                                window.dispatcherMarkers[e.driverId] = new google.maps.Marker({
+                                    position: { lat: e.latitude, lng: e.longitude },
+                                    map: window.dispatcherMapInstance,
+                                    icon: {
+                                        path: google.maps.SymbolPath.CIRCLE,
+                                        scale: 5,
+                                        fillColor: e.isBusy ? '#F8B803' : '#22C55E',
+                                        fillOpacity: 1,
+                                        strokeColor: '#0A0A1A',
+                                        strokeWeight: 2,
+                                    },
+                                    title: `Node: ${e.driverId.substring(0,8)} - ${e.isBusy ? 'In Transit' : 'Idle'}`
+                                });
+                            }
+                        }
+                    });
+            }
+        });
     </script>
     @endif
 

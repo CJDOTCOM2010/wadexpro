@@ -145,7 +145,7 @@
             ]
         });
 
-        // Add mock markers for $recentDeployments
+        window.operationsMapInstance = map;
         const deployments = @json($recentDeployments);
         deployments.forEach((d, index) => {
             new google.maps.Marker({
@@ -163,6 +163,47 @@
             });
         });
     }
+</script>
+
+<script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.Echo) {
+            window.Echo.channel('operations-map')
+                .listen('.driver.location.updated', (e) => {
+                    console.log('Driver Location Update:', e);
+                    // Add/update driver marker visually
+                    if (window.operationsMapInstance) {
+                        if (!window.driverMarkers) window.driverMarkers = {};
+                        
+                        if (window.driverMarkers[e.driverId]) {
+                            window.driverMarkers[e.driverId].setPosition({ lat: e.latitude, lng: e.longitude });
+                            window.driverMarkers[e.driverId].setIcon({
+                                path: google.maps.SymbolPath.CIRCLE,
+                                scale: 6,
+                                fillColor: e.isBusy ? '#F8B803' : '#22C55E',
+                                fillOpacity: 1,
+                                strokeColor: '#0A0A1A',
+                                strokeWeight: 2,
+                            });
+                        } else {
+                            window.driverMarkers[e.driverId] = new google.maps.Marker({
+                                position: { lat: e.latitude, lng: e.longitude },
+                                map: window.operationsMapInstance,
+                                icon: {
+                                    path: google.maps.SymbolPath.CIRCLE,
+                                    scale: 6,
+                                    fillColor: e.isBusy ? '#F8B803' : '#22C55E',
+                                    fillOpacity: 1,
+                                    strokeColor: '#0A0A1A',
+                                    strokeWeight: 2,
+                                },
+                                title: e.driverId
+                            });
+                        }
+                    }
+                });
+        }
+    });
 </script>
 @endif
 

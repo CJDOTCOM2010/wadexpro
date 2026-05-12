@@ -69,8 +69,12 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::post('/settings/onboarding/reorder', [\App\Modules\Admin\Controllers\OnboardingController::class, 'reorder'])->name('orchestrator.onboarding.reorder');
         Route::post('/settings/onboarding/splash', [\App\Modules\Admin\Controllers\OnboardingController::class, 'updateSplash'])->name('orchestrator.onboarding.splash.update');
 
-        Route::get('/infrastructure', fn() => view('admin.infrastructure'))->name('orchestrator.infrastructure');
-        Route::get('/modules', fn() => view('admin.module_hardening'))->name('orchestrator.modules');
+        // ── IT & Engineering Department ───────────────────────────────────────
+        Route::middleware('admin_department:IT|Engineering')->group(function() {
+            Route::get('/infrastructure', [\App\Modules\Admin\Controllers\InfrastructureController::class, 'infrastructure'])->name('orchestrator.infrastructure');
+            Route::post('/infrastructure/command', [\App\Modules\Admin\Controllers\InfrastructureController::class, 'cacheCommand'])->name('orchestrator.infrastructure.command');
+            Route::get('/modules', [\App\Modules\Admin\Controllers\InfrastructureController::class, 'modules'])->name('orchestrator.modules');
+        });
 
         // ── Driver Management Department ──────────────────────────────────────
         Route::middleware('admin_department:Operations|HR|Management')->group(function() {

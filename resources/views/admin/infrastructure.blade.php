@@ -129,27 +129,29 @@
         <!-- Tactical Cache Control center -->
         <div class="bg-white rounded-lg border border-gray-100 shadow-xl p-10">
             <h3 class="text-xl font-black text-brand tracking-tight mb-8">System Cache Commands</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button class="p-6 bg-surface rounded-lg border border-gray-50 flex flex-col gap-2 hover:border-accent transition group">
+            
+            <form action="{{ route('orchestrator.infrastructure.command') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @csrf
+                <button type="submit" name="command" value="optimize" class="p-6 bg-surface rounded-lg border border-gray-50 flex flex-col gap-2 hover:border-accent transition group text-left">
                     <span class="text-[9px] font-black text-brand-muted uppercase tracking-widest">Artisan optimize</span>
                     <span class="text-sm font-black text-brand">Aggressive Cache Clear</span>
                     <p class="text-[10px] text-brand-muted mt-2">Flushes app, routes & views.</p>
                 </button>
-                <button class="p-6 bg-surface rounded-lg border border-gray-50 flex flex-col gap-2 hover:border-accent transition group">
+                <button type="submit" name="command" value="config" class="p-6 bg-surface rounded-lg border border-gray-50 flex flex-col gap-2 hover:border-accent transition group text-left">
                     <span class="text-[9px] font-black text-brand-muted uppercase tracking-widest">Config:cache</span>
                     <span class="text-sm font-black text-brand">Rebuild Config Map</span>
                     <p class="text-[10px] text-brand-muted mt-2">Atomically refreshes .env.</p>
                 </button>
-                <button class="p-6 bg-surface rounded-lg border border-gray-50 flex flex-col gap-2 hover:border-accent transition group">
+                <button type="submit" name="command" value="route" class="p-6 bg-surface rounded-lg border border-gray-50 flex flex-col gap-2 hover:border-accent transition group text-left">
                     <span class="text-[9px] font-black text-brand-muted uppercase tracking-widest">Route:clear</span>
                     <span class="text-sm font-black text-brand">Flush Pathing Cache</span>
                     <p class="text-[10px] text-brand-muted mt-2">Zero-downtime path reset.</p>
                 </button>
-                <button class="p-6 bg-red-50 rounded-lg border border-red-100 flex flex-col gap-2 hover:bg-red-100 transition group items-center justify-center">
+                <button type="submit" name="command" value="nuclear" class="p-6 bg-red-50 rounded-lg border border-red-100 flex flex-col gap-2 hover:bg-red-100 transition group items-center justify-center">
                     <span class="text-[10px] font-black text-red-600 uppercase tracking-widest italic">Nuclear Flash</span>
                     <span class="text-sm font-black text-red-600">Wipe All Node Sessions</span>
                 </button>
-            </div>
+            </form>
         </div>
 
     </div>

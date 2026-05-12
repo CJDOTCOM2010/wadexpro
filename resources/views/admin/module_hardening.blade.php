@@ -155,27 +155,19 @@
             <h3 class="text-sm font-black text-brand uppercase tracking-widest mb-4">Audit Logs</h3>
             
             <div class="space-y-3">
+                @forelse($auditLogs as $log)
                 <div class="flex gap-3">
-                    <p class="text-[10px] font-mono text-brand-muted pt-0.5">14:02</p>
+                    <p class="text-[10px] font-mono text-brand-muted pt-0.5">{{ $log->created_at->format('H:i') }}</p>
                     <div>
-                        <p class="text-xs font-bold text-brand">JWT Rotation Completed</p>
-                        <p class="text-[10px] text-brand-muted">System automation.</p>
+                        <p class="text-xs font-bold {{ str_contains(strtolower($log->action), 'fail') || str_contains(strtolower($log->action), 'error') ? 'text-red-500' : 'text-brand' }}">{{ $log->action }}</p>
+                        <p class="text-[10px] text-brand-muted">{{ $log->details }}</p>
                     </div>
                 </div>
-                <div class="flex gap-3">
-                    <p class="text-[10px] font-mono text-brand-muted pt-0.5">11:45</p>
-                    <div>
-                        <p class="text-xs font-bold text-brand">Super Admin Login</p>
-                        <p class="text-[10px] text-brand-muted">IP: 197.210.64.12</p>
-                    </div>
+                @empty
+                <div class="text-center py-4">
+                    <p class="text-xs text-brand-muted font-bold">No recent audit logs available.</p>
                 </div>
-                <div class="flex gap-3">
-                    <p class="text-[10px] font-mono text-brand-muted pt-0.5">09:12</p>
-                    <div>
-                        <p class="text-xs font-bold text-red-500">Failed Webhook Delivery</p>
-                        <p class="text-[10px] text-brand-muted">Stripe Webhook signature mismatch.</p>
-                    </div>
-                </div>
+                @endforelse
             </div>
             
             <button class="mt-4 w-full text-center text-[10px] font-black text-accent uppercase tracking-widest hover:underline">View Full Audit Trail</button>

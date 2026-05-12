@@ -308,7 +308,7 @@
                         
                         <div class="p-4 border-b border-gray-50 mb-2">
                             <p class="text-sm font-black text-brand">Orchestrator Account</p>
-                            <p class="text-xs text-brand-muted truncate">{{ Auth::user()->email ?? 'admin@wadexpro.com' }}</p>
+                            <p class="text-xs text-brand-muted truncate">{{ auth('admin')->user()?->email ?? 'admin@wadexpro.com' }}</p>
                         </div>
 
                         <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface transition text-sm font-semibold text-gray-700">

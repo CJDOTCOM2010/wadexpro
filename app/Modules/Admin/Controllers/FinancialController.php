@@ -13,11 +13,11 @@ class FinancialController extends Controller
     public function index()
     {
         // Gross Revenue (Last 30 Days)
-        $grossRevenueL30 = Transaction::where('status', 'completed')
+        $grossRevenueL30 = (float) Transaction::where('status', 'completed')
             ->where('created_at', '>=', now()->subDays(30))
             ->sum('amount');
             
-        $grossRevenuePrev30 = Transaction::where('status', 'completed')
+        $grossRevenuePrev30 = (float) Transaction::where('status', 'completed')
             ->whereBetween('created_at', [now()->subDays(60), now()->subDays(30)])
             ->sum('amount');
             
@@ -26,7 +26,7 @@ class FinancialController extends Controller
             : 0;
 
         // Pending Payouts
-        $pendingPayoutsSum = WalletTransaction::where('category', 'payout')
+        $pendingPayoutsSum = (float) WalletTransaction::where('category', 'payout')
             ->where('status', 'pending')
             ->sum('amount');
             
@@ -40,7 +40,7 @@ class FinancialController extends Controller
         $profitMargin = 15.0;
 
         // Suspicious Flow
-        $suspiciousFlowSum = Transaction::where('status', 'failed')->sum('amount');
+        $suspiciousFlowSum = (float) Transaction::where('status', 'failed')->sum('amount');
         $suspiciousFlowCount = Transaction::where('status', 'failed')->count();
 
         $stats = [

@@ -40,7 +40,7 @@ class VehicleType extends Model
 
     public function vehicles()
     {
-        return $this->hasMany(Vehicle::class, 'vehicle_type_id');
+        return $this->hasMany(Vehicle::class, 'type', 'slug');
     }
 
     public function scopeActive($query)

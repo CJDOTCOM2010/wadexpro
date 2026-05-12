@@ -83,7 +83,7 @@
                     @forelse($recentTransactions as $txn)
                     <tr class="hover:bg-surface/50 transition-colors">
                         <td class="px-6 py-4">
-                            <p class="text-sm font-bold text-brand truncate max-w-[200px]">{{ $txn->user->name ?? 'Unknown User' }}</p>
+                            <p class="text-sm font-bold text-brand truncate max-w-[200px]">{{ $txn->user?->name ?? 'Unknown User' }}</p>
                             <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">{{ $txn->created_at->format('M d, H:i') }} • {{ ucfirst($txn->gateway) }}</p>
                         </td>
                         <td class="px-6 py-4 font-mono text-xs text-brand-muted">{{ substr($txn->reference, 0, 12) }}...</td>
@@ -134,10 +134,10 @@
                 <p class="text-xl font-black text-brand">₵{{ number_format($payout->amount, 2) }}</p>
                 <div class="flex items-center gap-3 mt-4 pt-3 border-t border-gray-50">
                     <div class="w-8 h-8 rounded-full bg-surface border border-gray-200 flex items-center justify-center font-bold text-[10px] text-brand">
-                        {{ strtoupper(substr($payout->user->name ?? 'U', 0, 2)) }}
+                        {{ strtoupper(substr($payout->user?->name ?? 'U', 0, 2)) }}
                     </div>
                     <div>
-                        <p class="text-xs font-bold text-brand truncate max-w-[150px]">{{ $payout->user->name ?? 'Unknown Driver' }}</p>
+                        <p class="text-xs font-bold text-brand truncate max-w-[150px]">{{ $payout->user?->name ?? 'Unknown Driver' }}</p>
                         <p class="text-[10px] text-brand-muted">{{ $payout->created_at->diffForHumans() }}</p>
                     </div>
                 </div>

@@ -274,6 +274,28 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> fetchProfile() async {
+    if (state.status != AuthStatus.authenticated) return;
+    try {
+      final response = await _repository.getProfile();
+      final userJson = response['data']?['user'] ?? response['user'];
+      
+      if (userJson != null) {
+        final user = UserModel.fromJson(userJson);
+        state = state.copyWith(user: user);
+
+        final encodedUser = jsonEncode(user.toJson());
+        if (kIsWeb) {
+          setLocalStorage('wadex_user_data', encodedUser);
+        } else {
+          await _storage.write(key: 'user_data', value: encodedUser);
+        }
+      }
+    } catch (e) {
+      print('WADEXPRO: Fetch profile error: $e');
+    }
+  }
+
   Future<bool> updateProfile({String? name, String? email, String? gender}) async {
     if (state.user == null) return false;
     

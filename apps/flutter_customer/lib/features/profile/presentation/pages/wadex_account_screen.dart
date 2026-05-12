@@ -27,6 +27,11 @@ class _WadexAccountScreenState extends ConsumerState<WadexAccountScreen> with Si
     super.initState();
     _tabCtrl = TabController(length: 4, vsync: this, initialIndex: widget.initialTab);
     _tabCtrl.addListener(() => setState(() {}));
+    
+    // Fetch latest profile data when opening account screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(authProvider.notifier).fetchProfile();
+    });
   }
 
   @override

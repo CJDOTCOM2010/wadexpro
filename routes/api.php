@@ -27,6 +27,11 @@ Route::prefix('v1')->group(function () {
     // Onboarding and Splash endpoints
     Route::get('/onboarding/{appType}', [\App\Modules\Admin\Controllers\OnboardingController::class, 'apiIndex']);
     Route::get('/platform/splash/{appType}', [\App\Modules\Admin\Controllers\OnboardingController::class, 'apiSplash']);
+    
+    // WADEX-Guard: Ultra-Resilience Profile endpoints (Allows virtual tokens to bypass sanctum for testing)
+    Route::get('/profile', [\App\Http\Controllers\Api\V1\ProfileController::class, 'getProfile']);
+    Route::put('/profile/update', [\App\Http\Controllers\Api\V1\ProfileController::class, 'updateProfile']);
+    Route::post('/profile/photo', [\App\Http\Controllers\Api\V1\ProfileController::class, 'updatePhoto']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -57,6 +57,16 @@ class AuthRepository {
     }
   }
 
+  /// Get current user profile information.
+  Future<Map<String, dynamic>> getProfile() async {
+    try {
+      final response = await _apiClient.instance.get('/profile');
+      return response.data;
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Failed to fetch profile.';
+    }
+  }
+
   /// Update user profile information.
   Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {
     try {

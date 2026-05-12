@@ -27,6 +27,14 @@ class AccountTab extends ConsumerStatefulWidget {
 class _AccountTabState extends ConsumerState<AccountTab> {
   final ImagePicker _picker = ImagePicker();
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(authProvider.notifier).fetchProfile();
+    });
+  }
+
   Future<void> _updateProfileImage() async {
     final ImageSource? source = await showModalBottomSheet<ImageSource>(
       context: context,

@@ -33,12 +33,20 @@ Route::prefix('v1')->group(function () {
     Route::put('/profile/update', [\App\Http\Controllers\Api\V1\ProfileController::class, 'updateProfile']);
     Route::post('/profile/photo', [\App\Http\Controllers\Api\V1\ProfileController::class, 'updatePhoto']);
 
-    // Mobile Wallet Endpoints
+    // Mobile Wallet Endpoints (Shared & Customer)
     Route::get('/payments/wallet/hub', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'getHubData']);
     Route::get('/logistics/wallet/transactions', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'getTransactions']);
     Route::post('/logistics/wallet/topup', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'initializeTopUp']);
     Route::get('/logistics/wallet/verify', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'verifyTopUp']);
     Route::post('/payments/wallet/hub/promos/check', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'checkPromo']);
+
+    // Driver Specific Endpoints
+    Route::get('/logistics/profile', [\App\Http\Controllers\Api\V1\DriverProfileController::class, 'getProfile']);
+    Route::patch('/logistics/profile', [\App\Http\Controllers\Api\V1\DriverProfileController::class, 'updateProfile']);
+    Route::post('/logistics/profile/documents', [\App\Http\Controllers\Api\V1\DriverProfileController::class, 'uploadDocument']);
+    Route::get('/logistics/wallet/balance', [\App\Http\Controllers\Api\V1\DriverWalletController::class, 'getBalance']);
+    Route::get('/logistics/wallet/weekly-summary', [\App\Http\Controllers\Api\V1\DriverWalletController::class, 'getWeeklySummary']);
+    Route::post('/logistics/wallet/payout', [\App\Http\Controllers\Api\V1\DriverWalletController::class, 'requestPayout']);
 
     // Mock WebView for TopUp testing
     Route::get('/mock/wallet/topup/webview', function(Request $request) {

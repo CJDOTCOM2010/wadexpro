@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../providers/profile_provider.dart';
 import 'package:wadexpro_driver/features/wallet/presentation/pages/wallet_screen.dart';
+import '../../auth/presentation/providers/auth_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -20,6 +21,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (image != null) {
       ref.read(profileProvider.notifier).uploadKYC(type, image);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(profileProvider.notifier).fetchProfile();
+      ref.read(authProvider.notifier).fetchProfile(); // ensure base user is updated
+    });
   }
 
   @override

@@ -167,6 +167,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
+
+  Future<void> fetchProfile() async {
+    if (state.status != AuthStatus.authenticated) return;
+    try {
+      final response = await _repository.getProfile();
+      final userJson = response['data']?['user'] ?? response['user'];
+      
+      if (userJson != null) {
+        state = state.copyWith(driver: Map<String, dynamic>.from(userJson));
+      }
+    } catch (e) {
+      print('WADEXPRO: Fetch profile error: $e');
+    }
+  }
 }
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {

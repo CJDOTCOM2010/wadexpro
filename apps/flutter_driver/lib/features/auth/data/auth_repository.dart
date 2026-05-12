@@ -113,6 +113,26 @@ class AuthRepository {
     }
   }
 
+  /// Get current driver profile information.
+  Future<Map<String, dynamic>> getProfile() async {
+    try {
+      final response = await _apiClient.instance.get('/profile');
+      return response.data;
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Failed to fetch profile.';
+    }
+  }
+
+  /// Update driver profile information.
+  Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {
+    try {
+      final response = await _apiClient.instance.put('/profile/update', data: data);
+      return response.data;
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Failed to update profile.';
+    }
+  }
+
   Future<String?> getToken() async {
     try {
       return await _storage.read(key: 'access_token').timeout(const Duration(seconds: 2));

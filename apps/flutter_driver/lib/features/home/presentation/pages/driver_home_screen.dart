@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/map_marker_generator.dart';
+import '../../../../core/utils/polyline_generator.dart';
 import '../providers/driver_status_provider.dart';
 import '../providers/active_trip_provider.dart';
 import '../widgets/incoming_ride_overlay.dart';
@@ -27,6 +28,9 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
   BitmapDescriptor? _pickupIcon;
   BitmapDescriptor? _dropoffIcon;
   BitmapDescriptor? _driverIcon;
+  
+  Set<Polyline> _polylines = {};
+  String? _currentRouteTripId;
 
   static const CameraPosition _initialPosition = CameraPosition(
     target: LatLng(9.0820, 8.6753),
@@ -74,6 +78,9 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
       });
     }
 
+    // Check if we need to draw a route
+    _checkAndGenerateRoute(tripState, statusState);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -88,6 +95,7 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
               _controller.complete(controller);
             },
             markers: _buildMarkers(tripState, statusState),
+            polylines: _polylines,
           ),
 
           // Top Command Bar (Only shown when no trip active)
@@ -261,5 +269,64 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
     ));
 
     return markers;
+  }
+
+  Future<void> _checkAndGenerateRoute(ActiveTripState tripState, DriverStatusState statusState) async {
+    if (tripState.status == ActiveTripStatus.none || tripState.rideData == null || statusState.currentPosition == null) {
+      if (_polylines.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) setState(() { _polylines.clear(); _currentRouteTripId = null; });
+        });
+      }
+      return;
+    }
+
+    final rideId = tripState.rideData!['id'].toString();
+    final status = tripState.status;
+    final tripKey = '${rideId}_$status';
+
+    if (_currentRouteTripId == tripKey) return; // Already generated
+
+    _currentRouteTripId = tripKey; // lock immediately to prevent duplicate calls
+
+    LatLng start = LatLng(statusState.currentPosition!.latitude, statusState.currentPosition!.longitude);
+    LatLng end;
+
+    if (status == ActiveTripStatus.accepted || status == ActiveTripStatus.arriving) {
+      end = LatLng(tripState.rideData!['pickupLat'] as double, tripState.rideData!['pickupLng'] as double);
+    } else {
+      end = LatLng(tripState.rideData!['dropoffLat'] as double, tripState.rideData!['dropoffLng'] as double);
+    }
+
+    final points = await PolylineGenerator.getMockRoute(start, end);
+    
+    if (mounted) {
+      setState(() {
+        _polylines = {
+          Polyline(
+            polylineId: const PolylineId('active_route'),
+            points: points,
+            color: AppColors.primaryNavy,
+            width: 5,
+            patterns: status == ActiveTripStatus.accepted ? [PatternItem.dash(20), PatternItem.gap(10)] : [],
+          )
+        };
+      });
+
+      // Fit map to show both start and end
+      final bounds = LatLngBounds(
+        southwest: LatLng(
+          start.latitude < end.latitude ? start.latitude : end.latitude,
+          start.longitude < end.longitude ? start.longitude : end.longitude,
+        ),
+        northeast: LatLng(
+          start.latitude > end.latitude ? start.latitude : end.latitude,
+          start.longitude > end.longitude ? start.longitude : end.longitude,
+        ),
+      );
+
+      final controller = await _controller.future;
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 80));
+    }
   }
 }

@@ -16,7 +16,7 @@ class HRManagementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::whereIn('role', ['admin', 'support', 'staff', 'manager'])
+        $query = User::whereIn('user_type', ['admin', 'support', 'staff', 'manager'])
             ->latest();
 
         if ($request->filled('search')) {
@@ -28,15 +28,15 @@ class HRManagementController extends Controller
         }
 
         if ($request->filled('role')) {
-            $query->where('role', $request->role);
+            $query->where('user_type', $request->role);
         }
 
         $staff = $query->paginate(20)->withQueryString();
 
         $stats = [
-            'total'    => User::whereIn('role', ['admin', 'support', 'staff', 'manager'])->count(),
-            'admins'   => User::where('role', 'admin')->count(),
-            'support'  => User::where('role', 'support')->count(),
+            'total'    => User::whereIn('user_type', ['admin', 'support', 'staff', 'manager'])->count(),
+            'admins'   => User::where('user_type', 'admin')->count(),
+            'support'  => User::where('user_type', 'support')->count(),
         ];
 
         return view('admin.hr_management', compact('staff', 'stats'));
@@ -59,7 +59,7 @@ class HRManagementController extends Controller
         $user = User::create([
             'name'       => $data['name'],
             'email'      => $data['email'],
-            'role'       => $data['role'],
+            'user_type'  => $data['role'], // Map 'role' from form to user_type
             'department' => $data['department'] ?? null,
             'password'   => Hash::make($tempPassword),
             'status'     => 'active',
@@ -79,7 +79,7 @@ class HRManagementController extends Controller
         $request->validate(['role' => 'required|in:admin,support,staff,manager']);
 
         $user = User::findOrFail($id);
-        $user->update(['role' => $request->role]);
+        $user->update(['user_type' => $request->role]);
 
         return back()->with('success', "Role updated to '{$request->role}' for {$user->name}.");
     }

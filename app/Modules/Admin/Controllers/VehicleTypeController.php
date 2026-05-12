@@ -14,8 +14,8 @@ class VehicleTypeController extends Controller
      */
     public function index()
     {
-        $vehicleTypes = VehicleType::withCount(['drivers' => function ($q) {
-            $q->where('status', 'active');
+        $vehicleTypes = VehicleType::withCount(['vehicles' => function ($q) {
+            $q->where('is_active', true);
         }])->orderBy('sort_order')->get();
 
         return view('admin.vehicle_types', compact('vehicleTypes'));

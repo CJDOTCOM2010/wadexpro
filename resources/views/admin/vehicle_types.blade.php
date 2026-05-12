@@ -72,7 +72,7 @@
             @endif
         </div>
         <div class="p-4 border-t border-gray-50 flex items-center justify-between">
-            <span class="text-xs text-brand-muted font-medium">{{ number_format($type->drivers_count) }} active drivers</span>
+            <span class="text-xs text-brand-muted font-medium">{{ number_format($type->vehicles_count) }} active vehicles</span>
             <div class="flex gap-3">
                 <button class="text-accent text-sm font-bold hover:text-accent-light transition">Edit</button>
                 <form action="{{ route('orchestrator.vehicle.types.destroy', $type->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this vehicle type?');">

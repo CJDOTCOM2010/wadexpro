@@ -18,7 +18,7 @@
             <div class="bg-brand/80 backdrop-blur-xl p-6 rounded-lg border border-white/10 shadow-2xl">
                 <p class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Active Assets</p>
                 <div class="flex items-center gap-4">
-                    <h4 class="text-3xl font-black text-white">142</h4>
+                    <h4 class="text-3xl font-black text-white">{{ number_format($liveNodes) }}</h4>
                     <span class="px-2 py-1 bg-green-500/20 text-green-400 text-[10px] font-black rounded-lg">LIVE</span>
                 </div>
             </div>
@@ -40,7 +40,7 @@
         <!-- Coordinate HUD -->
         <div class="absolute bottom-8 right-8 z-10">
             <div class="bg-brand/40 backdrop-blur-md px-6 py-4 rounded-lg border border-white/10 text-white/40 font-mono text-[10px] uppercase tracking-tighter">
-                LAT: 40.7128° N | LONG: 74.0060° W | ALT: 12.0m
+                LAT: 5.6037° N | LONG: 0.1870° W | ALT: 12.0m
             </div>
         </div>
 
@@ -53,53 +53,58 @@
                 </div>
             </div>
             <p class="text-white font-black text-sm mt-8 tracking-widest uppercase">Global Orchestrator Hub</p>
-            <p class="text-white/40 text-[10px] font-bold uppercase mt-1 tracking-widest">W-PRO-EU-01</p>
+            <p class="text-white/40 text-[10px] font-bold uppercase mt-1 tracking-widest">W-PRO-AFR-01</p>
         </div>
     </div>
 
     <!-- Right: Event Telemetry Ticker -->
-    <div class="w-96 bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-xl">
-        <div class="p-8 border-b border-gray-50 flex items-center justify-between">
-            <h3 class="text-xl font-black text-brand tracking-tight">Node Events</h3>
-            <span class="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
+    <div class="w-[450px] bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-xl shrink-0">
+        <div class="p-6 border-b border-gray-50 flex items-center justify-between">
+            <h3 class="text-lg font-black text-brand tracking-tight">Node Events</h3>
+            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>
         </div>
         
-        <div class="flex-1 overflow-y-auto p-6 space-y-8">
-            <!-- Event 1 -->
-            <div class="relative pl-6 border-l-2 border-gray-100 italic">
-                <div class="absolute -left-[5px] top-0 w-2 h-2 bg-brand rounded-full"></div>
-                <p class="text-xs font-black text-brand uppercase tracking-wider mb-2">Driver Deployment</p>
-                <p class="text-sm font-medium text-brand-muted leading-relaxed">Node <span class="text-brand font-bold underline decoration-accent decoration-2">DR-9281</span> initialized in Accra Central Sector.</p>
-                <p class="text-[10px] text-gray-300 font-bold uppercase mt-3">02:14:12 UTC</p>
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            
+            @foreach($sosAlerts as $alert)
+            <!-- SOS Alert -->
+            <div class="relative pl-5 border-l-2 border-red-500 bg-red-50/50 p-3 rounded-r">
+                <div class="absolute -left-[5px] top-4 w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+                <div class="absolute -left-[5px] top-4 w-2 h-2 bg-red-500 rounded-full"></div>
+                <p class="text-xs font-black text-red-600 uppercase tracking-wider mb-1">SOS SIGNAL DETECTED</p>
+                <p class="text-sm font-medium text-red-800 leading-relaxed">Alert triggered on Ride <a href="#" class="font-bold underline">{{ $alert->ride->reference ?? 'Unknown' }}</a>. Immediate verification required.</p>
+                <p class="text-[10px] text-red-400 font-bold uppercase mt-2">{{ $alert->created_at->format('H:i:s UTC') }}</p>
             </div>
+            @endforeach
 
-            <!-- Event 2 -->
-            <div class="relative pl-6 border-l-2 border-accent italic">
-                <div class="absolute -left-[5px] top-0 w-2 h-2 bg-accent rounded-full"></div>
-                <p class="text-xs font-black text-accent uppercase tracking-wider mb-2">High Value Transaction</p>
-                <p class="text-sm font-medium text-brand-muted leading-relaxed">Order <span class="text-brand font-bold underline decoration-accent decoration-2">#ORD-K7</span> value exceeding $2k threshold detected.</p>
-                <p class="text-[10px] text-gray-300 font-bold uppercase mt-3">02:12:04 UTC</p>
+            @foreach($highValueOrders as $order)
+            <!-- High Value Transaction -->
+            <div class="relative pl-5 border-l-2 border-accent">
+                <div class="absolute -left-[5px] top-1 w-2 h-2 bg-accent rounded-full"></div>
+                <p class="text-xs font-black text-accent uppercase tracking-wider mb-1">High Value Transaction</p>
+                <p class="text-sm font-medium text-brand-muted leading-relaxed">Order <a href="#" class="text-brand font-bold underline decoration-accent decoration-2">{{ $order->reference }}</a> value exceeding ₵500 detected (₵{{ number_format($order->total_amount) }}).</p>
+                <p class="text-[10px] text-gray-400 font-bold uppercase mt-2">{{ $order->created_at->format('H:i:s UTC') }}</p>
             </div>
+            @endforeach
 
-            <!-- Event 3 -->
-            <div class="relative pl-6 border-l-2 border-gray-100 italic">
-                <div class="absolute -left-[5px] top-0 w-2 h-2 bg-brand rounded-full"></div>
-                <p class="text-xs font-black text-brand uppercase tracking-wider mb-2">Fleet Optimization</p>
-                <p class="text-sm font-medium text-brand-muted leading-relaxed">System triggered dynamic routing update for Sector B-9.</p>
-                <p class="text-[10px] text-gray-300 font-bold uppercase mt-3">02:08:45 UTC</p>
+            @foreach($recentDeployments as $driver)
+            <!-- Driver Deployment -->
+            <div class="relative pl-5 border-l-2 border-gray-200">
+                <div class="absolute -left-[5px] top-1 w-2 h-2 bg-gray-300 rounded-full"></div>
+                <p class="text-xs font-black text-brand uppercase tracking-wider mb-1">Node Online</p>
+                <p class="text-sm font-medium text-brand-muted leading-relaxed">Node <span class="text-brand font-bold">{{ substr($driver->id, 0, 8) }}</span> ({{ $driver->user->name ?? 'Unknown' }}) established uplink.</p>
+                <p class="text-[10px] text-gray-400 font-bold uppercase mt-2">{{ $driver->last_location_at ? $driver->last_location_at->format('H:i:s UTC') : 'Just now' }}</p>
             </div>
+            @endforeach
 
-            <!-- Event 4 (SOS Alert) -->
-            <div class="relative pl-6 border-l-2 border-red-500 italic">
-                <div class="absolute -left-[5px] top-0 w-2 h-2 bg-red-500 rounded-full"></div>
-                <p class="text-xs font-black text-red-500 uppercase tracking-wider mb-2">SOS SIGNAL DETECTED</p>
-                <p class="text-sm font-medium text-brand-muted leading-relaxed">Manual override requested by <span class="text-brand font-bold">Node AC-02</span>. Verification required.</p>
-                <p class="text-[10px] text-gray-300 font-bold uppercase mt-3">01:54:30 UTC</p>
-            </div>
+            @if($sosAlerts->isEmpty() && $highValueOrders->isEmpty() && $recentDeployments->isEmpty())
+                <p class="text-center text-gray-400 text-sm mt-10">No recent network events.</p>
+            @endif
+
         </div>
 
-        <div class="p-8 bg-surface/50 border-t border-gray-50">
-            <button class="w-full py-4 bg-brand text-white font-black text-xs uppercase rounded-lg hover:bg-brand-light transition tracking-widest">Expand Ticker Hub</button>
+        <div class="p-6 bg-surface/50 border-t border-gray-50 text-center">
+            <span class="text-[10px] font-black text-brand-muted uppercase tracking-[0.2em] italic">Telemetry Active</span>
         </div>
     </div>
 </div>

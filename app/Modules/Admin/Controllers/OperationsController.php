@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Modules\Logistics\Models\Order;
 use App\Modules\Logistics\Models\Driver;
 use App\Modules\Logistics\Models\SafetyAlert;
+use App\Modules\Admin\Models\SystemSetting;
 
 class OperationsController extends Controller
 {
@@ -76,7 +77,9 @@ class OperationsController extends Controller
             ->whereNotNull('current_lat')
             ->get();
 
-        return view('admin.dispatcher', compact('stats', 'priorityOrders', 'activeDrivers'));
+        $google_maps_api_key = SystemSetting::get('google_maps_api_key');
+
+        return view('admin.dispatcher', compact('stats', 'priorityOrders', 'activeDrivers', 'google_maps_api_key'));
     }
 
     /**
@@ -105,6 +108,8 @@ class OperationsController extends Controller
             ->limit(5)
             ->get();
 
-        return view('admin.operations_map', compact('liveNodes', 'highValueOrders', 'sosAlerts', 'recentDeployments'));
+        $google_maps_api_key = SystemSetting::get('google_maps_api_key');
+
+        return view('admin.operations_map', compact('liveNodes', 'highValueOrders', 'sosAlerts', 'recentDeployments', 'google_maps_api_key'));
     }
 }

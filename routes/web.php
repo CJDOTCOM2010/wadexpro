@@ -42,9 +42,6 @@ Route::prefix('{country}/{lang}')
 
 // Internal Admin Operations
 Route::middleware(['web'])->group(function () {
-    Route::get('/admin/operations', [\App\Http\Controllers\Admin\OrchestratorController::class, 'index'])->name('orchestrator.operations_map');
-    Route::get('/admin/dispatch', [\App\Http\Controllers\Admin\OrchestratorController::class, 'dispatcher'])->name('orchestrator.dispatcher');
-
     Route::get('/driver', function () {
         return view('driver.dashboard');
     })->name('driver.dashboard');

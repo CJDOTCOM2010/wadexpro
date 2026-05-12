@@ -35,6 +35,10 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+        @keyframes fade-in-down {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-surface text-brand min-h-screen flex selection:bg-accent/30 overflow-hidden" x-data="{ sidebarOpen: true, userMenuOpen: false }">
@@ -203,6 +207,46 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden bg-white relative">
+        
+        <!-- Flash Notifications -->
+        @if(session('success'))
+            <div x-data="{ show: true }" x-show="show" class="absolute top-4 right-4 z-50 bg-green-50 border-l-4 border-green-500 p-4 rounded shadow-lg flex items-start gap-3 w-96 animate-[fade-in-down_0.3s_ease-out]">
+                <svg class="w-5 h-5 text-green-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div class="flex-1">
+                    <p class="text-sm font-bold text-green-800">Success</p>
+                    <p class="text-xs text-green-700 mt-1">{{ session('success') }}</p>
+                </div>
+                <button @click="show = false" class="text-green-600 hover:text-green-800"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <script>setTimeout(() => { document.querySelector('[x-data="{ show: true }"]')?.remove(); }, 5000);</script>
+        @endif
+
+        @if(session('error'))
+            <div x-data="{ show: true }" x-show="show" class="absolute top-4 right-4 z-50 bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-lg flex items-start gap-3 w-96 animate-[fade-in-down_0.3s_ease-out]">
+                <svg class="w-5 h-5 text-red-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <div class="flex-1">
+                    <p class="text-sm font-bold text-red-800">Error</p>
+                    <p class="text-xs text-red-700 mt-1">{{ session('error') }}</p>
+                </div>
+                <button @click="show = false" class="text-red-600 hover:text-red-800"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <script>setTimeout(() => { document.querySelector('[x-data="{ show: true }"]')?.remove(); }, 8000);</script>
+        @endif
+
+        @if($errors->any())
+            <div x-data="{ show: true }" x-show="show" class="absolute top-4 right-4 z-50 bg-amber-50 border-l-4 border-amber-500 p-4 rounded shadow-lg flex items-start gap-3 w-96 animate-[fade-in-down_0.3s_ease-out]">
+                <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div class="flex-1">
+                    <p class="text-sm font-bold text-amber-800">Validation Error</p>
+                    <ul class="list-disc list-inside text-xs text-amber-700 mt-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                <button @click="show = false" class="text-amber-600 hover:text-amber-800"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+        @endif
         
         <!-- Premium Topbar -->
         <header class="h-20 border-b border-gray-100 flex items-center justify-between px-8 bg-white/80 backdrop-blur-md shrink-0 sticky top-0 z-40">

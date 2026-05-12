@@ -8,7 +8,7 @@
         <p class="text-brand-muted font-medium mt-1">Manage Help Center questions for customers and drivers.</p>
     </div>
     <div class="flex gap-4">
-        <button class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2">
+        <button onclick="document.getElementById('add-modal').classList.remove('hidden')" class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Add FAQ
         </button>
@@ -21,33 +21,28 @@
     <div>
         <h3 class="text-[10px] font-black text-brand-muted uppercase tracking-widest mb-4 pl-2 border-l-2 border-brand">Customer Help Center</h3>
         <div class="space-y-4">
+            @php $customerFaqs = $faqs->filter(fn($f) => in_array($f->audience, ['customer', 'all'])); @endphp
             
-            <!-- Item -->
-            <div class="bg-white rounded border border-gray-100 p-5 shadow-sm group">
+            @forelse($customerFaqs as $faq)
+            <div class="bg-white rounded border border-gray-100 p-5 shadow-sm group relative">
                 <div class="flex justify-between items-start mb-2">
-                    <h4 class="text-sm font-bold text-brand">How do I reset my password?</h4>
-                    <button class="text-gray-400 hover:text-accent transition opacity-0 group-hover:opacity-100"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+                    <h4 class="text-sm font-bold text-brand pr-8">{{ $faq->question }}</h4>
+                    <form action="{{ route('orchestrator.cms.faq.destroy', $faq->id) }}" method="POST" class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition" onsubmit="return confirm('Delete this FAQ?');">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="text-red-400 hover:text-red-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                    </form>
                 </div>
-                <p class="text-xs text-brand-muted leading-relaxed">Go to the login screen and tap "Forgot Password". Enter your registered phone number to receive an OTP to reset it.</p>
+                <p class="text-xs text-brand-muted leading-relaxed">{{ $faq->answer }}</p>
                 <div class="mt-3 pt-3 border-t border-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center justify-between">
-                    <span>Category: Account</span>
-                    <span>Order: 1</span>
+                    <span>Category: {{ $faq->category ?? 'General' }}</span>
+                    <span>Order: {{ $faq->sort_order }}</span>
                 </div>
             </div>
-
-            <!-- Item -->
-            <div class="bg-white rounded border border-gray-100 p-5 shadow-sm group">
-                <div class="flex justify-between items-start mb-2">
-                    <h4 class="text-sm font-bold text-brand">Can I cancel a ride after booking?</h4>
-                    <button class="text-gray-400 hover:text-accent transition opacity-0 group-hover:opacity-100"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
-                </div>
-                <p class="text-xs text-brand-muted leading-relaxed">Yes, you can cancel before the driver arrives. Note that a cancellation fee may apply if the driver has already waited at the pickup location for over 5 minutes.</p>
-                <div class="mt-3 pt-3 border-t border-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center justify-between">
-                    <span>Category: Rides</span>
-                    <span>Order: 2</span>
-                </div>
+            @empty
+            <div class="p-6 bg-white rounded border border-dashed border-gray-200 text-center text-gray-400">
+                No customer FAQs found.
             </div>
-
+            @endforelse
         </div>
     </div>
 
@@ -55,23 +50,72 @@
     <div>
         <h3 class="text-[10px] font-black text-brand-muted uppercase tracking-widest mb-4 pl-2 border-l-2 border-accent">Driver Help Center</h3>
         <div class="space-y-4">
+            @php $driverFaqs = $faqs->filter(fn($f) => in_array($f->audience, ['driver', 'all'])); @endphp
             
-            <!-- Item -->
-            <div class="bg-white rounded border border-gray-100 p-5 shadow-sm group">
+            @forelse($driverFaqs as $faq)
+            <div class="bg-white rounded border border-gray-100 p-5 shadow-sm group relative">
                 <div class="flex justify-between items-start mb-2">
-                    <h4 class="text-sm font-bold text-brand">When do I get my payouts?</h4>
-                    <button class="text-gray-400 hover:text-accent transition opacity-0 group-hover:opacity-100"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+                    <h4 class="text-sm font-bold text-brand pr-8">{{ $faq->question }}</h4>
+                    <form action="{{ route('orchestrator.cms.faq.destroy', $faq->id) }}" method="POST" class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition" onsubmit="return confirm('Delete this FAQ?');">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="text-red-400 hover:text-red-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                    </form>
                 </div>
-                <p class="text-xs text-brand-muted leading-relaxed">Wallet balances can be withdrawn to Mobile Money instantly at any time, subject to a minimum withdrawal amount of ₵50.</p>
+                <p class="text-xs text-brand-muted leading-relaxed">{{ $faq->answer }}</p>
                 <div class="mt-3 pt-3 border-t border-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center justify-between">
-                    <span>Category: Payments</span>
-                    <span>Order: 1</span>
+                    <span>Category: {{ $faq->category ?? 'General' }}</span>
+                    <span>Order: {{ $faq->sort_order }}</span>
                 </div>
             </div>
-
+            @empty
+            <div class="p-6 bg-white rounded border border-dashed border-gray-200 text-center text-gray-400">
+                No driver FAQs found.
+            </div>
+            @endforelse
         </div>
     </div>
 
+</div>
+
+<!-- Add Modal -->
+<div id="add-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-black text-brand">Add FAQ</h3>
+            <button onclick="document.getElementById('add-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+        <form action="{{ route('orchestrator.cms.faq.store') }}" method="POST">
+            @csrf
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-[10px] font-black text-brand-muted uppercase tracking-widest mb-1">Question</label>
+                    <input type="text" name="question" required class="w-full bg-surface border border-gray-200 rounded p-2 text-sm focus:ring-2 focus:ring-brand/20 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-brand-muted uppercase tracking-widest mb-1">Answer</label>
+                    <textarea name="answer" rows="4" required class="w-full bg-surface border border-gray-200 rounded p-2 text-sm focus:ring-2 focus:ring-brand/20 outline-none"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-brand-muted uppercase tracking-widest mb-1">Audience</label>
+                        <select name="audience" required class="w-full bg-surface border border-gray-200 rounded p-2 text-sm focus:ring-2 focus:ring-brand/20 outline-none cursor-pointer">
+                            <option value="customer">Customers Only</option>
+                            <option value="driver">Drivers Only</option>
+                            <option value="all">Both (All Users)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-brand-muted uppercase tracking-widest mb-1">Category</label>
+                        <input type="text" name="category" placeholder="e.g. Payments" class="w-full bg-surface border border-gray-200 rounded p-2 text-sm focus:ring-2 focus:ring-brand/20 outline-none">
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-gray-100 gap-3">
+                <button type="button" onclick="document.getElementById('add-modal').classList.add('hidden')" class="px-4 py-2 text-brand font-bold text-sm">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 bg-brand text-white font-bold rounded shadow-sm hover:bg-brand-light transition">Save FAQ</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 @endsection

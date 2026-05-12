@@ -12,32 +12,43 @@
 <div class="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden flex h-[700px]">
     
     <!-- Sidebar / Filters -->
-    <div class="w-64 border-r border-gray-50 flex flex-col bg-surface/30">
+    <div class="w-64 border-r border-gray-50 flex flex-col bg-surface/30 shrink-0">
         <div class="p-4 border-b border-gray-50">
             <button class="w-full py-2.5 bg-brand text-white font-bold rounded hover:bg-brand-light transition text-sm">Compose New</button>
         </div>
         <div class="flex-1 overflow-y-auto py-4">
             <div class="px-4 mb-2 text-[10px] font-black text-brand-muted uppercase tracking-widest">Queues</div>
-            <a href="#" class="flex items-center justify-between px-4 py-2 bg-white border-l-2 border-brand text-brand">
+            
+            <a href="{{ route('orchestrator.support.tickets', ['queue' => 'unassigned']) }}" class="flex items-center justify-between px-4 py-2 hover:bg-white transition {{ request('queue') == 'unassigned' ? 'bg-white border-l-2 border-brand text-brand' : 'text-brand/70' }}">
                 <span class="text-sm font-bold">Unassigned</span>
-                <span class="bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded-full">12</span>
+                @if($counts['unassigned'] > 0)
+                <span class="bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded-full">{{ $counts['unassigned'] }}</span>
+                @endif
             </a>
-            <a href="#" class="flex items-center justify-between px-4 py-2 text-brand/70 hover:bg-white transition">
+            
+            <a href="{{ route('orchestrator.support.tickets', ['queue' => 'mine']) }}" class="flex items-center justify-between px-4 py-2 hover:bg-white transition {{ request('queue') == 'mine' ? 'bg-white border-l-2 border-brand text-brand' : 'text-brand/70' }}">
                 <span class="text-sm font-bold">My Tickets</span>
-                <span class="bg-surface border border-gray-200 text-brand-muted text-[10px] font-black px-2 py-0.5 rounded-full">4</span>
+                @if($counts['mine'] > 0)
+                <span class="bg-surface border border-gray-200 text-brand-muted text-[10px] font-black px-2 py-0.5 rounded-full">{{ $counts['mine'] }}</span>
+                @endif
             </a>
-            <a href="#" class="flex items-center justify-between px-4 py-2 text-brand/70 hover:bg-white transition">
-                <span class="text-sm font-bold">All Open</span>
+            
+            <a href="{{ route('orchestrator.support.tickets') }}" class="flex items-center justify-between px-4 py-2 hover:bg-white transition {{ !request('queue') && !request('status') ? 'bg-white border-l-2 border-brand text-brand' : 'text-brand/70' }}">
+                <span class="text-sm font-bold">All Tickets</span>
+            </a>
+
+            <a href="{{ route('orchestrator.support.tickets', ['status' => 'closed']) }}" class="flex items-center justify-between px-4 py-2 hover:bg-white transition {{ request('status') == 'closed' ? 'bg-white border-l-2 border-brand text-brand' : 'text-brand/70' }}">
+                <span class="text-sm font-bold">Resolved / Closed</span>
             </a>
             
             <div class="px-4 mt-8 mb-2 text-[10px] font-black text-brand-muted uppercase tracking-widest">Categories</div>
-            <a href="#" class="flex items-center gap-2 px-4 py-2 text-brand/70 hover:bg-white transition text-sm font-medium">
+            <a href="{{ route('orchestrator.support.tickets', ['category' => 'billing']) }}" class="flex items-center gap-2 px-4 py-2 text-brand/70 hover:bg-white transition text-sm font-medium {{ request('category') == 'billing' ? 'font-bold text-brand bg-white' : '' }}">
                 <span class="w-2 h-2 rounded-full bg-red-500"></span> Billing Disputes
             </a>
-            <a href="#" class="flex items-center gap-2 px-4 py-2 text-brand/70 hover:bg-white transition text-sm font-medium">
+            <a href="{{ route('orchestrator.support.tickets', ['category' => 'driver_behavior']) }}" class="flex items-center gap-2 px-4 py-2 text-brand/70 hover:bg-white transition text-sm font-medium {{ request('category') == 'driver_behavior' ? 'font-bold text-brand bg-white' : '' }}">
                 <span class="w-2 h-2 rounded-full bg-blue-500"></span> Driver Behavior
             </a>
-            <a href="#" class="flex items-center gap-2 px-4 py-2 text-brand/70 hover:bg-white transition text-sm font-medium">
+            <a href="{{ route('orchestrator.support.tickets', ['category' => 'app_issue']) }}" class="flex items-center gap-2 px-4 py-2 text-brand/70 hover:bg-white transition text-sm font-medium {{ request('category') == 'app_issue' ? 'font-bold text-brand bg-white' : '' }}">
                 <span class="w-2 h-2 rounded-full bg-purple-500"></span> App Issues
             </a>
         </div>
@@ -47,10 +58,14 @@
     <div class="flex-1 flex flex-col">
         <!-- Toolbar -->
         <div class="p-4 border-b border-gray-50 flex items-center justify-between bg-white">
-            <div class="relative w-64">
-                <input type="text" placeholder="Search tickets..." class="w-full bg-surface border border-gray-100 rounded pl-9 pr-3 py-1.5 text-sm font-medium outline-none focus:ring-1 focus:ring-brand/20 transition-all">
+            <form action="{{ route('orchestrator.support.tickets') }}" method="GET" class="relative w-64">
+                @if(request('queue')) <input type="hidden" name="queue" value="{{ request('queue') }}"> @endif
+                @if(request('status')) <input type="hidden" name="status" value="{{ request('status') }}"> @endif
+                @if(request('category')) <input type="hidden" name="category" value="{{ request('category') }}"> @endif
+                
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search tickets..." class="w-full bg-surface border border-gray-100 rounded pl-9 pr-3 py-1.5 text-sm font-medium outline-none focus:ring-1 focus:ring-brand/20 transition-all">
                 <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </div>
+            </form>
             <div class="flex items-center gap-2">
                 <button class="p-1.5 text-gray-400 hover:text-brand transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg></button>
             </div>
@@ -58,41 +73,46 @@
 
         <!-- List -->
         <div class="flex-1 overflow-y-auto bg-surface/10 divide-y divide-gray-50">
+            @forelse($tickets as $ticket)
+            <a href="{{ route('orchestrator.support.ticket.show', $ticket->id) }}" class="block p-4 bg-white hover:bg-surface/50 transition border-l-4 {{ $ticket->status == 'closed' ? 'border-gray-300 opacity-60' : 'border-'.$ticket->priorityColor().'-500' }}">
+                <div class="flex items-start justify-between mb-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-brand">{{ ucfirst($ticket->user_type) }}: {{ $ticket->user->name ?? 'Unknown' }}</span>
+                        @if($ticket->status != 'closed')
+                            <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-{{ $ticket->priorityColor() }}-100 text-{{ $ticket->priorityColor() }}-700">{{ $ticket->priority }}</span>
+                        @else
+                            <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">Closed</span>
+                        @endif
+                    </div>
+                    <span class="text-xs text-brand-muted whitespace-nowrap">{{ $ticket->created_at->diffForHumans() }}</span>
+                </div>
+                <h4 class="text-sm font-bold text-brand mb-1 truncate">{{ $ticket->subject }}</h4>
+                <div class="mt-3 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-brand-muted">
+                    <span>{{ $ticket->ticket_number }}</span>
+                    <span class="flex items-center gap-1">
+                        @if($ticket->category == 'billing')
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span> Billing
+                        @elseif($ticket->category == 'driver_behavior')
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> Driver Behavior
+                        @else
+                            <span class="w-2 h-2 rounded-full bg-gray-400"></span> {{ ucfirst(str_replace('_', ' ', $ticket->category)) }}
+                        @endif
+                    </span>
+                    @if($ticket->assignedTo)
+                        <span class="flex items-center gap-1 text-accent"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg> {{ $ticket->assignedTo->name }}</span>
+                    @endif
+                </div>
+            </a>
+            @empty
+            <div class="p-12 flex flex-col items-center justify-center text-gray-400 h-full">
+                <svg class="w-16 h-16 mb-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"/></svg>
+                <p class="text-sm font-bold text-brand-muted">No tickets found in this view.</p>
+            </div>
+            @endforelse
             
-            <!-- Ticket Row -->
-            <a href="{{ route('orchestrator.support.ticket.show', 1) }}" class="block p-4 bg-white hover:bg-surface/50 transition border-l-4 border-red-500">
-                <div class="flex items-start justify-between mb-1">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-brand">Customer: Sarah Jenkins</span>
-                        <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-red-100 text-red-700">Urgent</span>
-                    </div>
-                    <span class="text-xs text-brand-muted">10m ago</span>
-                </div>
-                <h4 class="text-sm font-bold text-brand mb-1">Driver demanded extra cash and refused to drop me</h4>
-                <p class="text-xs text-brand-muted truncate">The driver (Kwame M.) stopped halfway and said the app fare is too small. He locked the doors until I...</p>
-                <div class="mt-3 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-brand-muted">
-                    <span>#TKT-8921</span>
-                    <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg> Driver Behavior</span>
-                </div>
-            </a>
-
-            <!-- Ticket Row -->
-            <a href="#" class="block p-4 bg-white hover:bg-surface/50 transition border-l-4 border-amber-500 opacity-80">
-                <div class="flex items-start justify-between mb-1">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-brand">Driver: Osei Appiah</span>
-                        <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-amber-100 text-amber-700">High</span>
-                    </div>
-                    <span class="text-xs text-brand-muted">2h ago</span>
-                </div>
-                <h4 class="text-sm font-bold text-brand mb-1">Wallet payout failed to MoMo</h4>
-                <p class="text-xs text-brand-muted truncate">I tried to withdraw my earnings from yesterday but the transaction failed and the money left my wallet...</p>
-                <div class="mt-3 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-brand-muted">
-                    <span>#TKT-8919</span>
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Billing Disputes</span>
-                </div>
-            </a>
-
+            <div class="p-4 border-t border-gray-50 bg-white">
+                {{ $tickets->links() }}
+            </div>
         </div>
     </div>
 </div>

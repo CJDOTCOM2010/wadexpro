@@ -2,20 +2,19 @@
 
 namespace App\Modules\Support\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use App\Core\Traits\HasUuid;
+use App\Models\User;
 
 class TicketReply extends Model
 {
-    use HasUuids;
+    use HasUuid;
+
+    protected $table = 'ticket_replies';
 
     protected $fillable = [
-        'ticket_id',
-        'sender_id',
-        'sender_type',   // 'customer', 'driver', 'admin'
-        'message',
-        'attachments',   // JSON array of file URLs
-        'is_internal',   // internal admin note, not visible to user
+        'ticket_id', 'sender_id', 'sender_type',
+        'message', 'attachments', 'is_internal',
     ];
 
     protected $casts = [
@@ -25,14 +24,11 @@ class TicketReply extends Model
 
     public function ticket()
     {
-        return $this->belongsTo(SupportTicket::class);
+        return $this->belongsTo(SupportTicket::class, 'ticket_id');
     }
 
     public function sender()
     {
-        return $this->belongsTo(\App\Models\User::class, 'sender_id');
+        return $this->belongsTo(User::class, 'sender_id');
     }
-
-    public function scopePublic($query) { return $query->where('is_internal', false); }
-    public function scopeInternal($query) { return $query->where('is_internal', true); }
 }

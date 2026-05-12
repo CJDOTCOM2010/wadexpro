@@ -2,73 +2,79 @@
 
 namespace App\Modules\Support\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Core\Traits\HasUuid;
+use App\Models\User;
+use App\Modules\Logistics\Models\Order;
 
 class SupportTicket extends Model
 {
-    use HasUuids;
+    use HasUuid;
+
+    protected $table = 'support_tickets';
 
     protected $fillable = [
-        'ticket_number',
-        'user_id',
-        'user_type',         // 'customer', 'driver'
-        'order_id',
-        'subject',
-        'category',          // 'ride_dispute', 'payment_issue', 'account_problem', 'driver_complaint', 'refund_request', 'general'
-        'priority',          // 'low', 'medium', 'high', 'critical'
-        'status',            // 'open', 'in_progress', 'waiting_customer', 'resolved', 'closed'
-        'assigned_to',       // admin user UUID
-        'resolved_by',
-        'resolved_at',
-        'closed_at',
-        'first_response_at',
-        'satisfaction_rating', // 1-5 after resolution
-        'internal_notes',
+        'ticket_number', 'user_id', 'user_type', 'order_id',
+        'subject', 'category', 'priority', 'status',
+        'assigned_to', 'resolved_by',
+        'resolved_at', 'closed_at', 'first_response_at',
+        'satisfaction_rating', 'internal_notes',
     ];
 
     protected $casts = [
-        'resolved_at'          => 'datetime',
-        'closed_at'            => 'datetime',
-        'first_response_at'    => 'datetime',
-        'satisfaction_rating'  => 'integer',
+        'resolved_at'       => 'datetime',
+        'closed_at'         => 'datetime',
+        'first_response_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $ticket) {
+            $ticket->ticket_number = 'TKT-' . strtoupper(substr(uniqid(), -6));
+        });
+    }
+
+    // ── Relationships ─────────────────────────────────────────────────────────
 
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function assignedAgent()
+    public function order()
     {
-        return $this->belongsTo(\App\Models\User::class, 'assigned_to');
+        return $this->belongsTo(Order::class);
     }
 
-    public function replies(): HasMany
+    public function assignedTo()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function resolvedBy()
+    {
+        return $this->belongsTo(User::class, 'resolved_by');
+    }
+
+    public function replies()
     {
         return $this->hasMany(TicketReply::class, 'ticket_id');
     }
 
-    public function scopeOpen($query) { return $query->where('status', 'open'); }
-    public function scopeUnassigned($query) { return $query->whereNull('assigned_to'); }
-    public function scopeUrgent($query) { return $query->whereIn('priority', ['high', 'critical']); }
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
-    public function getPriorityBadgeAttribute(): string
+    public function isOpen(): bool
     {
-        return match($this->priority) {
-            'critical' => 'bg-red-600 text-white animate-pulse',
-            'high'     => 'bg-red-100 text-red-700',
-            'medium'   => 'bg-amber-100 text-amber-700',
-            default    => 'bg-gray-100 text-gray-600',
-        };
+        return in_array($this->status, ['open', 'in_progress']);
     }
 
-    protected static function boot()
+    public function priorityColor(): string
     {
-        parent::boot();
-        static::creating(function ($model) {
-            $model->ticket_number = 'TKT-' . strtoupper(substr(uniqid(), -6));
-        });
+        return match ($this->priority) {
+            'urgent' => 'red',
+            'high'   => 'amber',
+            'low'    => 'green',
+            default  => 'blue',
+        };
     }
 }

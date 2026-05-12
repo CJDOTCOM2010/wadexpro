@@ -32,6 +32,23 @@ Route::prefix('v1')->group(function () {
     Route::get('/profile', [\App\Http\Controllers\Api\V1\ProfileController::class, 'getProfile']);
     Route::put('/profile/update', [\App\Http\Controllers\Api\V1\ProfileController::class, 'updateProfile']);
     Route::post('/profile/photo', [\App\Http\Controllers\Api\V1\ProfileController::class, 'updatePhoto']);
+
+    // Mobile Wallet Endpoints
+    Route::get('/payments/wallet/hub', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'getHubData']);
+    Route::get('/logistics/wallet/transactions', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'getTransactions']);
+    Route::post('/logistics/wallet/topup', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'initializeTopUp']);
+    Route::get('/logistics/wallet/verify', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'verifyTopUp']);
+    Route::post('/payments/wallet/hub/promos/check', [\App\Http\Controllers\Api\V1\CustomerWalletController::class, 'checkPromo']);
+
+    // Mock WebView for TopUp testing
+    Route::get('/mock/wallet/topup/webview', function(Request $request) {
+        $ref = $request->query('reference', 'UNKNOWN');
+        return "<html><body style='background:#111;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;'>
+                <h1>WADEXPRO Mock Gateway</h1>
+                <p>Simulating Payment...</p>
+                <button onclick=\"window.location.href='/api/v1/wallet/verify?reference={$ref}';\" style='padding:15px 30px;background:#00D4AA;border:none;border-radius:8px;color:#fff;font-weight:bold;margin-top:20px;'>Authorize Top-Up</button>
+                </body></html>";
+    });
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

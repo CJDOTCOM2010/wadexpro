@@ -80,7 +80,11 @@
         <!-- Main Map Area -->
         <main class="flex-1 relative overflow-hidden bg-[#0A0A1A]">
             
-            <!-- CartoDB Styled Placeholder Map -->
+            <!-- Real Google Map -->
+            <div id="dispatcher-map" class="absolute inset-0 z-0 bg-[#0A0A1A]"></div>
+            
+            @if(empty($google_maps_api_key))
+            <!-- CartoDB Styled Placeholder Map (Fallback) -->
             <div class="absolute inset-0 carto-dots opacity-20"></div>
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] opacity-10">
                 <svg viewBox="0 0 1000 1000" class="w-full h-full fill-none stroke-accent/40 stroke-[0.5]">
@@ -91,31 +95,11 @@
                     <line x1="500" y1="0" x2="500" y2="1000" />
                 </svg>
             </div>
-
-            <!-- Animated Fleet Nodes (Simulated Placement for Active Drivers) -->
-            @foreach($activeDrivers as $index => $driver)
-            @php
-                // Generate random map positions for the mock UI to visualize nodes
-                $top = 20 + ($index * 15 % 60);
-                $left = 20 + ($index * 25 % 60);
-                // Determine if driver is busy based on some logic (mock: random)
-                $isBusy = $index % 3 === 0;
-            @endphp
-            <div class="absolute top-[{{ $top }}%] left-[{{ $left }}%]">
-                <div class="relative group">
-                    <div class="absolute inset-0 {{ $isBusy ? 'bg-accent' : 'bg-green-500' }} rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity"></div>
-                    <div class="relative w-3 h-3 {{ $isBusy ? 'bg-accent shadow-[0_0_15px_#F8B803]' : 'bg-green-500 shadow-[0_0_15px_#22C55E]' }} rounded-full flex items-center justify-center cursor-pointer">
-                        <div class="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-brand/90 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-bold uppercase z-50">
-                            Node: {{ substr($driver->id, 0, 8) }} | {{ $isBusy ? 'In Transit' : 'Idle' }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
+            @endif
 
             <!-- Top HUD Overlay -->
-            <div class="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-20">
-                <div class="bg-brand/80 backdrop-blur-xl px-8 py-4 rounded-full border border-white/10 flex items-center gap-12 shadow-2xl">
+            <div class="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-20 pointer-events-none">
+                <div class="bg-brand/80 backdrop-blur-xl px-8 py-4 rounded-full border border-white/10 flex items-center gap-12 shadow-2xl pointer-events-auto">
                     <div class="text-center">
                         <p class="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1">Global Coverage</p>
                         <p class="text-xl font-black text-accent">98.2%</p>
@@ -170,6 +154,60 @@
         </button>
 
     </div>
+
+    @if(!empty($google_maps_api_key))
+    <script async src="https://maps.googleapis.com/maps/api/js?key={{ $google_maps_api_key }}&callback=initDispatcherMap"></script>
+    <script>
+        function initDispatcherMap() {
+            const mapElement = document.getElementById('dispatcher-map');
+            if (!mapElement || typeof google === 'undefined') return;
+
+            const map = new google.maps.Map(mapElement, {
+                zoom: 13,
+                center: { lat: 5.6037, lng: -0.1870 },
+                disableDefaultUI: true,
+                styles: [
+                    { elementType: "geometry", stylers: [{ color: "#0A0A1A" }] },
+                    { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+                    { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+                    { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+                    { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+                    { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+                    { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
+                    { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+                    { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+                    { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+                    { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
+                    { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
+                    { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
+                    { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
+                    { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+                    { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+                    { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
+                    { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
+                ]
+            });
+
+            const drivers = @json($activeDrivers);
+            drivers.forEach((driver, index) => {
+                const isBusy = index % 3 === 0;
+                new google.maps.Marker({
+                    position: { lat: 5.6037 + (Math.random() - 0.5) * 0.15, lng: -0.1870 + (Math.random() - 0.5) * 0.15 },
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 5,
+                        fillColor: isBusy ? '#F8B803' : '#22C55E',
+                        fillOpacity: 1,
+                        strokeColor: '#0A0A1A',
+                        strokeWeight: 2,
+                    },
+                    title: `Node: ${driver.id.substring(0,8)} - ${isBusy ? 'In Transit' : 'Idle'}`
+                });
+            });
+        }
+    </script>
+    @endif
 
 </body>
 </html>

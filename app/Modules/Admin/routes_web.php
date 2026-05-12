@@ -29,14 +29,20 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         
         // Platform Core
         Route::get('/users', fn() => view('admin.users'))->name('orchestrator.users');
-        Route::get('/security', fn() => view('admin.security'))->name('orchestrator.security');
+        Route::get('/security', [\App\Modules\Admin\Controllers\SecurityController::class, 'index'])->name('orchestrator.security');
+        Route::patch('/security/alerts/{id}/resolve', [\App\Modules\Admin\Controllers\SecurityController::class, 'resolveAlert'])->name('orchestrator.security.alerts.resolve');
+        Route::post('/security/devices/block', [\App\Modules\Admin\Controllers\SecurityController::class, 'blockDevice'])->name('orchestrator.security.devices.block');
+        Route::patch('/security/devices/{id}/unblock', [\App\Modules\Admin\Controllers\SecurityController::class, 'unblockDevice'])->name('orchestrator.security.devices.unblock');
+
         Route::get('/operations-map', fn() => view('admin.operations_map'))->name('orchestrator.operations_map');
         Route::get('/dispatcher', fn() => view('admin.dispatcher'))->name('orchestrator.dispatcher');
         
         // Logistics Engine
         Route::get('/drivers', fn() => view('admin.asset_registry'))->name('orchestrator.drivers');
         Route::get('/orders', fn() => view('admin.global_queue'))->name('orchestrator.orders');
-        Route::get('/financials', fn() => view('admin.financials'))->name('orchestrator.financials');
+        Route::get('/financials', [\App\Modules\Admin\Controllers\FinancialController::class, 'index'])->name('orchestrator.financials');
+        Route::patch('/financials/payout/{id}/approve', [\App\Modules\Admin\Controllers\FinancialController::class, 'approvePayout'])->name('orchestrator.financials.payout.approve');
+
         
         // CMS & Platform
         Route::view('/menus', 'admin.menus')->name('orchestrator.menus');

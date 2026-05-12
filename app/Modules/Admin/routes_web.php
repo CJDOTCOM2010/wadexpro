@@ -28,7 +28,7 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('orchestrator.dashboard');
         
         // Platform Core
-        Route::get('/users', fn() => view('admin.users'))->name('orchestrator.users');
+        Route::get('/users', [\App\Modules\Admin\Controllers\UserController::class, 'index'])->name('orchestrator.users');
         Route::get('/security', [\App\Modules\Admin\Controllers\SecurityController::class, 'index'])->name('orchestrator.security');
         Route::patch('/security/alerts/{id}/resolve', [\App\Modules\Admin\Controllers\SecurityController::class, 'resolveAlert'])->name('orchestrator.security.alerts.resolve');
         Route::post('/security/devices/block', [\App\Modules\Admin\Controllers\SecurityController::class, 'blockDevice'])->name('orchestrator.security.devices.block');

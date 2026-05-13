@@ -43,10 +43,68 @@ class UserController extends Controller
         return view('admin.users', compact('stats', 'users'));
     }
 
-    public function toggleStatus(Request $request, string $id)
+    /**
+     * Provision a new entity node.
+     */
+    public function store(Request $request)
     {
-        // Assuming we add a 'status' or 'is_active' column if it doesn't exist,
-        // or just mock it. Let's assume we toggle 'is_active' or just flash a message if not exists.
-        return back()->with('success', 'User access level updated successfully.');
+        $request->validate([
+            'name'       => 'required|string|max:255',
+            'email'      => 'required|email|unique:users,email',
+            'phone'      => 'required|string|unique:users,phone',
+            'password'   => 'required|string|min:8',
+            'user_type'  => 'required|in:admin,customer,driver',
+        ]);
+
+        User::create([
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'phone'     => $request->phone,
+            'password'  => Hash::make($request->password),
+            'user_type' => $request->user_type,
+            'is_active' => true,
+        ]);
+
+        return back()->with('success', 'New entity provisioned successfully.');
+    }
+
+    /**
+     * Update user details.
+     */
+    public function update(Request $request, string $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'phone' => 'required|string|unique:users,phone,'.$user->id,
+        ]);
+
+        $user->update($request->only(['name', 'email', 'phone']));
+
+        return back()->with('success', 'User profile updated.');
+    }
+
+    /**
+     * Toggle active state.
+     */
+    public function toggleStatus(string $id)
+    {
+        $user = User::findOrFail($id);
+        $user->update(['is_active' => !$user->is_active]);
+
+        return back()->with('success', 'User access state toggled.');
+    }
+
+    /**
+     * Decommission user node.
+     */
+    public function destroy(string $id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return back()->with('success', 'User node decommissioned.');
     }
 }

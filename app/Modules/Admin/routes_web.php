@@ -30,6 +30,10 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         
         // Platform Core
         Route::get('/users', [\App\Modules\Admin\Controllers\UserController::class, 'index'])->name('orchestrator.users');
+        Route::post('/users', [\App\Modules\Admin\Controllers\UserController::class, 'store'])->name('orchestrator.users.store');
+        Route::put('/users/{id}', [\App\Modules\Admin\Controllers\UserController::class, 'update'])->name('orchestrator.users.update');
+        Route::patch('/users/{id}/toggle', [\App\Modules\Admin\Controllers\UserController::class, 'toggleStatus'])->name('orchestrator.users.toggle');
+        Route::delete('/users/{id}', [\App\Modules\Admin\Controllers\UserController::class, 'destroy'])->name('orchestrator.users.destroy');
         // Security & Fraud (Restricted)
         Route::middleware('admin_department:Security|IT|Engineering')->group(function() {
             Route::get('/security', [\App\Modules\Admin\Controllers\SecurityController::class, 'index'])->name('orchestrator.security');

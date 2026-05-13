@@ -2,16 +2,21 @@
 @section('title', 'Global Entity Node Matrix')
 @section('content')
 
-<div class="mb-8 flex items-center justify-between">
-    <div>
-        <h2 class="text-2xl font-black text-brand tracking-tight">User Matrix Control</h2>
-        <p class="text-brand-muted font-medium mt-1">Personnel oversight of the WADEXPRO distributed human node network.</p>
+<div x-data="{ 
+    showProvisionModal: false, 
+    showEditModal: false,
+    currentUser: { id: null, name: '', email: '', phone: '' }
+}">
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-black text-brand tracking-tight">User Matrix Control</h2>
+            <p class="text-brand-muted font-medium mt-1">Personnel oversight of the WADEXPRO distributed human node network.</p>
+        </div>
+        <button @click="showProvisionModal = true" class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2 shadow-xl shadow-brand/20">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            Provision New Entity
+        </button>
     </div>
-    <button class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-        Provision New Entity
-    </button>
-</div>
 
 <!-- Stats Bar -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -109,7 +114,32 @@
                         </div>
                     </td>
                     <td class="px-6 py-5 text-right">
-                        <button class="p-2 text-gray-300 hover:text-brand transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"/></svg></button>
+                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <!-- Toggle Status -->
+                            <form action="{{ route('orchestrator.users.toggle', $user->id) }}" method="POST">
+                                @csrf @method('PATCH')
+                                <button type="submit" class="p-2 {{ $user->is_active ? 'text-amber-500' : 'text-green-500' }} hover:bg-surface rounded-lg transition tooltip" title="{{ $user->is_active ? 'Suspend Node' : 'Activate Node' }}">
+                                    @if($user->is_active)
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                                    @else
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    @endif
+                                </button>
+                            </form>
+
+                            <!-- Edit Details -->
+                            <button @click="currentUser = { id: '{{ $user->id }}', name: '{{ $user->name }}', email: '{{ $user->email }}', phone: '{{ $user->phone }}' }; showEditModal = true" class="p-2 text-brand hover:bg-surface rounded-lg transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            </button>
+
+                            <!-- Delete (Decommission) -->
+                            <form action="{{ route('orchestrator.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('CRITICAL: Are you sure you want to decommission this entity node? This action is irreversible.')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty
@@ -126,6 +156,81 @@
     
     <div class="p-6 bg-surface/10 border-t border-gray-50 flex items-center justify-center">
         {{ $users->appends(request()->except('page'))->links() }}
+    </div>
+    </div>
+
+    <!-- Provision Modal -->
+    <div x-show="showProvisionModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div @click="showProvisionModal = false" class="absolute inset-0 bg-brand/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-fade-in-down" @click.stop>
+            <div class="p-8 border-b border-gray-100 flex items-center justify-between bg-surface/30">
+                <h3 class="text-2xl font-black text-brand tracking-tight">Provision New Node</h3>
+                <button @click="showProvisionModal = false" class="p-2 hover:bg-white rounded-full transition"><svg class="w-6 h-6 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form action="{{ route('orchestrator.users.store') }}" method="POST" class="p-8 space-y-5">
+                @csrf
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Full Legal Name</label>
+                    <input type="text" name="name" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Email Address</label>
+                        <input type="email" name="email" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Phone Number</label>
+                        <input type="text" name="phone" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Initial Credentials (Password)</label>
+                    <input type="password" name="password" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Node Classification</label>
+                    <select name="user_type" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <option value="customer">Customer Node</option>
+                        <option value="driver">Driver Node</option>
+                        <option value="admin">Administrative Node</option>
+                    </select>
+                </div>
+                <div class="pt-4 flex gap-4">
+                    <button type="button" @click="showProvisionModal = false" class="flex-1 py-4 text-sm font-bold text-brand-muted hover:text-brand transition">Cancel</button>
+                    <button type="submit" class="flex-1 py-4 bg-brand text-white font-black rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20">Finalize Provisioning</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div x-show="showEditModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div @click="showEditModal = false" class="absolute inset-0 bg-brand/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-fade-in-down" @click.stop>
+            <div class="p-8 border-b border-gray-100 flex items-center justify-between bg-surface/30">
+                <h3 class="text-2xl font-black text-brand tracking-tight">Recalibrate Identity</h3>
+                <button @click="showEditModal = false" class="p-2 hover:bg-white rounded-full transition"><svg class="w-6 h-6 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form :action="`/orchestrator/users/${currentUser.id}`" method="POST" class="p-8 space-y-5">
+                @csrf @method('PUT')
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Identity Label</label>
+                    <input type="text" name="name" x-model="currentUser.name" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Contact Email</label>
+                    <input type="email" name="email" x-model="currentUser.email" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Active Phone</label>
+                    <input type="text" name="phone" x-model="currentUser.phone" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                </div>
+                <div class="pt-4 flex gap-4">
+                    <button type="button" @click="showEditModal = false" class="flex-1 py-4 text-sm font-bold text-brand-muted hover:text-brand transition">Cancel</button>
+                    <button type="submit" class="flex-1 py-4 bg-brand text-white font-black rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20">Commit Changes</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

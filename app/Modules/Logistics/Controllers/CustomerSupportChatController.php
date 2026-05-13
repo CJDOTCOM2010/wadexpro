@@ -84,7 +84,7 @@ class CustomerSupportChatController extends Controller
 
         // Broadcast to Socket.IO server for real-time delivery to Admin Dashboard
         try {
-            $socketUrl = \App\Models\SystemSetting::get('flutter_rtc_url', 'https://wadexpro-4rexnj1k.on-forge.com:3000');
+            $socketUrl = \App\Modules\Admin\Models\SystemSetting::get('flutter_rtc_url', 'https://wadexpro-4rexnj1k.on-forge.com:3000');
             \Illuminate\Support\Facades\Http::timeout(3)->post("{$socketUrl}/api/support/push", [
                 'conversationId' => (string) $conversation->id,
                 'message'        => $request->content,

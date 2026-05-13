@@ -13,7 +13,7 @@
     <!-- Socket.IO Client -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
-        window.WADEX_SOCKET_URL = '{{ \App\Models\SystemSetting::get("flutter_rtc_url", "https://wadexpro-4rexnj1k.on-forge.com:3000") }}';
+        window.WADEX_SOCKET_URL = '{{ \App\Modules\Admin\Models\SystemSetting::get("flutter_rtc_url", "https://wadexpro-4rexnj1k.on-forge.com:3000") }}';
     </script>
 
     <!-- Leaflet.js Assets -->

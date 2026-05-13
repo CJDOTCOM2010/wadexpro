@@ -3,7 +3,7 @@
 namespace App\Modules\Notifications\Services;
 
 use App\Models\User;
-use App\Models\SystemSetting;
+use App\Modules\Admin\Models\SystemSetting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;

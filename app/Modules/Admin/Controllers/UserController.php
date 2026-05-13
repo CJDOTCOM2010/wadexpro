@@ -15,7 +15,7 @@ class UserController extends Controller
         // Stats
         $totalNodes = User::count();
         $activeSessions = User::where('updated_at', '>=', now()->subHours(24))->count();
-        $revokedAccess = User::where('status', 'deactivated')->count() ?? 0; // If there's a status column. Wait, check User model for 'status'. If not, 0.
+        $revokedAccess = User::where('is_active', false)->count();
 
         $stats = [
             'total_nodes'     => $totalNodes,

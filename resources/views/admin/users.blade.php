@@ -99,7 +99,7 @@
                     </td>
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-2">
-                            @if($user->status !== 'deactivated')
+                            @if($user->is_active)
                                 <div class="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
                                 <span class="text-xs font-bold text-brand uppercase tracking-tighter">Active</span>
                             @else

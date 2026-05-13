@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             CmsLandingPageSeeder::class,
             MenuSeeder::class,
             OnboardingSlideSeeder::class,
+            VehicleTypeSeeder::class,
         ]);
     }
 }

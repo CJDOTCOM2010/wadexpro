@@ -123,42 +123,51 @@
         <div @click="showAddModal = false" class="absolute inset-0 bg-brand/60 backdrop-blur-sm"></div>
         <div class="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-fade-in-down" @click.stop>
             <div class="p-8 border-b border-gray-100 flex items-center justify-between bg-surface/30">
-                <h3 class="text-2xl font-black text-brand tracking-tight">Add Vehicle Type</h3>
+                <div>
+                    <h3 class="text-2xl font-black text-brand tracking-tight">Provision New Category</h3>
+                    <p class="text-xs text-brand-muted font-medium mt-1">Define pricing and capacity for a new fleet tier.</p>
+                </div>
                 <button @click="showAddModal = false" class="p-2 hover:bg-white rounded-full transition"><svg class="w-6 h-6 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <form action="{{ route('orchestrator.vehicle.types.store') }}" method="POST" class="p-8 space-y-5">
                 @csrf
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Name (e.g. Economy)</label>
-                    <input type="text" name="name" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                    <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Name (Identifier)</label>
+                    <input type="text" name="name" required placeholder="e.g. Wadex Economy, Premium SUV" class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                    <p class="text-[9px] text-gray-400 font-medium italic italic">Visible to customers during ride selection.</p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Base Fare (₵)</label>
-                        <input type="number" step="0.01" name="base_fare" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <input type="number" step="0.01" name="base_fare" required placeholder="10.00" class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <p class="text-[9px] text-gray-400 font-medium italic">Fixed cost to start the ride.</p>
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Min Fare (₵)</label>
-                        <input type="number" step="0.01" name="min_fare" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <input type="number" step="0.01" name="min_fare" required placeholder="15.00" class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <p class="text-[9px] text-gray-400 font-medium italic">Minimum price for any trip.</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Per Km Rate (₵)</label>
-                        <input type="number" step="0.01" name="per_km_rate" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <input type="number" step="0.01" name="per_km_rate" required placeholder="2.50" class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <p class="text-[9px] text-gray-400 font-medium italic">Charge per kilometer traveled.</p>
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Per Minute Rate (₵)</label>
-                        <input type="number" step="0.01" name="per_minute_rate" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <input type="number" step="0.01" name="per_minute_rate" required placeholder="0.50" class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <p class="text-[9px] text-gray-400 font-medium italic">Charge per minute of trip time.</p>
                     </div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Passenger Capacity</label>
-                    <input type="number" name="capacity" value="4" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                    <input type="number" name="capacity" value="4" required placeholder="4" class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                    <p class="text-[9px] text-gray-400 font-medium italic">Maximum number of passengers allowed.</p>
                 </div>
                 <div class="pt-4 flex gap-4">
-                    <button type="button" @click="showAddModal = false" class="flex-1 py-4 text-sm font-bold text-brand-muted hover:text-brand transition">Cancel</button>
-                    <button type="submit" class="flex-1 py-4 bg-brand text-white font-black rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20">Save Vehicle Type</button>
+                    <button type="button" @click="showAddModal = false" class="flex-1 py-4 text-sm font-bold text-brand-muted hover:text-brand transition">Discard</button>
+                    <button type="submit" class="flex-1 py-4 bg-brand text-white font-black rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20">Finalize Category</button>
                 </div>
             </form>
         </div>
@@ -169,7 +178,10 @@
         <div @click="showEditModal = false" class="absolute inset-0 bg-brand/60 backdrop-blur-sm"></div>
         <div class="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-fade-in-down" @click.stop>
             <div class="p-8 border-b border-gray-100 flex items-center justify-between bg-surface/30">
-                <h3 class="text-2xl font-black text-brand tracking-tight">Edit Vehicle Type</h3>
+                <div>
+                    <h3 class="text-2xl font-black text-brand tracking-tight">Recalibrate Category</h3>
+                    <p class="text-xs text-brand-muted font-medium mt-1">Adjust pricing dynamics for this vehicle tier.</p>
+                </div>
                 <button @click="showEditModal = false" class="p-2 hover:bg-white rounded-full transition"><svg class="w-6 h-6 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <form :action="`/orchestrator/driver-management/vehicle-types/${currentType.id}`" method="POST" class="p-8 space-y-5">
@@ -178,34 +190,40 @@
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Name</label>
                     <input type="text" name="name" x-model="currentType.name" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                    <p class="text-[9px] text-gray-400 font-medium italic">Updates display label in the customer app.</p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Base Fare (₵)</label>
                         <input type="number" step="0.01" name="base_fare" x-model="currentType.base_fare" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <p class="text-[9px] text-gray-400 font-medium italic">Fixed entry cost for the ride.</p>
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Min Fare (₵)</label>
                         <input type="number" step="0.01" name="min_fare" x-model="currentType.min_fare" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <p class="text-[9px] text-gray-400 font-medium italic">Flooring price for the trip.</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Per Km Rate (₵)</label>
                         <input type="number" step="0.01" name="per_km_rate" x-model="currentType.per_km_rate" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <p class="text-[9px] text-gray-400 font-medium italic">Charge per kilometer distance.</p>
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Per Minute Rate (₵)</label>
                         <input type="number" step="0.01" name="per_minute_rate" x-model="currentType.per_minute_rate" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                        <p class="text-[9px] text-gray-400 font-medium italic">Charge per minute of travel.</p>
                     </div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Passenger Capacity</label>
                     <input type="number" name="capacity" x-model="currentType.capacity" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none">
+                    <p class="text-[9px] text-gray-400 font-medium italic">Maximum seat capacity for this tier.</p>
                 </div>
                 <div class="pt-4 flex gap-4">
                     <button type="button" @click="showEditModal = false" class="flex-1 py-4 text-sm font-bold text-brand-muted hover:text-brand transition">Cancel</button>
-                    <button type="submit" class="flex-1 py-4 bg-brand text-white font-black rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20">Update Vehicle Type</button>
+                    <button type="submit" class="flex-1 py-4 bg-brand text-white font-black rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20">Commit Changes</button>
                 </div>
             </form>
         </div>

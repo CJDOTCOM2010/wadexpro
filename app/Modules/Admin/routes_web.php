@@ -66,6 +66,15 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::post('/settings/notifications/events',  [\App\Modules\Admin\Controllers\NotificationController::class, 'updateEvents'])->name('orchestrator.settings.notifications.events');
         Route::post('/settings/notifications/test',    [\App\Modules\Admin\Controllers\NotificationController::class, 'test'])->name('orchestrator.settings.notifications.test');
 
+        // Notification Templates
+        Route::get('/settings/templates',              [\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'index'])->name('orchestrator.templates.index');
+        Route::get('/settings/templates/create',       [\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'create'])->name('orchestrator.templates.create');
+        Route::post('/settings/templates',             [\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'store'])->name('orchestrator.templates.store');
+        Route::get('/settings/templates/{id}/edit',    [\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'edit'])->name('orchestrator.templates.edit');
+        Route::put('/settings/templates/{id}',         [\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'update'])->name('orchestrator.templates.update');
+        Route::delete('/settings/templates/{id}',      [\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'destroy'])->name('orchestrator.templates.destroy');
+        Route::patch('/settings/templates/{id}/toggle',[\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'toggle'])->name('orchestrator.templates.toggle');
+
         // Onboarding Slide Manager
         Route::get('/settings/onboarding/{appType}', [\App\Modules\Admin\Controllers\OnboardingController::class, 'index'])->name('orchestrator.settings.onboarding');
         Route::post('/settings/onboarding', [\App\Modules\Admin\Controllers\OnboardingController::class, 'store'])->name('orchestrator.onboarding.store');

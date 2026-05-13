@@ -109,7 +109,7 @@ class SupportTicketController extends Controller
             'replies.sender',
         ])->findOrFail($id);
 
-        $agents = User::where('role', 'admin')->get(['id', 'name']);
+        $agents = User::where('user_type', 'admin')->get(['id', 'name']);
 
         return view('admin.support_ticket_detail', compact('ticket', 'agents'));
     }

@@ -16,6 +16,8 @@ import 'core/theme/app_colors.dart';
 import 'core/network/providers.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'core/services/push_notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +29,9 @@ void main() async {
   try {
     await Firebase.initializeApp();
     debugPrint('WADEXPRO Driver: Firebase Identity initialized successfully.');
+
+    // Register background message handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   } catch (e) {
     debugPrint('WADEXPRO Driver: Firebase initialization skipped or failed: $e');
   }
@@ -144,6 +149,10 @@ class _AppGate extends ConsumerWidget {
       case AuthStatus.authenticated:
         // Once authenticated, go straight to the home screen.
         // KYC onboarding is handled separately from the main auth gate.
+        // Initialize push notifications for the driver
+        Future.microtask(() {
+          ref.read(pushNotificationServiceProvider).initialize();
+        });
         return const DriverHomeScreen();
         
       case AuthStatus.otpSent:

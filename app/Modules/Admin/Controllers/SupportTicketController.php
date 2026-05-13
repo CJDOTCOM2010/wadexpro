@@ -138,6 +138,21 @@ class SupportTicketController extends Controller
             $ticket->update(['first_response_at' => now(), 'status' => 'in_progress']);
         }
 
+        // Send push notification to the ticket owner (if not internal note)
+        if (!$request->boolean('is_internal', false) && $ticket->user) {
+            try {
+                $fcmService = app(\App\Modules\Notifications\Services\FcmService::class);
+                $fcmService->sendToUser(
+                    $ticket->user,
+                    'Support Update',
+                    'An agent replied to your ticket: ' . \Illuminate\Support\Str::limit($ticket->subject, 40),
+                    ['type' => 'support_reply', 'ticket_id' => (string) $ticket->id]
+                );
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('FCM push for ticket reply failed: ' . $e->getMessage());
+            }
+        }
+
         return back()->with('success', 'Reply sent successfully.');
     }
 

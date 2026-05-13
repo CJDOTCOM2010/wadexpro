@@ -16,6 +16,8 @@ import 'core/config/brand_config.dart';
 import 'features/auth/presentation/pages/otp_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'core/services/push_notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +29,9 @@ void main() async {
   try {
     await Firebase.initializeApp();
     debugPrint('WADEXPRO: Firebase Identity initialized successfully.');
+
+    // Register background message handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   } catch (e) {
     debugPrint('WADEXPRO: Firebase initialization skipped or failed: $e');
   }
@@ -132,6 +137,8 @@ class _AppGate extends ConsumerWidget {
       // Connect Socket if authenticated
       Future.microtask(() {
         ref.read(socketServiceProvider).connect(AppConfig.instance.socketUrl, '/rider');
+        // Initialize push notifications
+        ref.read(pushNotificationServiceProvider).initialize();
       });
       return const MainDashboardScreen();
     }

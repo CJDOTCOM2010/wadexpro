@@ -89,6 +89,28 @@ class DriverOrderController extends Controller
 
         $order = $this->orderService->updateStatus($order, $validated['status']);
 
+        // Push notification to the customer about order status change
+        if ($order->customer) {
+            $statusMessages = [
+                'picked_up'  => 'Your package has been picked up by the driver.',
+                'in_transit' => 'Your delivery is on the way!',
+                'delivered'  => 'Your package has been delivered. Thank you for using WADEXPRO!',
+                'cancelled'  => 'Your order has been cancelled.',
+            ];
+
+            try {
+                $fcmService = app(\App\Modules\Notifications\Services\FcmService::class);
+                $fcmService->sendToUser(
+                    $order->customer,
+                    'Order Update',
+                    $statusMessages[$validated['status']] ?? 'Your order status has been updated.',
+                    ['type' => 'order_update', 'order_id' => (string) $order->id, 'status' => $validated['status']]
+                );
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('FCM push for order update failed: ' . $e->getMessage());
+            }
+        }
+
         return $this->success($order, 'Order status updated.');
     }
 }

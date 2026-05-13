@@ -146,6 +146,26 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </div>
         </a>
+
+        <!-- Payment Gateways Card -->
+        <a href="{{ route('orchestrator.settings.payments') }}" class="group relative overflow-hidden bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-5">
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 opacity-[0.02] group-hover:opacity-[0.06] transition-opacity pointer-events-none">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+            </div>
+
+            <div class="w-14 h-14 shrink-0 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors relative z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+
+            <div class="relative z-10 flex-1">
+                <h3 class="text-[17px] font-black text-brand mb-1">Payment Gateways</h3>
+                <p class="text-[11px] text-brand-muted font-bold tracking-tight leading-relaxed">Dynamic provider switching, API keys, and transaction modes.</p>
+            </div>
+
+            <div class="relative z-10 shrink-0 text-accent opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </a>
     </div>
 </div>
 

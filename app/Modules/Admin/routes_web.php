@@ -78,8 +78,9 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::get('/settings', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'index'])->name('orchestrator.settings');
         Route::get('/settings/branding', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'branding'])->name('orchestrator.settings.branding');
         Route::get('/settings/authentication', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'auth'])->name('orchestrator.settings.auth');
-        Route::get('/settings/mobile-manifest', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'manifest'])->name('orchestrator.settings.manifest');
+        Route::get('/settings/manifest', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'manifest'])->name('orchestrator.settings.manifest');
         Route::get('/settings/localization', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'localization'])->name('orchestrator.settings.localization');
+        Route::get('/settings/payments', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'payments'])->name('orchestrator.settings.payments');
         Route::post('/settings', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'update'])->name('orchestrator.settings.update');
 
         // Communication & Notifications

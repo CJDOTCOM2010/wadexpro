@@ -49,6 +49,15 @@ class SystemSettingController extends Controller
     }
 
     /**
+     * Display payment gateway management page.
+     */
+    public function payments()
+    {
+        $settings = SystemSetting::where('group', 'payments')->get()->keyBy('key');
+        return view('admin.settings.payments', compact('settings'));
+    }
+
+    /**
      * Update specified system settings.
      */
     public function update(Request $request)
@@ -56,9 +65,18 @@ class SystemSettingController extends Controller
         $settings = $request->input('settings', []);
 
         foreach ($settings as $key => $value) {
-            // Handle booleans from checkboxes (they send '1' or '0' but we want 'true'/'false' strings for our cast)
+            // Handle booleans from checkboxes
             if ($key === 'google_auth_enabled' || $key === 'facebook_auth_enabled') {
                 $value = $value ? 'true' : 'false';
+            }
+
+            // Secure Payment Gateway Keys: Only update if the value was actually changed from the placeholder
+            if (str_ends_with($key, '_secret_key')) {
+                if ($value === '********' || empty($value)) {
+                    continue; // Skip updating if it's the masked placeholder
+                }
+                // Encrypt before saving
+                $value = \Illuminate\Support\Facades\Crypt::encryptString($value);
             }
 
             SystemSetting::set($key, $value);

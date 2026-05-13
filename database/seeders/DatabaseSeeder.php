@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             OnboardingSlideSeeder::class,
             VehicleTypeSeeder::class,
+            PaymentGatewaySettingsSeeder::class,
         ]);
     }
 }

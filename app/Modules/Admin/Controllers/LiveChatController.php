@@ -89,6 +89,24 @@ class LiveChatController extends Controller
             'updated_at' => now(),
         ]);
 
+        // Broadcast to Socket.IO server for real-time delivery to Flutter app
+        try {
+            $socketUrl = \App\Models\SystemSetting::get('flutter_rtc_url', 'https://wadexpro-4rexnj1k.on-forge.com:3000');
+            \Illuminate\Support\Facades\Http::timeout(3)->post("{$socketUrl}/api/support/push", [
+                'conversationId' => $id,
+                'message'        => $request->message,
+                'from'           => (string) auth('admin')->id(),
+                'fromName'       => auth('admin')->user()->name ?? 'Support Agent',
+                'fromType'       => 'admin',
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Socket push failed: ' . $e->getMessage());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'data' => $message->load('sender')]);
+        }
+
         return back()->with('success', 'Message sent.');
     }
 

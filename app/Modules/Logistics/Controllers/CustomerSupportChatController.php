@@ -82,6 +82,20 @@ class CustomerSupportChatController extends Controller
 
         $conversation->update(['updated_at' => now(), 'status' => 'waiting']);
 
+        // Broadcast to Socket.IO server for real-time delivery to Admin Dashboard
+        try {
+            $socketUrl = \App\Models\SystemSetting::get('flutter_rtc_url', 'https://wadexpro-4rexnj1k.on-forge.com:3000');
+            \Illuminate\Support\Facades\Http::timeout(3)->post("{$socketUrl}/api/support/push", [
+                'conversationId' => (string) $conversation->id,
+                'message'        => $request->content,
+                'from'           => (string) $user->id,
+                'fromName'       => $user->name ?? 'Customer',
+                'fromType'       => 'customer',
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Socket push failed: ' . $e->getMessage());
+        }
+
         return response()->json([
             'message' => 'Message sent.',
             'data'    => $message->load('sender:id,name,avatar_url'),

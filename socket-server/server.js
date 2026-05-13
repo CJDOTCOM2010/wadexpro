@@ -56,6 +56,53 @@ app.get('/health', (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
+// REST API — Server-to-Server Push (Laravel → Socket.IO)
+// ---------------------------------------------------------------------------
+
+/**
+ * Push a support chat message into a conversation room.
+ * Called by LiveChatController::reply() after persisting to DB.
+ */
+app.post('/api/support/push', (req, res) => {
+  const { conversationId, message, from, fromName, fromType } = req.body;
+
+  if (!conversationId || !message) {
+    return res.status(400).json({ error: 'conversationId and message are required.' });
+  }
+
+  const messageEvent = {
+    conversationId,
+    from: from || 'system',
+    fromName: fromName || 'Support Agent',
+    fromType: fromType || 'admin',
+    message,
+    timestamp: new Date().toISOString(),
+  };
+
+  // Broadcast to conversation room via /support namespace
+  supportNs.to(`support_chat:${conversationId}`).emit('chat:message', messageEvent);
+
+  // Also notify all support agents
+  supportNs.to('support_agents').emit('chat:new_agent_message', messageEvent);
+
+  res.json({ success: true, event: messageEvent });
+});
+
+/**
+ * Push a system event notification to the admin namespace.
+ */
+app.post('/api/admin/notify', (req, res) => {
+  const { event, data } = req.body;
+
+  if (!event) {
+    return res.status(400).json({ error: 'event is required.' });
+  }
+
+  adminNs.emit(event, data || {});
+  res.json({ success: true });
+});
+
+// ---------------------------------------------------------------------------
 // JWT Authentication Middleware for Socket.IO
 // ---------------------------------------------------------------------------
 const authenticateSocket = async (socket, next) => {

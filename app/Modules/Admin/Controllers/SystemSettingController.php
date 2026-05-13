@@ -64,19 +64,34 @@ class SystemSettingController extends Controller
     {
         $settings = $request->input('settings', []);
 
+        // Boolean keys that come from checkboxes
+        $booleanKeys = [
+            'google_auth_enabled', 'facebook_auth_enabled',
+            'cash_on_delivery_enabled', 'wallet_payments_enabled',
+            'momo_enabled', 'googlepay_enabled',
+            'paystack_enabled', 'flutterwave_enabled', 'stripe_enabled',
+        ];
+
+        // Encrypted keys with masking pattern
+        $encryptedKeys = [
+            'paystack_secret_key', 'flutterwave_secret_key', 'stripe_secret_key',
+            'flutterwave_encryption_key', 'payment_webhook_secret',
+        ];
+
         foreach ($settings as $key => $value) {
-            // Handle booleans from checkboxes
-            if ($key === 'google_auth_enabled' || $key === 'facebook_auth_enabled') {
-                $value = $value ? 'true' : 'false';
+            // Skip masked placeholder values for sensitive keys
+            if (in_array($key, $encryptedKeys)) {
+                if ($value === '********' || empty($value)) {
+                    continue;
+                }
+                $value = \Illuminate\Support\Facades\Crypt::encryptString($value);
+                SystemSetting::updateOrCreate(['key' => $key], ['value' => $value, 'is_encrypted' => true, 'group' => 'payments']);
+                continue;
             }
 
-            // Secure Payment Gateway Keys: Only update if the value was actually changed from the placeholder
-            if (str_ends_with($key, '_secret_key')) {
-                if ($value === '********' || empty($value)) {
-                    continue; // Skip updating if it's the masked placeholder
-                }
-                // Encrypt before saving
-                $value = \Illuminate\Support\Facades\Crypt::encryptString($value);
+            // Handle boolean settings
+            if (in_array($key, $booleanKeys)) {
+                $value = ($value === 'true' || $value === true || $value === '1') ? 'true' : 'false';
             }
 
             SystemSetting::set($key, $value);

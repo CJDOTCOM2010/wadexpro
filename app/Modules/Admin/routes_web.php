@@ -53,6 +53,16 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         
         // CMS & Platform
         Route::view('/menus', 'admin.menus')->name('orchestrator.menus');
+
+        // ── Roles & Permissions ──────────────────────────────────────────────
+        Route::get('/roles',                          [\App\Modules\Admin\Controllers\RolePermissionController::class, 'index'])->name('orchestrator.roles.index');
+        Route::post('/roles',                         [\App\Modules\Admin\Controllers\RolePermissionController::class, 'storeRole'])->name('orchestrator.roles.store');
+        Route::put('/roles/{id}',                     [\App\Modules\Admin\Controllers\RolePermissionController::class, 'updateRole'])->name('orchestrator.roles.update');
+        Route::delete('/roles/{id}',                  [\App\Modules\Admin\Controllers\RolePermissionController::class, 'destroyRole'])->name('orchestrator.roles.destroy');
+        Route::post('/permissions',                   [\App\Modules\Admin\Controllers\RolePermissionController::class, 'storePermission'])->name('orchestrator.permissions.store');
+        Route::delete('/permissions/{id}',            [\App\Modules\Admin\Controllers\RolePermissionController::class, 'destroyPermission'])->name('orchestrator.permissions.destroy');
+        Route::post('/users/{userId}/assign-role',    [\App\Modules\Admin\Controllers\RolePermissionController::class, 'assignRole'])->name('orchestrator.users.assign-role');
+        Route::delete('/users/{userId}/revoke-role/{roleId}', [\App\Modules\Admin\Controllers\RolePermissionController::class, 'revokeRole'])->name('orchestrator.users.revoke-role');
         Route::get('/settings', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'index'])->name('orchestrator.settings');
         Route::get('/settings/branding', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'branding'])->name('orchestrator.settings.branding');
         Route::get('/settings/authentication', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'auth'])->name('orchestrator.settings.auth');

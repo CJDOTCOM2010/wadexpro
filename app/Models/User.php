@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use \Laravel\Sanctum\HasApiTokens, HasFactory, Notifiable, \Illuminate\Database\Eloquent\Concerns\HasUuids;
+    use \Laravel\Sanctum\HasApiTokens, HasFactory, Notifiable, \Illuminate\Database\Eloquent\Concerns\HasUuids, \App\Core\Traits\HasRolesAndPermissions;
 
     /**
      * The attributes that are mass assignable.

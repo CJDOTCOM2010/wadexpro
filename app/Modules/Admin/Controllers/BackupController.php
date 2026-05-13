@@ -17,28 +17,36 @@ class BackupController extends Controller
      */
     public function index()
     {
-        $disk = Storage::disk(config('backup.backup.destination.disks')[0]);
-        $files = $disk->allFiles(config('backup.backup.name'));
-        
-        $backups = [];
-        foreach ($files as $file) {
-            if (substr($file, -4) == '.zip') {
-                $backups[] = [
-                    'file_path' => $file,
-                    'file_name' => str_replace(config('backup.backup.name') . '/', '', $file),
-                    'file_size' => $this->formatBytes($disk->size($file)),
-                    'last_modified' => Carbon::createFromTimestamp($disk->lastModified($file))->toDateTimeString(),
-                    'age' => Carbon::createFromTimestamp($disk->lastModified($file))->diffForHumans(),
-                ];
+        try {
+            $diskName = config('backup.backup.destination.disks')[0] ?? 'local';
+            $disk = Storage::disk($diskName);
+            $backupName = config('backup.backup.name', 'Laravel');
+            
+            $files = $disk->allFiles($backupName);
+            
+            $backups = [];
+            foreach ($files as $file) {
+                if (substr($file, -4) == '.zip') {
+                    $backups[] = [
+                        'file_path' => $file,
+                        'file_name' => str_replace($backupName . '/', '', $file),
+                        'file_size' => $this->formatBytes($disk->size($file)),
+                        'last_modified' => Carbon::createFromTimestamp($disk->lastModified($file))->toDateTimeString(),
+                        'age' => Carbon::createFromTimestamp($disk->lastModified($file))->diffForHumans(),
+                    ];
+                }
             }
+
+            // Sort by date descending
+            usort($backups, function($a, $b) {
+                return ($b['last_modified'] ?? '') <=> ($a['last_modified'] ?? '');
+            });
+
+            return view('admin.settings.backup', compact('backups'));
+        } catch (\Exception $e) {
+            Log::error('Backup Index Error: ' . $e->getMessage());
+            return view('admin.settings.backup', ['backups' => []]);
         }
-
-        // Sort by date descending
-        usort($backups, function($a, $b) {
-            return $b['last_modified'] <=> $a['last_modified'];
-        });
-
-        return view('admin.settings.backup', compact('backups'));
     }
 
     /**

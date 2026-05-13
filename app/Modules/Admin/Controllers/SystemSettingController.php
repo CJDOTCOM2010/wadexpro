@@ -100,6 +100,7 @@ class SystemSettingController extends Controller
         $settings = $request->input('settings', []);
 
         // Boolean keys that come from checkboxes
+        $booleanKeys = [
             'google_auth_enabled', 'facebook_auth_enabled', 'apple_auth_enabled',
             'cash_on_delivery_enabled', 'wallet_payments_enabled',
             'momo_enabled', 'googlepay_enabled',

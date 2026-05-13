@@ -18,7 +18,7 @@ class PaymentsServiceProvider extends ServiceProvider
                 $app->make(PaystackProvider::class),
                 $app->make(FlutterwaveProvider::class),
                 $app->make(StripeProvider::class),
-            ]);
+            ], $app->make(\App\Modules\Accounting\Services\AccountingService::class));
         });
     }
 

@@ -1,8 +1,15 @@
 <?php
 
+namespace App\Modules\Logistics\Controllers;
+
 use App\Modules\Logistics\Services\FleetIntelligenceService;
 use App\Modules\Logistics\Models\AnalyticsSnapshot;
+use App\Modules\Logistics\Models\Order;
+use App\Modules\Logistics\Models\Driver;
+use App\Modules\Logistics\Models\RideRequest;
+use App\Modules\Logistics\Models\Organization;
 use Illuminate\Http\Request;
+use App\Core\Traits\ApiResponse;
 use Illuminate\Routing\Controller;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;

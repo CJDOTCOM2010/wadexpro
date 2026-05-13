@@ -5,6 +5,7 @@ namespace App\Modules\Logistics\Controllers;
 use App\Core\Traits\ApiResponse;
 use App\Modules\Logistics\Services\DriverService;
 use App\Modules\Logistics\Services\OrderService;
+use App\Modules\Logistics\Services\AntifraudService;
 use App\Modules\Logistics\Services\SafetyGuardService;
 use App\Modules\Logistics\Models\Order;
 use App\Modules\Logistics\Models\RideRequest;

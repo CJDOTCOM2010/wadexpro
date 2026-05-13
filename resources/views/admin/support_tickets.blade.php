@@ -145,7 +145,7 @@
                         <select name="user_id" required class="w-full bg-surface border border-gray-100 rounded-lg px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-accent outline-none transition">
                             <option value="">Select User...</option>
                             @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }} ({{ ucfirst($user->role) }} - {{ $user->phone }})</option>
+                                <option value="{{ $user->id }}">{{ $user->name }} ({{ ucfirst($user->user_type) }} - {{ $user->phone }})</option>
                             @endforeach
                         </select>
                     </div>

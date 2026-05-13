@@ -55,7 +55,7 @@ class SupportTicketController extends Controller
         ];
 
         // For "Compose New" user search
-        $users = User::whereIn('role', ['customer', 'driver'])->limit(50)->get(['id', 'name', 'phone', 'role']);
+        $users = User::whereIn('user_type', ['customer', 'driver'])->limit(50)->get(['id', 'name', 'phone', 'user_type']);
 
         return view('admin.support_tickets', compact('tickets', 'counts', 'users'));
     }
@@ -77,7 +77,7 @@ class SupportTicketController extends Controller
 
         $ticket = SupportTicket::create([
             'user_id'     => $user->id,
-            'user_type'   => $user->role,
+            'user_type'   => $user->user_type,
             'subject'     => $request->subject,
             'category'    => $request->category,
             'priority'    => $request->priority,

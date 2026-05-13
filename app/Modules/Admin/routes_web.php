@@ -107,6 +107,9 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::get('/settings/backups/download/{file}', [BackupController::class, 'download'])->name('orchestrator.settings.backups.download');
         Route::delete('/settings/backups/delete/{file}', [BackupController::class, 'delete'])->name('orchestrator.settings.backups.delete');
         Route::post('/settings/backups/clean', [BackupController::class, 'clean'])->name('orchestrator.settings.backups.clean');
+        Route::get('/settings/prefixes', [SystemSettingController::class, 'prefixes'])->name('orchestrator.settings.prefixes');
+        Route::get('/settings/geolocation', [SystemSettingController::class, 'geolocation'])->name('orchestrator.settings.geolocation');
+        Route::get('/settings/social-auth', [SystemSettingController::class, 'socialAuth'])->name('orchestrator.settings.social_auth');
         Route::get('/settings/authentication', [SystemSettingController::class, 'auth'])->name('orchestrator.settings.auth');
         Route::get('/settings/manifest', [SystemSettingController::class, 'manifest'])->name('orchestrator.settings.manifest');
         Route::get('/settings/localization', [SystemSettingController::class, 'localization'])->name('orchestrator.settings.localization');

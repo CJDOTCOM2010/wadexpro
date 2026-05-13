@@ -66,6 +66,33 @@ class SystemSettingController extends Controller
     }
 
     /**
+     * Display prefix configuration page.
+     */
+    public function prefixes()
+    {
+        $settings = SystemSetting::where('group', 'prefixes')->get()->keyBy('key');
+        return view('admin.settings.prefixes', compact('settings'));
+    }
+
+    /**
+     * Display geolocation & maps configuration page.
+     */
+    public function geolocation()
+    {
+        $settings = SystemSetting::where('group', 'geolocation')->get()->keyBy('key');
+        return view('admin.settings.geolocation', compact('settings'));
+    }
+
+    /**
+     * Display social authentication configuration page.
+     */
+    public function socialAuth()
+    {
+        $settings = SystemSetting::where('group', 'social_auth')->get()->keyBy('key');
+        return view('admin.settings.social_auth', compact('settings'));
+    }
+
+    /**
      * Update specified system settings.
      */
     public function update(Request $request)
@@ -73,17 +100,21 @@ class SystemSettingController extends Controller
         $settings = $request->input('settings', []);
 
         // Boolean keys that come from checkboxes
-        $booleanKeys = [
-            'google_auth_enabled', 'facebook_auth_enabled',
+            'google_auth_enabled', 'facebook_auth_enabled', 'apple_auth_enabled',
             'cash_on_delivery_enabled', 'wallet_payments_enabled',
             'momo_enabled', 'googlepay_enabled',
             'paystack_enabled', 'flutterwave_enabled', 'stripe_enabled',
+            'google_maps_enabled', 'mapbox_enabled',
         ];
 
         // Encrypted keys with masking pattern
         $encryptedKeys = [
             'paystack_secret_key', 'flutterwave_secret_key', 'stripe_secret_key',
             'flutterwave_encryption_key', 'payment_webhook_secret',
+            'google_maps_key', 'mapbox_key',
+            'google_client_id', 'google_client_secret',
+            'facebook_client_id', 'facebook_client_secret',
+            'apple_client_id', 'apple_client_secret',
         ];
 
         foreach ($settings as $key => $value) {

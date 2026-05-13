@@ -7,23 +7,18 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
         <div>
             <div class="flex items-center gap-2 text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2">
-                <a href="{{ route('orchestrator.settings') }}" class="hover:text-brand transition-colors">Settings Hub</a>
+                <span>System Management</span>
                 <span class="text-gray-300">/</span>
-                <span>Asset Management</span>
+                <span>Asset Library</span>
             </div>
             <h2 class="text-3xl font-black text-brand tracking-tight">System Asset Library</h2>
             <p class="text-sm text-brand-muted font-medium mt-1">Centralized control for all system uploads, media, and storage nodes.</p>
         </div>
         
-        <div class="flex items-center gap-3">
-            <button @click="uploadModal = true" class="bg-brand text-white px-6 py-4 rounded-xl text-xs font-black shadow-xl hover:shadow-brand/20 hover:-translate-y-0.5 transition-all flex items-center gap-3">
+            <button @click="uploadModal = true" class="bg-brand text-white px-8 py-4 rounded-xl text-xs font-black shadow-xl hover:shadow-brand/20 hover:-translate-y-0.5 transition-all flex items-center gap-3">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                 Upload New Assets
             </button>
-            <a href="{{ route('orchestrator.settings') }}" class="bg-white border border-gray-100 text-brand-muted hover:bg-gray-50 px-6 py-4 rounded-xl text-xs font-black shadow-sm transition-all flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                Hub
-            </a>
         </div>
     </div>
 

@@ -48,6 +48,13 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
             Route::get('/dispatcher', [\App\Modules\Admin\Controllers\OperationsController::class, 'dispatcher'])->name('orchestrator.dispatcher');
             Route::get('/orders', [\App\Modules\Admin\Controllers\OperationsController::class, 'globalQueue'])->name('orchestrator.orders');
             Route::get('/drivers', fn() => view('admin.asset_registry'))->name('orchestrator.drivers');
+            
+            // Vehicle Types
+            Route::get('/driver-management/vehicle-types', [\App\Modules\Admin\Controllers\VehicleTypeController::class, 'index'])->name('orchestrator.vehicle.types');
+            Route::post('/driver-management/vehicle-types', [\App\Modules\Admin\Controllers\VehicleTypeController::class, 'store'])->name('orchestrator.vehicle.types.store');
+            Route::put('/driver-management/vehicle-types/{id}', [\App\Modules\Admin\Controllers\VehicleTypeController::class, 'update'])->name('orchestrator.vehicle.types.update');
+            Route::patch('/driver-management/vehicle-types/{id}/toggle', [\App\Modules\Admin\Controllers\VehicleTypeController::class, 'toggle'])->name('orchestrator.vehicle.types.toggle');
+            Route::delete('/driver-management/vehicle-types/{id}', [\App\Modules\Admin\Controllers\VehicleTypeController::class, 'destroy'])->name('orchestrator.vehicle.types.destroy');
         });
         // Treasury & Financials (Restricted)
         Route::middleware('admin_department:Finance|Accounting|Treasury')->group(function() {

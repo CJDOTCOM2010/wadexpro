@@ -170,10 +170,10 @@
                 <div>
                     <label class="block text-[10px] font-black text-brand-muted uppercase tracking-widest mb-1">Role</label>
                     <select name="role" required class="w-full bg-surface border border-gray-200 rounded p-2 text-sm focus:ring-2 focus:ring-brand/20 outline-none cursor-pointer">
-                        <option value="support">Support Agent</option>
-                        <option value="manager">Manager</option>
-                        <option value="admin">System Admin</option>
-                        <option value="staff">General Staff</option>
+                        <option value="">-- Select Role --</option>
+                        @foreach($roles as $role)
+                        <option value="{{ $role->name }}">{{ $role->label ?? $role->name }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div>

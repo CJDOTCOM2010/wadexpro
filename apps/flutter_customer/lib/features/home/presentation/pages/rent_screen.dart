@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/wadex_snackbar.dart';
 import '../../../../core/network/api_client.dart';
 import 'package:dio/dio.dart';
 
@@ -78,7 +79,7 @@ class _RentScreenState extends State<RentScreen> {
       _showBookingSheet(name, price);
     } catch (e) {
       if (mounted) Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to book vehicle')));
+      WadexSnackBar.showError(context, 'Failed to book vehicle');
     }
   }
 

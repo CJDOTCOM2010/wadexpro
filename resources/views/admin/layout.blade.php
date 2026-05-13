@@ -196,6 +196,10 @@
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                     <span class="text-sm font-semibold whitespace-nowrap">Infrastructure Hub</span>
                 </a>
+                <a href="{{ route('orchestrator.error_monitoring') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.error_monitoring') ? 'bg-white/10 text-red-400 shadow-lg shadow-black/20' : 'text-white/60 hover:text-red-400' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Error Monitoring</span>
+                </a>
                 <a href="{{ route('orchestrator.modules') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.modules') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a2 2 0 01-2 2H3a2 2 0 01-2-2V4a2 2 0 114 0v1a2 2 0 012 2h4a2 2 0 012-2V4z"/></svg>
                     <span class="text-sm font-semibold whitespace-nowrap">Module Hardening</span>
@@ -297,6 +301,18 @@
                     <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
                     <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Gateway Active</span>
                 </div>
+
+                <!-- Error Monitoring -->
+                <a href="{{ route('orchestrator.error_monitoring') }}" class="relative p-2.5 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 rounded-lg border border-red-100 transition shadow-sm group">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+                    </span>
+                    
+                    <!-- Tooltip -->
+                    <span class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max px-2 py-1 bg-gray-900 text-white text-[10px] font-black rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">System Errors</span>
+                </a>
 
                 <!-- Notifications -->
                 <button class="relative p-2.5 bg-surface text-gray-500 hover:text-brand rounded-lg border border-gray-100 transition shadow-sm">

@@ -9,6 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:wadexpro_customer/core/theme/app_colors.dart';
 import 'package:wadexpro_customer/features/auth/presentation/providers/auth_provider.dart';
 import 'package:wadexpro_customer/core/models/user_model.dart';
+import '../../../../core/widgets/wadex_snackbar.dart';
 
 class WadexAccountScreen extends ConsumerStatefulWidget {
   final int initialTab;
@@ -451,7 +452,11 @@ class _PersonalInfoTab extends ConsumerWidget {
               if (field == 'Email') success = await ref.read(authProvider.notifier).updateProfile(email: val);
               
               if (ctx.mounted) {
-                ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(success ? '$field updated' : 'Update failed'), behavior: SnackBarBehavior.floating));
+                if (success) {
+                  WadexSnackBar.showSuccess(ctx, '$field updated');
+                } else {
+                  WadexSnackBar.showError(ctx, 'Update failed');
+                }
               }
             },
             child: const Text('SAVE'),
@@ -480,7 +485,11 @@ class _PersonalInfoTab extends ConsumerWidget {
                   Navigator.pop(c);
                   final success = await ref.read(authProvider.notifier).updateProfile(gender: g);
                   if (ctx.mounted) {
-                    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(success ? 'Gender set to $g' : 'Update failed'), behavior: SnackBarBehavior.floating));
+                    if (success) {
+                      WadexSnackBar.showSuccess(ctx, 'Gender set to $g');
+                    } else {
+                      WadexSnackBar.showError(ctx, 'Update failed');
+                    }
                   }
                 },
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../providers/active_trip_provider.dart';
 import '../../../../core/network/providers.dart';
+import '../../../../core/widgets/wadex_snackbar.dart';
 
 class DeliveryManifestScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> orderData;
@@ -24,13 +25,9 @@ class _DeliveryManifestScreenState extends ConsumerState<DeliveryManifestScreen>
     try {
       await ref.read(rideRepositoryProvider).updateStopStatus(stopId, status);
       // Data will refresh via the order stops event or a manual reload
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Stop status updated: $status')),
-      );
+      WadexSnackBar.showSuccess(context, 'Stop status updated: $status');
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-      );
+      WadexSnackBar.showError(context, 'Error: $e');
     } finally {
       setState(() => _isLoading = false);
     }

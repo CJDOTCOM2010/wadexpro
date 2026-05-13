@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/config/brand_config.dart';
+import '../../../../core/widgets/wadex_snackbar.dart';
 import '../providers/kyc_provider.dart';
 
 class KYCScreen extends ConsumerStatefulWidget {
@@ -61,25 +62,19 @@ class _KYCScreenState extends ConsumerState<KYCScreen> {
   void _handleSubmit() async {
     // Validate text fields
     if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required text fields.'), backgroundColor: Colors.red),
-      );
+      WadexSnackBar.showError(context, 'Please fill all required text fields.');
       return;
     }
     
     // Validate required uploads
     if (_profilePhoto == null || _licenseFront == null || _vehicleReg == null || _carPhotoFront == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please upload all required photos (Profile, License, Reg, Car).'), backgroundColor: Colors.red),
-      );
+      WadexSnackBar.showError(context, 'Please upload all required photos (Profile, License, Reg, Car).');
       return;
     }
     
     // Validate safety checkboxes
     if (!_agreedToSafety || !_completedTutorial) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You must acknowledge the safety guidelines and tutorial.'), backgroundColor: Colors.red),
-      );
+      WadexSnackBar.showError(context, 'You must acknowledge the safety guidelines and tutorial.');
       return;
     }
 

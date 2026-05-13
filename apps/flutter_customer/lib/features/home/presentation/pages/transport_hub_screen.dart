@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/thumb_reach_bottom_sheet.dart';
+import '../../../../core/widgets/wadex_snackbar.dart';
 import '../../../../core/network/api_client.dart';
 import 'package:dio/dio.dart';
 
@@ -390,16 +391,12 @@ class _TransportHubScreenState extends State<TransportHubScreen> {
                 if (context.mounted) {
                   Navigator.pop(context); // loading
                   Navigator.pop(context); // bottom sheet
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Successfully booked at ${hub['name']}')),
-                  );
+                  WadexSnackBar.showSuccess(context, 'Successfully booked at ${hub['name']}');
                 }
               } catch (e) {
                 if (context.mounted) {
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Failed to book at this hub')),
-                  );
+                  WadexSnackBar.showError(context, 'Failed to book at this hub');
                 }
               }
             },

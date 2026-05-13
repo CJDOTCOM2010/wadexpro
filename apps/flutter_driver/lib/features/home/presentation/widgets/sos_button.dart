@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../../core/network/providers.dart';
+import '../../../../core/widgets/wadex_snackbar.dart';
 import '../providers/active_trip_provider.dart';
 
 class SOSButton extends ConsumerStatefulWidget {
@@ -60,21 +61,19 @@ class _SOSButtonState extends ConsumerState<SOSButton> with SingleTickerProvider
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('SOS Alert Sent. Help is on the way.'),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 5),
-          ),
+        WadexSnackBar.show(
+          context, 
+          message: 'SOS Alert Sent. Help is on the way.', 
+          type: SnackbarType.error, 
+          title: 'EMERGENCY ALERT',
+          duration: const Duration(seconds: 5),
         );
         setState(() => _isHolding = false);
         _controller.reset();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Safety Alert Error: $e'), backgroundColor: Colors.red),
-        );
+        WadexSnackBar.showError(context, 'Safety Alert Error: $e');
       }
     }
   }

@@ -47,6 +47,10 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
             Route::patch('/security/alerts/{id}/resolve', [\App\Modules\Admin\Controllers\SecurityController::class, 'resolveAlert'])->name('orchestrator.security.alerts.resolve');
             Route::post('/security/devices/block', [\App\Modules\Admin\Controllers\SecurityController::class, 'blockDevice'])->name('orchestrator.security.devices.block');
             Route::patch('/security/devices/{id}/unblock', [\App\Modules\Admin\Controllers\SecurityController::class, 'unblockDevice'])->name('orchestrator.security.devices.unblock');
+            
+            // Error Monitoring
+            Route::get('/error-monitoring', [\App\Modules\Admin\Controllers\ErrorMonitoringController::class, 'index'])->name('orchestrator.error_monitoring');
+            Route::post('/error-monitoring/clear', [\App\Modules\Admin\Controllers\ErrorMonitoringController::class, 'clear'])->name('orchestrator.error_monitoring.clear');
         });
 
         // Operations & Logistics (Restricted)

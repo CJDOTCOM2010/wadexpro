@@ -12,6 +12,7 @@ final supportChatProvider = StateNotifierProvider<SupportChatNotifier, ChatState
 class SupportChatNotifier extends StateNotifier<ChatState> {
   final _socketService;
   final ChatRepository _repository;
+  String? _conversationId;
 
   SupportChatNotifier(this._socketService, this._repository) : super(ChatState()) {
     _initializeListener();
@@ -22,11 +23,12 @@ class SupportChatNotifier extends StateNotifier<ChatState> {
     state = state.copyWith(isLoading: true);
     try {
       final data = await _repository.fetchSupportHistory();
-      final List<dynamic> messagesJson = data['messages'] ?? [];
+      _conversationId = data['id'].toString();
       
-      final messages = messagesJson.map((m) => ChatMessage.fromMap(m, -2)).toList(); 
-      // Using -2 as a placeholder. The backend sets sender_id to user->id. 
-      // We will identify 'isMe' by checking if message_type != 'system' AND sender_type != 'admin'
+      // Subscribe to the socket room for this conversation
+      _socketService.socket?.emit('chat:subscribe', _conversationId);
+
+      final List<dynamic> messagesJson = data['messages'] ?? [];
       
       final parsedMessages = messagesJson.map((m) {
         final isSystem = m['message_type'] == 'system';
@@ -73,7 +75,9 @@ class SupportChatNotifier extends StateNotifier<ChatState> {
     state = state.copyWith(messages: [...state.messages, optimisticMsg]);
 
     // Send via socket
-    _socketService.sendSupportMessage(text);
+    if (_conversationId != null) {
+      _socketService.sendSupportMessage(_conversationId!, text);
+    }
 
     // Persist via REST
     try {
@@ -81,5 +85,13 @@ class SupportChatNotifier extends StateNotifier<ChatState> {
     } catch (e) {
       // Handle error
     }
+  }
+  
+  @override
+  void dispose() {
+    if (_conversationId != null) {
+      _socketService.socket?.emit('chat:unsubscribe', _conversationId);
+    }
+    super.dispose();
   }
 }

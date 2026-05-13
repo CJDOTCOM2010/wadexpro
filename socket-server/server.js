@@ -572,6 +572,60 @@ adminNs.on('connection', (socket) => {
   });
 });
 
+// =================== SUPPORT NAMESPACE ===================
+const supportNs = io.of('/support');
+supportNs.use(authenticateSocket);
+
+supportNs.on('connection', (socket) => {
+  console.log(`Support client connected: ${socket.userId} (${socket.id}) - Type: ${socket.userType}`);
+
+  // Join personal room to receive targeted support messages
+  socket.join(`support_user:${socket.userId}`);
+
+  // Admins/Agents can join a generic "agents" room to receive new chat notifications
+  if (['admin', 'super_admin'].includes(socket.userType)) {
+    socket.join('support_agents');
+  }
+
+  // Subscribe to a specific conversation thread
+  socket.on('chat:subscribe', (conversationId) => {
+    socket.join(`support_chat:${conversationId}`);
+    console.log(`User ${socket.userId} joined support_chat:${conversationId}`);
+  });
+
+  // Unsubscribe from a conversation thread
+  socket.on('chat:unsubscribe', (conversationId) => {
+    socket.leave(`support_chat:${conversationId}`);
+  });
+
+  // Send a message within a support chat
+  socket.on('chat:send', (data) => {
+    const { conversationId, message } = data;
+    
+    const messageEvent = {
+      conversationId: conversationId,
+      from: socket.userId,
+      fromName: socket.userName,
+      fromType: socket.userType,
+      message: message,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Broadcast to the conversation room
+    supportNs.to(`support_chat:${conversationId}`).emit('chat:message', messageEvent);
+
+    // If customer is sending, also notify the agents room if they aren't explicitly in the conversation room yet
+    if (socket.userType === 'customer') {
+        supportNs.to('support_agents').emit('chat:new_customer_message', messageEvent);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`Support client disconnected: ${socket.userId}`);
+  });
+});
+
+
 // ---------------------------------------------------------------------------
 // Redis Subscriber — Listen for Laravel Broadcast Events
 // ---------------------------------------------------------------------------

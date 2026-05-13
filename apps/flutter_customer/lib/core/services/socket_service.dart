@@ -6,12 +6,15 @@ class SocketService {
   final String _url = 'http://localhost:3002/rider'; // Local Node Server
   final _storage = const FlutterSecureStorage();
 
+  IO.Socket? _supportSocket;
+
   IO.Socket get socket => _socket!;
   bool get isConnected => _socket?.connected ?? false;
 
   Future<void> connect(String url, String namespace) async {
     final token = await _storage.read(key: 'access_token');
     
+    // Primary Socket (Rider/Driver)
     _socket = IO.io('$url$namespace', IO.OptionBuilder()
       .setTransports(['websocket'])
       .setAuth({'token': token})
@@ -21,14 +24,21 @@ class SocketService {
     _socket!.connect();
 
     _socket!.onConnect((_) {
-      print('Connected to WADEXP Real-time Engine');
+      print('Connected to WADEXP Real-time Engine ($namespace)');
     });
 
-    _socket!.onDisconnect((_) {
-      print('Disconnected from Real-time Engine');
+    // Support Socket (Always connects to /support namespace)
+    _supportSocket = IO.io('$url/support', IO.OptionBuilder()
+      .setTransports(['websocket'])
+      .setAuth({'token': token})
+      .disableAutoConnect()
+      .build());
+      
+    _supportSocket!.connect();
+    
+    _supportSocket!.onConnect((_) {
+      print('Connected to WADEXP Support Chat Engine');
     });
-
-    _socket!.onConnectError((err) => print('Socket connection error: $err'));
   }
 
   void subscribeToRide(String rideId) {
@@ -41,6 +51,7 @@ class SocketService {
 
   void disconnect() {
     _socket?.disconnect();
+    _supportSocket?.disconnect();
   }
 
   void requestRide(Map<String, dynamic> data) {
@@ -75,11 +86,12 @@ class SocketService {
 
   // --- Support Chat ---
   void onSupportMessage(Function(dynamic) handler) {
-    _socket?.on('support_chat:message', handler);
+    _supportSocket?.on('chat:message', handler);
   }
 
-  void sendSupportMessage(String message) {
-    _socket?.emit('support_chat:send', {
+  void sendSupportMessage(String conversationId, String message) {
+    _supportSocket?.emit('chat:send', {
+      'conversationId': conversationId,
       'message': message,
     });
   }

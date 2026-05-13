@@ -42,4 +42,21 @@ class ChatConversation extends Model
     {
         return $this->belongsTo(RideRequest::class, 'order_id', 'uuid');
     }
+
+    /**
+     * The latest message in this conversation.
+     */
+    public function latestMessage()
+    {
+        return $this->hasOne(ChatMessage::class, 'conversation_id')->latestOfMany();
+    }
+
+    /**
+     * Get the customer (non-admin) participant.
+     */
+    public function customer()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'chat_participants', 'conversation_id', 'user_id')
+                    ->whereNotIn('user_type', ['admin', 'super_admin', 'employee']);
+    }
 }

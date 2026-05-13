@@ -75,6 +75,11 @@ Route::prefix('v1/logistics')->middleware('auth:sanctum')->group(function () {
         Route::post('/optimize-route', [OptimizationController::class, 'optimize']);
     });
 
+    Route::prefix('support/chat')->group(function () {
+        Route::get('/', [\App\Modules\Logistics\Controllers\CustomerSupportChatController::class, 'getActive']);
+        Route::post('/send', [\App\Modules\Logistics\Controllers\CustomerSupportChatController::class, 'send']);
+    });
+
     // -----------------------------------------------------------------------
     // Personal Order Endpoints (Customer Side)
     // -----------------------------------------------------------------------

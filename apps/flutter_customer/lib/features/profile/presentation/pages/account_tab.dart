@@ -16,6 +16,7 @@ import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/providers/dashboard_provider.dart';
 import '../widgets/appearance_modal.dart';
 import 'wadex_account_screen.dart';
+import '../../chat/presentation/pages/support_chat_screen.dart';
 
 class AccountTab extends ConsumerStatefulWidget {
   const AccountTab({super.key});
@@ -713,18 +714,30 @@ class _AccountTabState extends ConsumerState<AccountTab> {
             const SizedBox(height: 12),
             const Text('Priority access for Diamond members', style: TextStyle(color: Colors.white38)),
             const SizedBox(height: 40),
-            _buildPremiumSupportAction(Icons.headset_mic_rounded, 'Direct Line', '24/7 Priority Support', const Color(0xFF00D4AA)),
+            _buildPremiumSupportAction(Icons.headset_mic_rounded, 'Direct Line', '24/7 Priority Support', const Color(0xFF00D4AA), null),
             const SizedBox(height: 20),
-            _buildPremiumSupportAction(Icons.chat_bubble_rounded, 'Live Chat', 'Average response: 30s', const Color(0xFF6C63FF)),
+            _buildPremiumSupportAction(
+              Icons.chat_bubble_rounded, 
+              'Live Chat', 
+              'Average response: 30s', 
+              const Color(0xFF6C63FF),
+              () {
+                Navigator.pop(ctx); // Close modal
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const SupportChatScreen()));
+              }
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPremiumSupportAction(IconData icon, String title, String sub, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(20),
+  Widget _buildPremiumSupportAction(IconData icon, String title, String sub, Color color, VoidCallback? onTap) {
+    return InkWell(
+      onTap: onTap ?? () => _showComingSoon(context, title),
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(24),

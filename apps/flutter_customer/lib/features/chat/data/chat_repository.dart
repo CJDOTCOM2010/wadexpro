@@ -28,4 +28,26 @@ class ChatRepository {
       throw e.response?.data['message'] ?? 'Failed to send message.';
     }
   }
+
+  /// Fetch active support chat
+  Future<Map<String, dynamic>> fetchSupportHistory() async {
+    try {
+      final response = await _apiClient.instance.get('/v1/logistics/support/chat');
+      return response.data['data'];
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Failed to load support chat.';
+    }
+  }
+
+  /// Send support message
+  Future<Map<String, dynamic>> sendSupportMessage(String content) async {
+    try {
+      final response = await _apiClient.instance.post('/v1/logistics/support/chat/send', data: {
+        'content': content,
+      });
+      return response.data['data'];
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Failed to send support message.';
+    }
+  }
 }

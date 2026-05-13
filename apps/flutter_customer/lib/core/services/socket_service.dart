@@ -60,4 +60,27 @@ class SocketService {
   void emit(String event, dynamic data) {
     _socket?.emit(event, data);
   }
+
+  // --- Ride Chat ---
+  void onChatMessage(Function(dynamic) handler) {
+    _socket?.on('chat:message', handler);
+  }
+
+  void sendChatMessage(String rideId, String message) {
+    _socket?.emit('chat:send', {
+      'rideId': rideId,
+      'message': message,
+    });
+  }
+
+  // --- Support Chat ---
+  void onSupportMessage(Function(dynamic) handler) {
+    _socket?.on('support_chat:message', handler);
+  }
+
+  void sendSupportMessage(String message) {
+    _socket?.emit('support_chat:send', {
+      'message': message,
+    });
+  }
 }

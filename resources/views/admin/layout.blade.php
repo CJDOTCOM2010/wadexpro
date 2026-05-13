@@ -72,6 +72,23 @@
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                     <span class="text-sm font-semibold whitespace-nowrap">Overview Dashboard</span>
                 </a>
+            </div>
+
+            <!-- Section: Support Operations (High Priority) -->
+            <div class="space-y-1">
+                <p class="px-4 text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-4">Support Operations</p>
+                <a href="{{ route('orchestrator.livechat') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition group {{ request()->routeIs('orchestrator.livechat*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20 border-accent/50' : 'text-white/80 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/></svg>
+                    <span class="text-sm font-black whitespace-nowrap">LIVE CHAT SUPPORT</span>
+                    <span class="ml-auto flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-accent opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+                    </span>
+                </a>
+                <a href="{{ route('orchestrator.support.tickets') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.support.*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Ticket Inbox</span>
+                </a>
                 <a href="{{ route('orchestrator.users') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.users') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     <span class="text-sm font-semibold whitespace-nowrap">User Matrix</span>
@@ -120,15 +137,6 @@
                 </a>
             </div>
 
-            <!-- Section: Customer Support -->
-            <div class="space-y-1">
-                <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Customer Support</p>
-                <a href="{{ route('orchestrator.support.tickets') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.support.*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    <span class="text-sm font-semibold whitespace-nowrap">Ticket Inbox</span>
-                    <span class="ml-auto text-[9px] font-black bg-red-500 text-white px-2 py-0.5 rounded-full">New</span>
-                </a>
-            </div>
 
             <!-- Section: Analytics -->
             <div class="space-y-1">

@@ -268,6 +268,16 @@ riderNs.on('connection', (socket) => {
     });
   });
 
+  // Support chat message from rider to admin
+  socket.on('support_chat:send', (data) => {
+    adminNs.emit('support_chat:message', {
+      from: socket.userId,
+      fromName: socket.userName,
+      message: data.message,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
   // SOS emergency
   socket.on('sos:trigger', (data) => {
     adminNs.emit('sos:alert', {

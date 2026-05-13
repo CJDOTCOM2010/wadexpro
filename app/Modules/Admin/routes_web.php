@@ -9,6 +9,7 @@ use App\Modules\Admin\Controllers\OrchestratorAnalyticsController;
 use App\Modules\Admin\Controllers\MarketingController;
 use App\Modules\Admin\Controllers\ContentManagementController;
 use App\Modules\Admin\Controllers\HRManagementController;
+use App\Modules\Admin\Controllers\LiveChatController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -168,6 +169,13 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
             Route::patch('/hr/{id}/activate',       [HRManagementController::class, 'activate'])->name('orchestrator.hr.activate');
             Route::post('/hr/{id}/reset-password',  [HRManagementController::class, 'resetPassword'])->name('orchestrator.hr.reset-password');
         });
+
+        // ── Live Chat Support ─────────────────────────────────────────────────
+        Route::get('/live-chat',              [LiveChatController::class, 'index'])->name('orchestrator.livechat');
+        Route::get('/live-chat/{id}',         [LiveChatController::class, 'show'])->name('orchestrator.livechat.show');
+        Route::post('/live-chat/{id}/reply',  [LiveChatController::class, 'reply'])->name('orchestrator.livechat.reply');
+        Route::patch('/live-chat/{id}/close', [LiveChatController::class, 'close'])->name('orchestrator.livechat.close');
+        Route::patch('/live-chat/{id}/reopen',[LiveChatController::class, 'reopen'])->name('orchestrator.livechat.reopen');
     });
 });
 

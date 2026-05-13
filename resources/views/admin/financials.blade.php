@@ -84,7 +84,7 @@
                     <tr class="hover:bg-surface/50 transition-colors">
                         <td class="px-6 py-4">
                             <p class="text-sm font-bold text-brand truncate max-w-[200px]">{{ $txn->user?->name ?? 'Unknown User' }}</p>
-                            <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">{{ $txn->created_at->format('M d, H:i') }} • {{ ucfirst($txn->gateway) }}</p>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">{{ $txn->created_at?->format('M d, H:i') ?? 'Unknown Date' }} • {{ ucfirst($txn->gateway) }}</p>
                         </td>
                         <td class="px-6 py-4 font-mono text-xs text-brand-muted">{{ substr($txn->reference, 0, 12) }}...</td>
                         <td class="px-6 py-4 font-black text-brand">₵{{ number_format($txn->amount, 2) }}</td>
@@ -138,7 +138,7 @@
                     </div>
                     <div>
                         <p class="text-xs font-bold text-brand truncate max-w-[150px]">{{ $payout->user?->name ?? 'Unknown Driver' }}</p>
-                        <p class="text-[10px] text-brand-muted">{{ $payout->created_at->diffForHumans() }}</p>
+                        <p class="text-[10px] text-brand-muted">{{ $payout->created_at?->diffForHumans() ?? 'Unknown Date' }}</p>
                     </div>
                 </div>
             </div>

@@ -122,6 +122,7 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         // ── Customer Support Department ───────────────────────────────────────
         Route::middleware('admin_department:Support|Customer Service')->group(function() {
             Route::get('/support/tickets',                        [SupportTicketController::class, 'index'])->name('orchestrator.support.tickets');
+            Route::post('/support/tickets',                       [SupportTicketController::class, 'store'])->name('orchestrator.support.tickets.store');
             Route::get('/support/tickets/{id}',                   [SupportTicketController::class, 'show'])->name('orchestrator.support.ticket.show');
             Route::post('/support/tickets/{id}/reply',            [SupportTicketController::class, 'reply'])->name('orchestrator.support.ticket.reply');
             Route::post('/support/tickets/{id}/assign',           [SupportTicketController::class, 'assign'])->name('orchestrator.support.ticket.assign');

@@ -54,7 +54,47 @@ class SupportTicketController extends Controller
             'open'       => SupportTicket::whereIn('status', ['open', 'in_progress'])->count(),
         ];
 
-        return view('admin.support_tickets', compact('tickets', 'counts'));
+        // For "Compose New" user search
+        $users = User::whereIn('role', ['customer', 'driver'])->limit(50)->get(['id', 'name', 'phone', 'role']);
+
+        return view('admin.support_tickets', compact('tickets', 'counts', 'users'));
+    }
+
+    /**
+     * Store a new ticket from admin.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id'  => 'required|exists:users,id',
+            'subject'  => 'required|string|max:255',
+            'category' => 'required|string',
+            'priority' => 'required|in:low,medium,high,urgent',
+            'message'  => 'required|string',
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+
+        $ticket = SupportTicket::create([
+            'user_id'     => $user->id,
+            'user_type'   => $user->role,
+            'subject'     => $request->subject,
+            'category'    => $request->category,
+            'priority'    => $request->priority,
+            'status'      => 'open',
+            'assigned_to' => auth('admin')->id(),
+        ]);
+
+        // Create initial reply (the message)
+        $ticket->replies()->create([
+            'sender_id'   => auth('admin')->id(),
+            'sender_type' => 'admin',
+            'message'     => $request->message,
+            'is_internal' => false,
+        ]);
+
+        return redirect()->route('orchestrator.support.ticket.show', $ticket->id)
+            ->with('success', 'Ticket created successfully.');
     }
 
     /**

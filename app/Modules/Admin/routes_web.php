@@ -11,6 +11,7 @@ use App\Modules\Admin\Controllers\ContentManagementController;
 use App\Modules\Admin\Controllers\HRManagementController;
 use App\Modules\Admin\Controllers\LiveChatController;
 use App\Modules\Admin\Controllers\SystemSettingController;
+use App\Modules\Admin\Controllers\AssetManagementController;
 use App\Modules\Admin\Controllers\NotificationController;
 use App\Modules\Admin\Controllers\OnboardingController;
 use Illuminate\Support\Facades\Route;
@@ -92,6 +93,12 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::get('/settings', [SystemSettingController::class, 'index'])->name('orchestrator.settings');
         Route::get('/settings/branding', [SystemSettingController::class, 'branding'])->name('orchestrator.settings.branding');
         Route::get('/settings/dashboard-branding', [SystemSettingController::class, 'dashboardBranding'])->name('orchestrator.settings.dashboard_branding');
+        
+        // Asset Management
+        Route::get('/settings/assets', [AssetManagementController::class, 'index'])->name('orchestrator.settings.assets');
+        Route::post('/settings/assets/upload', [AssetManagementController::class, 'upload'])->name('orchestrator.settings.assets.upload');
+        Route::post('/settings/assets/delete', [AssetManagementController::class, 'delete'])->name('orchestrator.settings.assets.delete');
+        Route::post('/settings/assets/config', [AssetManagementController::class, 'updateConfig'])->name('orchestrator.settings.assets.config');
         Route::get('/settings/authentication', [SystemSettingController::class, 'auth'])->name('orchestrator.settings.auth');
         Route::get('/settings/manifest', [SystemSettingController::class, 'manifest'])->name('orchestrator.settings.manifest');
         Route::get('/settings/localization', [SystemSettingController::class, 'localization'])->name('orchestrator.settings.localization');

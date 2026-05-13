@@ -167,26 +167,6 @@
             </div>
         </a>
 
-        <!-- Asset Management Card -->
-        <a href="{{ route('orchestrator.settings.assets') }}" class="group relative overflow-hidden bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-5">
-            <div class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 opacity-[0.02] group-hover:opacity-[0.06] transition-opacity pointer-events-none">
-                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            </div>
-
-            <div class="w-14 h-14 shrink-0 bg-brand text-white rounded-lg flex items-center justify-center relative z-10 group-hover:bg-accent group-hover:text-brand transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
-            </div>
-
-            <div class="relative z-10 flex-1">
-                <h3 class="text-[17px] font-black text-brand mb-1">Asset Management</h3>
-                <p class="text-[11px] text-brand-muted font-bold tracking-tight leading-relaxed">Centralized file vault, media library, and storage nodes.</p>
-            </div>
-
-            <div class="relative z-10 shrink-0 text-accent opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 duration-300">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </div>
-        </a>
-
         <!-- Payment Gateways Card -->
         <a href="{{ route('orchestrator.settings.payments') }}" class="group relative overflow-hidden bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-5">
             <div class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 opacity-[0.02] group-hover:opacity-[0.06] transition-opacity pointer-events-none">

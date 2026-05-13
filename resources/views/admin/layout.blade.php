@@ -307,10 +307,20 @@
                 <!-- Profile Dropdown -->
                 <div class="relative" @click.away="userMenuOpen = false">
                     <button @click="userMenuOpen = !userMenuOpen" class="flex items-center gap-3 pl-1 pr-4 py-1.5 bg-brand text-white rounded-lg transition hover:opacity-90 shadow-lg shadow-black/10">
-                        <div class="w-9 h-9 rounded-lg bg-accent text-brand flex items-center justify-center font-black text-sm">SA</div>
+                        @php
+                            $headerUser = auth('admin')->user();
+                            $headerInitials = strtoupper(substr($headerUser?->first_name ?? $headerUser?->name ?? 'A', 0, 1) . substr($headerUser?->last_name ?? '', 0, 1)) ?: 'AD';
+                        @endphp
+                        <div class="w-9 h-9 rounded-lg bg-accent text-brand flex items-center justify-center font-black text-sm overflow-hidden">
+                            @if($headerUser?->avatar_url)
+                                <img src="{{ $headerUser->avatar_url }}" class="w-full h-full object-cover">
+                            @else
+                                {{ $headerInitials }}
+                            @endif
+                        </div>
                         <div class="text-left hidden sm:block">
                             <p class="text-[11px] font-black text-accent uppercase leading-none mb-0.5">Clearance: Level 5</p>
-                            <p class="text-[13px] font-bold leading-none">Super Admin</p>
+                            <p class="text-[13px] font-bold leading-none capitalize">{{ str_replace('_', ' ', $headerUser?->user_type ?? 'Administrator') }}</p>
                         </div>
                         <svg class="w-4 h-4 text-white/50 transition-transform" :class="userMenuOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
@@ -323,11 +333,12 @@
                          class="absolute right-0 mt-4 w-64 bg-white rounded-lg shadow-2xl border border-gray-100 p-3 z-50 overflow-hidden" x-cloak>
                         
                         <div class="p-4 border-b border-gray-50 mb-2">
-                            <p class="text-sm font-black text-brand">Orchestrator Account</p>
+                            <p class="text-sm font-black text-brand">{{ auth('admin')->user()?->name ?? 'Orchestrator Account' }}</p>
                             <p class="text-xs text-brand-muted truncate">{{ auth('admin')->user()?->email ?? 'admin@wadexpro.com' }}</p>
+                            <p class="text-[10px] text-brand-muted mt-0.5">{{ ucfirst(str_replace('_',' ', auth('admin')->user()?->user_type ?? 'admin')) }}</p>
                         </div>
 
-                        <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface transition text-sm font-semibold text-gray-700">
+                        <a href="{{ route('orchestrator.profile') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface transition text-sm font-semibold text-gray-700">
                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             My Profile Settings
                         </a>

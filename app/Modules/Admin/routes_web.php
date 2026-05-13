@@ -34,6 +34,13 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::put('/users/{id}', [\App\Modules\Admin\Controllers\UserController::class, 'update'])->name('orchestrator.users.update');
         Route::patch('/users/{id}/toggle', [\App\Modules\Admin\Controllers\UserController::class, 'toggleStatus'])->name('orchestrator.users.toggle');
         Route::delete('/users/{id}', [\App\Modules\Admin\Controllers\UserController::class, 'destroy'])->name('orchestrator.users.destroy');
+
+        // Admin Profile & Account Settings
+        Route::get('/profile', [\App\Modules\Admin\Controllers\ProfileController::class, 'index'])->name('orchestrator.profile');
+        Route::post('/profile', [\App\Modules\Admin\Controllers\ProfileController::class, 'updateProfile'])->name('orchestrator.profile.update');
+        Route::post('/profile/password', [\App\Modules\Admin\Controllers\ProfileController::class, 'changePassword'])->name('orchestrator.profile.password');
+        Route::post('/profile/notifications', [\App\Modules\Admin\Controllers\ProfileController::class, 'updateNotifications'])->name('orchestrator.profile.notifications');
+        Route::post('/profile/revoke-sessions', [\App\Modules\Admin\Controllers\ProfileController::class, 'revokeAllSessions'])->name('orchestrator.profile.revoke');
         // Security & Fraud (Restricted)
         Route::middleware('admin_department:Security|IT|Engineering')->group(function() {
             Route::get('/security', [\App\Modules\Admin\Controllers\SecurityController::class, 'index'])->name('orchestrator.security');

@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    protected $fillable = ['name', 'label', 'description', 'is_system'];
+    protected $fillable = ['name', 'label', 'description', 'is_system', 'guard_name'];
+
+    protected $attributes = [
+        'guard_name' => 'web',
+    ];
+
     protected $casts = ['is_system' => 'boolean'];
 
     public function permissions()

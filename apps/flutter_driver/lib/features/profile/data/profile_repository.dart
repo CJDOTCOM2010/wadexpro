@@ -51,4 +51,48 @@ class ProfileRepository {
       throw e.response?.data['message'] ?? 'Failed to upload document';
     }
   }
+
+  Future<void> submitKYC({
+    required String licenseNumber,
+    required String licenseClass,
+    required String expiresAt,
+    XFile? idCardFront,
+    XFile? idCardBack,
+    XFile? driverPhoto,
+  }) async {
+    try {
+      final Map<String, dynamic> formDataMap = {
+        'license_number': licenseNumber,
+        'license_class': licenseClass,
+        'license_expires_at': expiresAt,
+      };
+
+      if (idCardFront != null) {
+        formDataMap['id_card_front'] = kIsWeb 
+            ? MultipartFile.fromBytes(await idCardFront.readAsBytes(), filename: idCardFront.name) 
+            : await MultipartFile.fromFile(idCardFront.path);
+      }
+
+      if (idCardBack != null) {
+        formDataMap['id_card_back'] = kIsWeb 
+            ? MultipartFile.fromBytes(await idCardBack.readAsBytes(), filename: idCardBack.name) 
+            : await MultipartFile.fromFile(idCardBack.path);
+      }
+
+      if (driverPhoto != null) {
+        formDataMap['driver_photo'] = kIsWeb 
+            ? MultipartFile.fromBytes(await driverPhoto.readAsBytes(), filename: driverPhoto.name) 
+            : await MultipartFile.fromFile(driverPhoto.path);
+      }
+
+      final formData = FormData.fromMap(formDataMap);
+
+      await _apiClient.instance.post(
+        '/v1/logistics/driver/kyc/upload',
+        data: formData,
+      );
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Failed to submit KYC documents';
+    }
+  }
 }

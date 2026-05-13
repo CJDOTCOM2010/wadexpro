@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../providers/profile_provider.dart';
 import 'package:wadexpro_driver/features/wallet/presentation/pages/wallet_screen.dart';
 import '../../auth/presentation/providers/auth_provider.dart';
+import 'kyc_upload_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -14,14 +15,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  final _picker = ImagePicker();
-
-  Future<void> _pickAndUpload(String type) async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera, imageQuality: 70);
-    if (image != null) {
-      ref.read(profileProvider.notifier).uploadKYC(type, image);
-    }
-  }
 
   @override
   void initState() {
@@ -232,6 +225,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildKYCSection(ProfileState state) {
+    final status = state.verificationStatus;
+    
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
@@ -245,29 +240,66 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Text('KYC / DOCUMENTS', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
             ],
           ),
-          const SizedBox(height: 20),
-          _buildDocTile('Driving License', state.data?['license_path'] != null, 'license'),
-          _buildDocTile('Vehicle Insurance', state.data?['insurance_path'] != null, 'insurance'),
-          _buildDocTile('National ID Card', state.data?['id_card_path'] != null, 'id_card'),
+          const SizedBox(height: 16),
+          if (status == 'verified')
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+              child: const Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green),
+                  SizedBox(width: 12),
+                  Expanded(child: Text('Your documents are verified and approved.', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))),
+                ],
+              ),
+            )
+          else if (status == 'pending_verification' || status == 'pending')
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+              child: const Row(
+                children: [
+                  Icon(Icons.access_time_filled, color: Colors.orange),
+                  SizedBox(width: 12),
+                  Expanded(child: Text('Your documents are currently under review.', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold))),
+                ],
+              ),
+            )
+          else
+            Column(
+              children: [
+                if (status == 'rejected')
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error, color: Colors.red),
+                        const SizedBox(width: 12),
+                        Expanded(child: Text('Documents rejected. Please re-upload clear copies.', style: TextStyle(color: Colors.red.shade700))),
+                      ],
+                    ),
+                  ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Identity & License', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('Required for verification'),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const KYCUploadScreen()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6C63FF),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text('UPLOAD', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDocTile(String title, bool isUploaded, String type) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-      subtitle: Text(
-        isUploaded ? 'Document Uploaded' : 'Action Required',
-        style: TextStyle(color: isUploaded ? Colors.green : Colors.grey, fontSize: 12),
-      ),
-      trailing: isUploaded
-          ? const Icon(Icons.check_circle, color: Colors.green)
-          : TextButton(
-              onPressed: () => _pickAndUpload(type),
-              child: const Text('UPLOAD'),
-            ),
     );
   }
 

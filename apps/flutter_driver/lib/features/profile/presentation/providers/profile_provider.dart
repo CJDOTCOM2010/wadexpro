@@ -76,4 +76,29 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
+
+  Future<void> submitKYC({
+    required String licenseNumber,
+    required String licenseClass,
+    required String expiresAt,
+    XFile? idCardFront,
+    XFile? idCardBack,
+    XFile? driverPhoto,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _repository.submitKYC(
+        licenseNumber: licenseNumber,
+        licenseClass: licenseClass,
+        expiresAt: expiresAt,
+        idCardFront: idCardFront,
+        idCardBack: idCardBack,
+        driverPhoto: driverPhoto,
+      );
+      await fetchProfile();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
 }

@@ -10,6 +10,9 @@ use App\Modules\Admin\Controllers\MarketingController;
 use App\Modules\Admin\Controllers\ContentManagementController;
 use App\Modules\Admin\Controllers\HRManagementController;
 use App\Modules\Admin\Controllers\LiveChatController;
+use App\Modules\Admin\Controllers\SystemSettingController;
+use App\Modules\Admin\Controllers\NotificationController;
+use App\Modules\Admin\Controllers\OnboardingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -86,20 +89,20 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::delete('/permissions/{id}',            [\App\Modules\Admin\Controllers\RolePermissionController::class, 'destroyPermission'])->name('orchestrator.permissions.destroy');
         Route::post('/users/{userId}/assign-role',    [\App\Modules\Admin\Controllers\RolePermissionController::class, 'assignRole'])->name('orchestrator.users.assign-role');
         Route::delete('/users/{userId}/revoke-role/{roleId}', [\App\Modules\Admin\Controllers\RolePermissionController::class, 'revokeRole'])->name('orchestrator.users.revoke-role');
-        Route::get('/settings', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'index'])->name('orchestrator.settings');
+        Route::get('/settings', [SystemSettingController::class, 'index'])->name('orchestrator.settings');
         Route::get('/settings/branding', [SystemSettingController::class, 'branding'])->name('orchestrator.settings.branding');
         Route::get('/settings/dashboard-branding', [SystemSettingController::class, 'dashboardBranding'])->name('orchestrator.settings.dashboard_branding');
-        Route::get('/settings/authentication', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'auth'])->name('orchestrator.settings.auth');
-        Route::get('/settings/manifest', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'manifest'])->name('orchestrator.settings.manifest');
-        Route::get('/settings/localization', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'localization'])->name('orchestrator.settings.localization');
-        Route::get('/settings/payments', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'payments'])->name('orchestrator.settings.payments');
-        Route::post('/settings', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'update'])->name('orchestrator.settings.update');
+        Route::get('/settings/authentication', [SystemSettingController::class, 'auth'])->name('orchestrator.settings.auth');
+        Route::get('/settings/manifest', [SystemSettingController::class, 'manifest'])->name('orchestrator.settings.manifest');
+        Route::get('/settings/localization', [SystemSettingController::class, 'localization'])->name('orchestrator.settings.localization');
+        Route::get('/settings/payments', [SystemSettingController::class, 'payments'])->name('orchestrator.settings.payments');
+        Route::post('/settings', [SystemSettingController::class, 'update'])->name('orchestrator.settings.update');
 
         // Communication & Notifications
-        Route::get('/settings/notifications',          [\App\Modules\Admin\Controllers\NotificationController::class, 'index'])->name('orchestrator.settings.notifications');
-        Route::post('/settings/notifications',         [\App\Modules\Admin\Controllers\NotificationController::class, 'update'])->name('orchestrator.settings.notifications.update');
-        Route::post('/settings/notifications/events',  [\App\Modules\Admin\Controllers\NotificationController::class, 'updateEvents'])->name('orchestrator.settings.notifications.events');
-        Route::post('/settings/notifications/test',    [\App\Modules\Admin\Controllers\NotificationController::class, 'test'])->name('orchestrator.settings.notifications.test');
+        Route::get('/settings/notifications',          [NotificationController::class, 'index'])->name('orchestrator.settings.notifications');
+        Route::post('/settings/notifications',         [NotificationController::class, 'update'])->name('orchestrator.settings.notifications.update');
+        Route::post('/settings/notifications/events',  [NotificationController::class, 'updateEvents'])->name('orchestrator.settings.notifications.events');
+        Route::post('/settings/notifications/test',    [NotificationController::class, 'test'])->name('orchestrator.settings.notifications.test');
 
         // Notification Templates
         Route::get('/settings/templates',              [\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'index'])->name('orchestrator.templates.index');
@@ -110,14 +113,14 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::delete('/settings/templates/{id}',      [\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'destroy'])->name('orchestrator.templates.destroy');
         Route::patch('/settings/templates/{id}/toggle',[\App\Modules\Admin\Controllers\NotificationTemplateController::class, 'toggle'])->name('orchestrator.templates.toggle');
 
-        // Onboarding Slide Manager
-        Route::get('/settings/onboarding/{appType}', [\App\Modules\Admin\Controllers\OnboardingController::class, 'index'])->name('orchestrator.settings.onboarding');
-        Route::post('/settings/onboarding', [\App\Modules\Admin\Controllers\OnboardingController::class, 'store'])->name('orchestrator.onboarding.store');
-        Route::put('/settings/onboarding/{id}', [\App\Modules\Admin\Controllers\OnboardingController::class, 'update'])->name('orchestrator.onboarding.update');
-        Route::delete('/settings/onboarding/{id}', [\App\Modules\Admin\Controllers\OnboardingController::class, 'destroy'])->name('orchestrator.onboarding.destroy');
-        Route::patch('/settings/onboarding/{id}/toggle', [\App\Modules\Admin\Controllers\OnboardingController::class, 'toggle'])->name('orchestrator.onboarding.toggle');
-        Route::post('/settings/onboarding/reorder', [\App\Modules\Admin\Controllers\OnboardingController::class, 'reorder'])->name('orchestrator.onboarding.reorder');
-        Route::post('/settings/onboarding/splash', [\App\Modules\Admin\Controllers\OnboardingController::class, 'updateSplash'])->name('orchestrator.onboarding.splash.update');
+        // App Onboarding Slides
+        Route::get('/settings/onboarding/{appType}', [OnboardingController::class, 'index'])->name('orchestrator.settings.onboarding');
+        Route::post('/settings/onboarding', [OnboardingController::class, 'store'])->name('orchestrator.onboarding.store');
+        Route::put('/settings/onboarding/{id}', [OnboardingController::class, 'update'])->name('orchestrator.onboarding.update');
+        Route::delete('/settings/onboarding/{id}', [OnboardingController::class, 'destroy'])->name('orchestrator.onboarding.destroy');
+        Route::patch('/settings/onboarding/{id}/toggle', [OnboardingController::class, 'toggle'])->name('orchestrator.onboarding.toggle');
+        Route::post('/settings/onboarding/reorder', [OnboardingController::class, 'reorder'])->name('orchestrator.onboarding.reorder');
+        Route::post('/settings/onboarding/splash', [OnboardingController::class, 'updateSplash'])->name('orchestrator.onboarding.splash.update');
 
         // ── IT & Engineering Department ───────────────────────────────────────
         Route::middleware('admin_department:IT|Engineering')->group(function() {

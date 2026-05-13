@@ -285,11 +285,11 @@ class WalletScreen extends ConsumerWidget {
             child: const Icon(Icons.storefront, color: Color(0xFFE17055)),
           ),
           const SizedBox(width: 16),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('In-Store Top-up', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                const Text('In-Store Top-up', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                 Text('Visit any ${BrandConfig.shortName} Office to top up via Cash.', style: TextStyle(fontSize: 11, color: Colors.white54)),
               ],
             ),

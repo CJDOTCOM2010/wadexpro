@@ -144,6 +144,7 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
 
         // ── Customer Support Department ───────────────────────────────────────
         Route::middleware('admin_department:Support|Customer Service')->group(function() {
+            // Support Tickets
             Route::get('/support/tickets',                        [SupportTicketController::class, 'index'])->name('orchestrator.support.tickets');
             Route::post('/support/tickets',                       [SupportTicketController::class, 'store'])->name('orchestrator.support.tickets.store');
             Route::get('/support/tickets/{id}',                   [SupportTicketController::class, 'show'])->name('orchestrator.support.ticket.show');
@@ -151,6 +152,13 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
             Route::post('/support/tickets/{id}/assign',           [SupportTicketController::class, 'assign'])->name('orchestrator.support.ticket.assign');
             Route::patch('/support/tickets/{id}/resolve',         [SupportTicketController::class, 'resolve'])->name('orchestrator.support.ticket.resolve');
             Route::patch('/support/tickets/{id}/close',           [SupportTicketController::class, 'close'])->name('orchestrator.support.ticket.close');
+
+            // Live Chat
+            Route::get('/support/livechat',                       [\App\Modules\Admin\Controllers\LiveChatController::class, 'index'])->name('orchestrator.livechat');
+            Route::get('/support/livechat/{id}',                  [\App\Modules\Admin\Controllers\LiveChatController::class, 'show'])->name('orchestrator.livechat.show');
+            Route::post('/support/livechat/{id}/reply',           [\App\Modules\Admin\Controllers\LiveChatController::class, 'reply'])->name('orchestrator.livechat.reply');
+            Route::post('/support/livechat/{id}/close',           [\App\Modules\Admin\Controllers\LiveChatController::class, 'close'])->name('orchestrator.livechat.close');
+            Route::post('/support/livechat/{id}/reopen',          [\App\Modules\Admin\Controllers\LiveChatController::class, 'reopen'])->name('orchestrator.livechat.reopen');
         });
 
         // ── Analytics & Reporting Department ─────────────────────────────────

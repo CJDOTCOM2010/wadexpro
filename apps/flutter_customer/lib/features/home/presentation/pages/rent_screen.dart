@@ -25,7 +25,7 @@ class _RentScreenState extends State<RentScreen> {
 
   Future<void> _fetchRentals() async {
     try {
-      final response = await ApiClient().instance.get('/v1/logistics/rentals');
+      final response = await ApiClient(Dio()).instance.get('/v1/logistics/rentals');
       setState(() {
         _rentalData = response.data['data'];
         _isLoading = false;
@@ -70,7 +70,7 @@ class _RentScreenState extends State<RentScreen> {
     );
 
     try {
-      await ApiClient().instance.post('/v1/logistics/book', data: {
+      await ApiClient(Dio()).instance.post('/v1/logistics/book', data: {
         'service_type': 'rent',
         'item_id': id,
       });

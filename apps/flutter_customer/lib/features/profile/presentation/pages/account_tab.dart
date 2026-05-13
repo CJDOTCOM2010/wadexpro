@@ -16,7 +16,7 @@ import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/providers/dashboard_provider.dart';
 import '../widgets/appearance_modal.dart';
 import 'wadex_account_screen.dart';
-import '../../chat/presentation/pages/support_chat_screen.dart';
+import '../../../chat/presentation/pages/support_chat_screen.dart';
 
 class AccountTab extends ConsumerStatefulWidget {
   const AccountTab({super.key});
@@ -723,7 +723,7 @@ class _AccountTabState extends ConsumerState<AccountTab> {
               const Color(0xFF6C63FF),
               () {
                 Navigator.pop(ctx); // Close modal
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const SupportChatScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => SupportChatScreen()));
               }
             ),
           ],
@@ -762,6 +762,7 @@ class _AccountTabState extends ConsumerState<AccountTab> {
           ),
           const Icon(Icons.chevron_right, color: Colors.white24),
         ],
+      ),
       ),
     );
   }

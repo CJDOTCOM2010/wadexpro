@@ -33,7 +33,7 @@ class _TransportHubScreenState extends State<TransportHubScreen> {
 
   Future<void> _fetchHubs() async {
     try {
-      final response = await ApiClient().instance.get('/v1/logistics/hubs/${widget.serviceName}');
+      final response = await ApiClient(Dio()).instance.get('/v1/logistics/hubs/${widget.serviceName}');
       setState(() {
         _transportData = response.data['data'];
         _isLoading = false;
@@ -289,7 +289,7 @@ class _TransportHubScreenState extends State<TransportHubScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [BoxShadow(color: accent.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))],
                 ),
-                child: Icon(icon, color: Colors.white, size: 26),
+                child: Icon(widget.icon, color: Colors.white, size: 26),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -384,7 +384,7 @@ class _TransportHubScreenState extends State<TransportHubScreen> {
               );
 
               try {
-                await ApiClient().instance.post('/v1/logistics/book', data: {
+                await ApiClient(Dio()).instance.post('/v1/logistics/book', data: {
                   'service_type': widget.serviceName,
                   'item_id': hub['id'] ?? 0,
                 });

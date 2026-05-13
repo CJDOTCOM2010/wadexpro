@@ -137,6 +137,18 @@
                 </a>
             </div>
 
+            <!-- Section: Customer Support -->
+            <div class="space-y-1">
+                <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Customer Support</p>
+                <a href="{{ route('orchestrator.support.tickets') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.support.ticket*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Support Tickets</span>
+                </a>
+                <a href="{{ route('orchestrator.livechat') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.livechat*') ? 'bg-white/10 text-accent shadow-lg shadow-black/20' : 'text-white/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    <span class="text-sm font-semibold whitespace-nowrap">Live Chat</span>
+                </a>
+            </div>
 
             <!-- Section: Analytics -->
             <div class="space-y-1">

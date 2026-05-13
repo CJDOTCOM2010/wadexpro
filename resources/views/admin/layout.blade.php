@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WADEXPRO Orchestrator</title>
+    <title>{{ \App\Modules\Admin\Models\SystemSetting::get('dashboard_app_name', 'WADEXPRO') }} {{ \App\Modules\Admin\Models\SystemSetting::get('dashboard_tagline', 'Orchestrator') }}</title>
+    
+    @php $favicon = \App\Modules\Admin\Models\SystemSetting::get('dashboard_favicon_url'); @endphp
+    @if($favicon)
+        <link rel="icon" type="image/x-icon" href="{{ $favicon }}">
+    @endif
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -58,12 +63,27 @@
         <!-- Sticky Logo Area -->
         <div class="h-20 flex items-center px-6 border-b border-white/10 shrink-0 bg-brand sticky top-0 z-20">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center shrink-0">
-                    <span class="text-brand font-black text-xl">W</span>
-                </div>
+                @php $dashLogo = \App\Modules\Admin\Models\SystemSetting::get('dashboard_logo_url'); @endphp
+                @if($dashLogo)
+                    <div class="w-10 h-10 bg-brand rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                        <img src="{{ $dashLogo }}" class="w-full h-full object-contain">
+                    </div>
+                @else
+                    <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center shrink-0">
+                        <span class="text-brand font-black text-xl">{{ substr(\App\Modules\Admin\Models\SystemSetting::get('dashboard_app_name', 'W'), 0, 1) }}</span>
+                    </div>
+                @endif
+                
                 <div class="transition-all duration-300" :class="sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 pointer-events-none'">
-                    <span class="text-xl font-bold tracking-tight">WADEX<span class="text-accent">PRO</span></span>
-                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] -mt-1">Orchestrator</p>
+                    <span class="text-xl font-bold tracking-tight">
+                        @php 
+                            $appName = \App\Modules\Admin\Models\SystemSetting::get('dashboard_app_name', 'WADEXPRO');
+                            $firstWord = strtok($appName, ' ');
+                            $rest = substr($appName, strlen($firstWord));
+                        @endphp
+                        {{ $firstWord }}<span class="text-accent">{{ $rest }}</span>
+                    </span>
+                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] -mt-1">{{ \App\Modules\Admin\Models\SystemSetting::get('dashboard_tagline', 'Orchestrator') }}</p>
                 </div>
             </div>
         </div>

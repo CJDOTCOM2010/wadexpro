@@ -87,7 +87,8 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::post('/users/{userId}/assign-role',    [\App\Modules\Admin\Controllers\RolePermissionController::class, 'assignRole'])->name('orchestrator.users.assign-role');
         Route::delete('/users/{userId}/revoke-role/{roleId}', [\App\Modules\Admin\Controllers\RolePermissionController::class, 'revokeRole'])->name('orchestrator.users.revoke-role');
         Route::get('/settings', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'index'])->name('orchestrator.settings');
-        Route::get('/settings/branding', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'branding'])->name('orchestrator.settings.branding');
+        Route::get('/settings/branding', [SystemSettingController::class, 'branding'])->name('orchestrator.settings.branding');
+        Route::get('/settings/dashboard-branding', [SystemSettingController::class, 'dashboardBranding'])->name('orchestrator.settings.dashboard_branding');
         Route::get('/settings/authentication', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'auth'])->name('orchestrator.settings.auth');
         Route::get('/settings/manifest', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'manifest'])->name('orchestrator.settings.manifest');
         Route::get('/settings/localization', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'localization'])->name('orchestrator.settings.localization');

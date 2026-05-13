@@ -28,6 +28,26 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </div>
         </a>
+        
+        <!-- Dashboard Branding Card -->
+        <a href="{{ route('orchestrator.settings.dashboard_branding') }}" class="group relative overflow-hidden bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-5">
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 opacity-[0.02] group-hover:opacity-[0.06] transition-opacity pointer-events-none">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            </div>
+            
+            <div class="w-14 h-14 shrink-0 bg-accent/5 rounded-lg flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-brand transition-colors relative z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            
+            <div class="relative z-10 flex-1">
+                <h3 class="text-[17px] font-black text-brand mb-1">Dashboard Branding</h3>
+                <p class="text-[11px] text-brand-muted font-bold tracking-tight leading-relaxed">Customize logos, favicons, and portal identity.</p>
+            </div>
+            
+            <div class="relative z-10 shrink-0 text-accent opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </a>
 
         <!-- Identity Card -->
         <a href="{{ route('orchestrator.settings.auth') }}" class="group relative overflow-hidden bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-5">

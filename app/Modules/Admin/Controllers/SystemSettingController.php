@@ -25,6 +25,14 @@ class SystemSettingController extends Controller
     }
 
     /**
+     * Display dashboard branding settings page.
+     */
+    public function dashboardBranding()
+    {
+        return view('admin.settings.dashboard_branding');
+    }
+
+    /**
      * Display identity and authentication settings page.
      */
     public function auth()
@@ -97,11 +105,25 @@ class SystemSettingController extends Controller
             SystemSetting::set($key, $value);
         }
 
-        // Handle brand logo file upload
+        // Handle brand logo file upload (Mobile Apps)
         if ($request->hasFile('brand_logo')) {
             $request->validate(['brand_logo' => 'image|mimes:png,jpg,jpeg,svg,webp|max:2048']);
             $path = $request->file('brand_logo')->store('branding', 'public');
             SystemSetting::set('brand_logo_url', '/storage/' . $path);
+        }
+
+        // Handle dashboard logo file upload
+        if ($request->hasFile('dashboard_logo')) {
+            $request->validate(['dashboard_logo' => 'image|mimes:png,jpg,jpeg,svg,webp|max:2048']);
+            $path = $request->file('dashboard_logo')->store('branding/dashboard', 'public');
+            SystemSetting::set('dashboard_logo_url', '/storage/' . $path);
+        }
+
+        // Handle dashboard favicon file upload
+        if ($request->hasFile('dashboard_favicon')) {
+            $request->validate(['dashboard_favicon' => 'image|mimes:png,jpg,jpeg,svg,webp,ico|max:1024']);
+            $path = $request->file('dashboard_favicon')->store('branding/dashboard', 'public');
+            SystemSetting::set('dashboard_favicon_url', '/storage/' . $path);
         }
 
         // Flush the public settings cache so mobile apps pick up changes immediately

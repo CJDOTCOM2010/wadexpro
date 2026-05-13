@@ -2,13 +2,10 @@
 
 namespace App\Modules\Admin\Models;
 
-use App\Core\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    use HasUuid;
-
     protected $fillable = ['name', 'label', 'description', 'is_system'];
     protected $casts = ['is_system' => 'boolean'];
 

@@ -2,13 +2,10 @@
 
 namespace App\Modules\Admin\Models;
 
-use App\Core\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 
 class Permission extends Model
 {
-    use HasUuid;
-
     protected $fillable = ['name', 'module', 'label'];
 
     public function roles()

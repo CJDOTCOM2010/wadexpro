@@ -43,8 +43,8 @@ return new class extends Migration
 
         if (!Schema::hasTable('role_permission')) {
             Schema::create('role_permission', function (Blueprint $table) {
-                $table->uuid('role_id');
-                $table->uuid('permission_id');
+                $table->unsignedBigInteger('role_id');
+                $table->unsignedBigInteger('permission_id');
                 $table->primary(['role_id', 'permission_id']);
                 $table->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete();
                 $table->foreign('permission_id')->references('id')->on('permissions')->cascadeOnDelete();
@@ -54,7 +54,7 @@ return new class extends Migration
         if (!Schema::hasTable('user_role')) {
             Schema::create('user_role', function (Blueprint $table) {
                 $table->uuid('user_id');
-                $table->uuid('role_id');
+                $table->unsignedBigInteger('role_id');
                 $table->primary(['user_id', 'role_id']);
                 $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
                 $table->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete();

@@ -8,10 +8,10 @@
         <p class="text-brand-muted font-medium mt-1">Manage system administrators, support agents, and access controls.</p>
     </div>
     <div class="flex gap-4">
-        <button onclick="document.getElementById('add-modal').classList.remove('hidden')" class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2">
+        <a href="{{ route('orchestrator.hr.create') }}" class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-            Add Staff Member
-        </button>
+            Onboard New Staff
+        </a>
     </div>
 </div>
 

@@ -106,4 +106,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(\App\Modules\Logistics\Models\Driver::class);
     }
+
+    /**
+     * Get the user's staff profile (if they are an employee).
+     */
+    public function staffProfile()
+    {
+        return $this->hasOne(\App\Modules\Admin\Models\StaffProfile::class);
+    }
 }

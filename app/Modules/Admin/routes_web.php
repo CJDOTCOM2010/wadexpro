@@ -161,6 +161,7 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         // ── HR Department ─────────────────────────────────────────────────────
         Route::middleware('admin_department:HR|Management')->group(function() {
             Route::get('/hr',                       [HRManagementController::class, 'index'])->name('orchestrator.hr');
+            Route::get('/hr/onboard',               [HRManagementController::class, 'create'])->name('orchestrator.hr.create');
             Route::post('/hr',                      [HRManagementController::class, 'store'])->name('orchestrator.hr.store');
             Route::patch('/hr/{id}/role',           [HRManagementController::class, 'updateRole'])->name('orchestrator.hr.role');
             Route::patch('/hr/{id}/deactivate',     [HRManagementController::class, 'deactivate'])->name('orchestrator.hr.deactivate');

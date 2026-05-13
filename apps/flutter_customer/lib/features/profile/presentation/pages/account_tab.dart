@@ -17,6 +17,7 @@ import '../../../../core/providers/dashboard_provider.dart';
 import '../widgets/appearance_modal.dart';
 import 'wadex_account_screen.dart';
 import '../../../chat/presentation/pages/support_chat_screen.dart';
+import '../../../support/presentation/pages/support_tickets_screen.dart';
 
 class AccountTab extends ConsumerStatefulWidget {
   const AccountTab({super.key});
@@ -714,7 +715,16 @@ class _AccountTabState extends ConsumerState<AccountTab> {
             const SizedBox(height: 12),
             const Text('Priority access for Diamond members', style: TextStyle(color: Colors.white38)),
             const SizedBox(height: 40),
-            _buildPremiumSupportAction(Icons.headset_mic_rounded, 'Direct Line', '24/7 Priority Support', const Color(0xFF00D4AA), null),
+            _buildPremiumSupportAction(
+              Icons.contact_support_rounded, 
+              'Support Tickets', 
+              'Asynchronous issue tracking', 
+              const Color(0xFF00D4AA),
+              () {
+                Navigator.pop(ctx);
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const SupportTicketsScreen()));
+              }
+            ),
             const SizedBox(height: 20),
             _buildPremiumSupportAction(
               Icons.chat_bubble_rounded, 

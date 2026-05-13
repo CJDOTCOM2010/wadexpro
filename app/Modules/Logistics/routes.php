@@ -80,6 +80,12 @@ Route::prefix('v1/logistics')->middleware('auth:sanctum')->group(function () {
         Route::post('/send', [\App\Modules\Logistics\Controllers\CustomerSupportChatController::class, 'send']);
     });
 
+    Route::prefix('support/tickets')->group(function () {
+        Route::get('/', [\App\Modules\Logistics\Controllers\CustomerSupportTicketController::class, 'index']);
+        Route::post('/', [\App\Modules\Logistics\Controllers\CustomerSupportTicketController::class, 'store']);
+        Route::post('/{id}/reply', [\App\Modules\Logistics\Controllers\CustomerSupportTicketController::class, 'reply']);
+    });
+
     // -----------------------------------------------------------------------
     // Personal Order Endpoints (Customer Side)
     // -----------------------------------------------------------------------

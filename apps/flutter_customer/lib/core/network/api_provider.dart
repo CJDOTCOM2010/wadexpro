@@ -5,6 +5,7 @@ import '../services/socket_service.dart';
 import '../../features/auth/data/auth_repository.dart';
 import '../../features/wallet/data/wallet_repository.dart';
 import '../../features/chat/data/chat_repository.dart';
+import '../../features/support/data/support_repository.dart';
 import '../providers/localization_provider.dart';
 
 final dioProvider = Provider((ref) => Dio());
@@ -39,4 +40,9 @@ final socketServiceProvider = Provider((ref) {
 final walletRepositoryProvider = Provider((ref) {
   final apiClient = ref.watch(apiClientProvider);
   return WalletRepository(apiClient);
+});
+
+final supportTicketRepositoryProvider = Provider((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return SupportTicketRepository(apiClient);
 });

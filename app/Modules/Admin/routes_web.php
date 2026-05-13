@@ -12,6 +12,7 @@ use App\Modules\Admin\Controllers\HRManagementController;
 use App\Modules\Admin\Controllers\LiveChatController;
 use App\Modules\Admin\Controllers\SystemSettingController;
 use App\Modules\Admin\Controllers\AssetManagementController;
+use App\Modules\Admin\Controllers\BackupController;
 use App\Modules\Admin\Controllers\NotificationController;
 use App\Modules\Admin\Controllers\OnboardingController;
 use Illuminate\Support\Facades\Route;
@@ -99,6 +100,13 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::post('/settings/assets/upload', [AssetManagementController::class, 'upload'])->name('orchestrator.settings.assets.upload');
         Route::post('/settings/assets/delete', [AssetManagementController::class, 'delete'])->name('orchestrator.settings.assets.delete');
         Route::post('/settings/assets/config', [AssetManagementController::class, 'updateConfig'])->name('orchestrator.settings.assets.config');
+        
+        // System Backups
+        Route::get('/settings/backups', [BackupController::class, 'index'])->name('orchestrator.settings.backups');
+        Route::post('/settings/backups/create', [BackupController::class, 'create'])->name('orchestrator.settings.backups.create');
+        Route::get('/settings/backups/download/{file}', [BackupController::class, 'download'])->name('orchestrator.settings.backups.download');
+        Route::delete('/settings/backups/delete/{file}', [BackupController::class, 'delete'])->name('orchestrator.settings.backups.delete');
+        Route::post('/settings/backups/clean', [BackupController::class, 'clean'])->name('orchestrator.settings.backups.clean');
         Route::get('/settings/authentication', [SystemSettingController::class, 'auth'])->name('orchestrator.settings.auth');
         Route::get('/settings/manifest', [SystemSettingController::class, 'manifest'])->name('orchestrator.settings.manifest');
         Route::get('/settings/localization', [SystemSettingController::class, 'localization'])->name('orchestrator.settings.localization');

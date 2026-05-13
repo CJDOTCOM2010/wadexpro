@@ -13,4 +13,5 @@ return [
     App\Modules\Monitoring\MonitoringServiceProvider::class,
     App\Modules\Notifications\NotificationsServiceProvider::class,
     App\Modules\Payments\PaymentsServiceProvider::class,
+    Spatie\Backup\BackupServiceProvider::class,
 ];

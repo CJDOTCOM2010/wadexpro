@@ -60,6 +60,12 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::get('/settings/localization', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'localization'])->name('orchestrator.settings.localization');
         Route::post('/settings', [\App\Modules\Admin\Controllers\SystemSettingController::class, 'update'])->name('orchestrator.settings.update');
 
+        // Communication & Notifications
+        Route::get('/settings/notifications',          [\App\Modules\Admin\Controllers\NotificationController::class, 'index'])->name('orchestrator.settings.notifications');
+        Route::post('/settings/notifications',         [\App\Modules\Admin\Controllers\NotificationController::class, 'update'])->name('orchestrator.settings.notifications.update');
+        Route::post('/settings/notifications/events',  [\App\Modules\Admin\Controllers\NotificationController::class, 'updateEvents'])->name('orchestrator.settings.notifications.events');
+        Route::post('/settings/notifications/test',    [\App\Modules\Admin\Controllers\NotificationController::class, 'test'])->name('orchestrator.settings.notifications.test');
+
         // Onboarding Slide Manager
         Route::get('/settings/onboarding/{appType}', [\App\Modules\Admin\Controllers\OnboardingController::class, 'index'])->name('orchestrator.settings.onboarding');
         Route::post('/settings/onboarding', [\App\Modules\Admin\Controllers\OnboardingController::class, 'store'])->name('orchestrator.onboarding.store');

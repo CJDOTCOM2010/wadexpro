@@ -89,7 +89,25 @@
             </div>
         </a>
 
-        <!-- Customer Onboarding Card -->
+        <!-- Communication & Notifications Card -->
+        <a href="{{ route('orchestrator.settings.notifications') }}" class="group relative overflow-hidden bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-5">
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 opacity-[0.02] group-hover:opacity-[0.06] transition-opacity pointer-events-none">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            </div>
+
+            <div class="w-14 h-14 shrink-0 bg-orange-50 rounded-lg flex items-center justify-center text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors relative z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            </div>
+
+            <div class="relative z-10 flex-1">
+                <h3 class="text-[17px] font-black text-brand mb-1">Communication Channels</h3>
+                <p class="text-[11px] text-brand-muted font-bold tracking-tight leading-relaxed">Email, SMS, WhatsApp, Push, and In-Call API configurations.</p>
+            </div>
+
+            <div class="relative z-10 shrink-0 text-accent opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </a>
         <a href="{{ route('orchestrator.settings.onboarding', 'customer') }}" class="group relative overflow-hidden bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-5">
             <div class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 opacity-[0.02] group-hover:opacity-[0.06] transition-opacity pointer-events-none">
                 <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>

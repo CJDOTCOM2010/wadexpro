@@ -69,12 +69,8 @@ class FinancialController extends Controller
 
             return view('admin.financials', compact('stats', 'recentTransactions', 'pendingPayouts'));
         } catch (\Throwable $e) {
-            dd(
-                'FINANCIAL DASHBOARD ERROR:',
-                $e->getMessage(),
-                'File: ' . $e->getFile() . ' on line ' . $e->getLine(),
-                $e->getTraceAsString()
-            );
+            \Illuminate\Support\Facades\Log::error('FinancialController error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->with('error', 'Financial dashboard could not load: ' . $e->getMessage());
         }
     }
 

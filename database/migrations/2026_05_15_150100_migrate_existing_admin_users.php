@@ -31,8 +31,6 @@ return new class extends Migration
                 ]
             );
         }
-
-        $this->command->info("Migrated {$adminUsers->count()} admin users to admins table.");
     }
 
     public function down(): void

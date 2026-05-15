@@ -46,6 +46,15 @@ class Admin extends Authenticatable
         return $this->is_super_admin === true || $this->level === 'super_admin';
     }
 
+    public function hasRole(string $roleName): bool
+    {
+        if ($roleName === 'super_admin') {
+            return $this->isSuperAdmin();
+        }
+
+        return $this->role === $roleName;
+    }
+
     public function canAccessModule(string $moduleSlug): bool
     {
         if ($this->isSuperAdmin()) {

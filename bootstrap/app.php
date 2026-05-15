@@ -19,6 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->redirectGuestsTo(function ($request) {
+            // Admin/Orchestrator routes should redirect to the admin login
+            if ($request->is('orchestrator/*') || $request->is(env('ORCHESTRATOR_PATH', 'orchestrator') . '/*')) {
+                return route('orchestrator.login');
+            }
+
+            // Customer/Public routes redirect to the localized login
             $segments = $request->segments();
             $country = $segments[0] ?? 'gh';
             $lang = $segments[1] ?? 'en';

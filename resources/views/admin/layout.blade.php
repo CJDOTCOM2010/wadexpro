@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ \App\Modules\Admin\Models\SystemSetting::get('dashboard_app_name', 'WADEXPRO') }} {{ \App\Modules\Admin\Models\SystemSetting::get('dashboard_tagline', 'Orchestrator') }}</title>
+    <title>WADEXPRO Orchestrator</title>
     
-    @php $favicon = \App\Modules\Admin\Models\SystemSetting::get('dashboard_favicon_url'); @endphp
+    @php 
+        try {
+            $favicon = \App\Modules\Admin\Models\SystemSetting::get('dashboard_favicon_url');
+        } catch (\Exception $e) {
+            $favicon = null;
+        }
+    @endphp
     @if($favicon)
         <link rel="icon" type="image/x-icon" href="{{ $favicon }}">
     @endif
@@ -18,7 +24,7 @@
     <!-- Socket.IO Client -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
-        window.WADEX_SOCKET_URL = '{{ \App\Modules\Admin\Models\SystemSetting::get("flutter_rtc_url", "https://wadexpro-4rexnj1k.on-forge.com:3000") }}';
+        window.WADEX_SOCKET_URL = 'https://wadexpro-4rexnj1k.on-forge.com:3000';
     </script>
 
     <!-- Leaflet.js Assets -->

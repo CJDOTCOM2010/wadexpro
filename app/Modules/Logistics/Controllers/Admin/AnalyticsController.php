@@ -27,8 +27,13 @@ class AnalyticsController extends Controller
             ->where('created_at', '>=', $startOfMonth)
             ->sum('final_price');
 
-        // Real-time Online Count from Redis
-        $onlineDrivers = \Illuminate\Support\Facades\Redis::zCard('drivers:locations');
+        // Real-time Online Count from Redis (graceful fallback if Redis is unavailable)
+        try {
+            $onlineDrivers = \Illuminate\Support\Facades\Redis::zCard('drivers:locations');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Redis unavailable for driver location count: ' . $e->getMessage());
+            $onlineDrivers = 0;
+        }
 
         // Customer Stats
         $totalCustomers = DB::table('users')->where('user_type', 'customer')->count();

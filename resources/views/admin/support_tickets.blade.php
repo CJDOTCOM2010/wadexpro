@@ -3,56 +3,77 @@
 @section('content')
 
 <div x-data="{ showComposeModal: false, searchUser: '' }">
+    <!-- Error Alert -->
+    @if(session('error'))
+    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+        <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+    </div>
+    @endif
+
+    <!-- Success Alert -->
+    @if(session('success'))
+    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
+        <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
+    </div>
+    @endif
+
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h2 class="text-2xl font-black text-brand tracking-tight">Support Tickets</h2>
+            <div class="flex items-center gap-3">
+                <h2 class="text-2xl font-black text-brand tracking-tight">Support Tickets</h2>
+                <span class="px-2 py-1 bg-surface border border-gray-200 text-xs font-bold text-brand-muted rounded-full">
+                    {{ $tickets->total() }} Total
+                </span>
+            </div>
             <p class="text-brand-muted font-medium mt-1">Resolve customer and driver issues, disputes, and inquiries.</p>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden flex h-[700px]">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex min-h-[700px]">
         
         <!-- Sidebar / Filters -->
-        <div class="w-64 border-r border-gray-50 flex flex-col bg-surface/30 shrink-0">
-            <div class="p-4 border-b border-gray-50">
-                <button @click="showComposeModal = true" class="w-full py-2.5 bg-brand text-white font-bold rounded hover:bg-brand-light transition text-sm flex items-center justify-center gap-2 shadow-lg shadow-black/10">
+        <div class="w-72 border-r border-gray-100 flex flex-col bg-white shrink-0">
+            <div class="p-5 border-b border-gray-100">
+                <button @click="showComposeModal = true" class="w-full py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition text-sm flex items-center justify-center gap-2 shadow-lg shadow-black/10 hover:shadow-xl">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Compose New
+                    Compose New Ticket
                 </button>
             </div>
             <div class="flex-1 overflow-y-auto py-4">
-                <div class="px-4 mb-2 text-[10px] font-black text-brand-muted uppercase tracking-widest">Queues</div>
+                <div class="px-5 mb-3 text-[10px] font-black text-brand-muted uppercase tracking-widest">Queue Filters</div>
                 
-                <a href="{{ route('orchestrator.support.tickets', ['queue' => 'unassigned']) }}" class="flex items-center justify-between px-4 py-2 hover:bg-white transition {{ request('queue') == 'unassigned' ? 'bg-white border-l-2 border-brand text-brand' : 'text-brand/70' }}">
+                <a href="{{ route('orchestrator.support.tickets', ['queue' => 'unassigned']) }}" class="flex items-center justify-between px-5 py-3 mx-3 rounded-lg hover:bg-surface transition {{ request('queue') == 'unassigned' ? 'bg-brand text-white' : 'text-brand/70' }}">
                     <span class="text-sm font-bold">Unassigned</span>
                     @if($counts['unassigned'] > 0)
-                    <span class="bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded-full">{{ $counts['unassigned'] }}</span>
+                    <span class="bg-white/20 text-[10px] font-black px-2 py-0.5 rounded-full">{{ $counts['unassigned'] }}</span>
                     @endif
                 </a>
                 
-                <a href="{{ route('orchestrator.support.tickets', ['queue' => 'mine']) }}" class="flex items-center justify-between px-4 py-2 hover:bg-white transition {{ request('queue') == 'mine' ? 'bg-white border-l-2 border-brand text-brand' : 'text-brand/70' }}">
+                <a href="{{ route('orchestrator.support.tickets', ['queue' => 'mine']) }}" class="flex items-center justify-between px-5 py-3 mx-3 rounded-lg hover:bg-surface transition {{ request('queue') == 'mine' ? 'bg-brand text-white' : 'text-brand/70' }}">
                     <span class="text-sm font-bold">My Tickets</span>
                     @if($counts['mine'] > 0)
-                    <span class="bg-surface border border-gray-200 text-brand-muted text-[10px] font-black px-2 py-0.5 rounded-full">{{ $counts['mine'] }}</span>
+                    <span class="bg-surface text-brand-muted text-[10px] font-black px-2 py-0.5 rounded-full">{{ $counts['mine'] }}</span>
                     @endif
                 </a>
                 
-                <a href="{{ route('orchestrator.support.tickets') }}" class="flex items-center justify-between px-4 py-2 hover:bg-white transition {{ !request('queue') && !request('status') ? 'bg-white border-l-2 border-brand text-brand' : 'text-brand/70' }}">
+                <a href="{{ route('orchestrator.support.tickets') }}" class="flex items-center justify-between px-5 py-3 mx-3 rounded-lg hover:bg-surface transition {{ !request('queue') && !request('status') ? 'bg-brand text-white' : 'text-brand/70' }}">
                     <span class="text-sm font-bold">All Tickets</span>
                 </a>
 
-                <a href="{{ route('orchestrator.support.tickets', ['status' => 'closed']) }}" class="flex items-center justify-between px-4 py-2 hover:bg-white transition {{ request('status') == 'closed' ? 'bg-white border-l-2 border-brand text-brand' : 'text-brand/70' }}">
+                <a href="{{ route('orchestrator.support.tickets', ['status' => 'closed']) }}" class="flex items-center justify-between px-5 py-3 mx-3 rounded-lg hover:bg-surface transition {{ request('status') == 'closed' ? 'bg-brand text-white' : 'text-brand/70' }}">
                     <span class="text-sm font-bold">Resolved / Closed</span>
                 </a>
-                
-                <div class="px-4 mt-8 mb-2 text-[10px] font-black text-brand-muted uppercase tracking-widest">Categories</div>
-                <a href="{{ route('orchestrator.support.tickets', ['category' => 'billing']) }}" class="flex items-center gap-2 px-4 py-2 text-brand/70 hover:bg-white transition text-sm font-medium {{ request('category') == 'billing' ? 'font-bold text-brand bg-white' : '' }}">
+
+                <div class="px-5 mt-8 mb-3 text-[10px] font-black text-brand-muted uppercase tracking-widest">Categories</div>
+                <a href="{{ route('orchestrator.support.tickets', ['category' => 'billing']) }}" class="flex items-center gap-3 px-5 py-2.5 mx-3 rounded-lg text-brand/70 hover:bg-surface transition text-sm font-medium {{ request('category') == 'billing' ? 'bg-red-50 text-red-700 font-bold' : '' }}">
                     <span class="w-2 h-2 rounded-full bg-red-500"></span> Billing Disputes
                 </a>
-                <a href="{{ route('orchestrator.support.tickets', ['category' => 'driver_behavior']) }}" class="flex items-center gap-2 px-4 py-2 text-brand/70 hover:bg-white transition text-sm font-medium {{ request('category') == 'driver_behavior' ? 'font-bold text-brand bg-white' : '' }}">
+                <a href="{{ route('orchestrator.support.tickets', ['category' => 'driver_behavior']) }}" class="flex items-center gap-3 px-5 py-2.5 mx-3 rounded-lg text-brand/70 hover:bg-surface transition text-sm font-medium {{ request('category') == 'driver_behavior' ? 'bg-blue-50 text-blue-700 font-bold' : '' }}">
                     <span class="w-2 h-2 rounded-full bg-blue-500"></span> Driver Behavior
                 </a>
-                <a href="{{ route('orchestrator.support.tickets', ['category' => 'app_issue']) }}" class="flex items-center gap-2 px-4 py-2 text-brand/70 hover:bg-white transition text-sm font-medium {{ request('category') == 'app_issue' ? 'font-bold text-brand bg-white' : '' }}">
+                <a href="{{ route('orchestrator.support.tickets', ['category' => 'app_issue']) }}" class="flex items-center gap-3 px-5 py-2.5 mx-3 rounded-lg text-brand/70 hover:bg-surface transition text-sm font-medium {{ request('category') == 'app_issue' ? 'bg-purple-50 text-purple-700 font-bold' : '' }}">
                     <span class="w-2 h-2 rounded-full bg-purple-500"></span> App Issues
                 </a>
             </div>
@@ -76,35 +97,59 @@
             </div>
 
             <!-- List -->
-            <div class="flex-1 overflow-y-auto bg-surface/10 divide-y divide-gray-50">
+            <div class="flex-1 overflow-y-auto bg-surface/10">
                 @forelse($tickets as $ticket)
-                <a href="{{ route('orchestrator.support.ticket.show', $ticket->id) }}" class="block p-4 bg-white hover:bg-surface/50 transition border-l-4 {{ $ticket->status == 'closed' ? 'border-gray-300 opacity-60' : 'border-'.$ticket->priorityColor().'-500' }}">
-                    <div class="flex items-start justify-between mb-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-brand">{{ ucfirst($ticket->user_type) }}: {{ $ticket->user->name ?? 'Unknown' }}</span>
-                            @if($ticket->status != 'closed')
-                                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-{{ $ticket->priorityColor() }}-100 text-{{ $ticket->priorityColor() }}-700">{{ $ticket->priority }}</span>
-                            @else
-                                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">Closed</span>
-                            @endif
+                <a href="{{ route('orchestrator.support.ticket.show', $ticket->id) }}" class="block p-4 bg-white hover:bg-surface/50 transition border-b border-gray-50 group">
+                    <div class="flex items-start gap-4">
+                        <!-- Priority Indicator -->
+                        <div class="w-1 h-12 rounded-full shrink-0 
+                            @if($ticket->status == 'closed') bg-gray-300
+                            @elseif($ticket->priority == 'urgent') bg-red-500
+                            @elseif($ticket->priority == 'high') bg-orange-500
+                            @elseif($ticket->priority == 'medium') bg-amber-500
+                            @else bg-blue-500
+                            @endif">
                         </div>
-                        <span class="text-xs text-brand-muted whitespace-nowrap">{{ $ticket->created_at->diffForHumans() }}</span>
-                    </div>
-                    <h4 class="text-sm font-bold text-brand mb-1 truncate">{{ $ticket->subject }}</h4>
-                    <div class="mt-3 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-brand-muted">
-                        <span>{{ $ticket->ticket_number }}</span>
-                        <span class="flex items-center gap-1">
-                            @if($ticket->category == 'billing')
-                                <span class="w-2 h-2 rounded-full bg-red-500"></span> Billing
-                            @elseif($ticket->category == 'driver_behavior')
-                                <span class="w-2 h-2 rounded-full bg-blue-500"></span> Driver Behavior
-                            @else
-                                <span class="w-2 h-2 rounded-full bg-gray-400"></span> {{ ucfirst(str_replace('_', ' ', $ticket->category)) }}
-                            @endif
-                        </span>
-                        @if($ticket->assignedTo)
-                            <span class="flex items-center gap-1 text-accent"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg> {{ $ticket->assignedTo->name }}</span>
-                        @endif
+                        
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-brand">{{ ucfirst($ticket->user_type ?? 'user') }}: {{ $ticket->user->name ?? 'Unknown' }}</span>
+                                    @if($ticket->status != 'closed')
+                                        <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest 
+                                            @if($ticket->priority == 'urgent') bg-red-100 text-red-700
+                                            @elseif($ticket->priority == 'high') bg-orange-100 text-orange-700
+                                            @elseif($ticket->priority == 'medium') bg-amber-100 text-amber-700
+                                            @else bg-blue-100 text-blue-700
+                                            @endif">
+                                            {{ $ticket->priority }}
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">Closed</span>
+                                    @endif
+                                </div>
+                                <span class="text-xs text-brand-muted whitespace-nowrap">{{ $ticket->created_at->diffForHumans() }}</span>
+                            </div>
+                            <h4 class="text-sm font-bold text-brand mb-2 truncate group-hover:text-accent transition">{{ $ticket->subject }}</h4>
+                            <div class="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-brand-muted">
+                                <span class="font-mono">{{ $ticket->ticket_number ?? 'N/A' }}</span>
+                                <span class="flex items-center gap-1">
+                                    @if($ticket->category == 'billing')
+                                        <span class="w-2 h-2 rounded-full bg-red-500"></span> Billing
+                                    @elseif($ticket->category == 'driver_behavior')
+                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> Driver Behavior
+                                    @else
+                                        <span class="w-2 h-2 rounded-full bg-gray-400"></span> {{ ucfirst(str_replace('_', ' ', $ticket->category ?? 'general')) }}
+                                    @endif
+                                </span>
+                                @if($ticket->assignedTo)
+                                    <span class="flex items-center gap-1 text-accent"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg> {{ $ticket->assignedTo->name ?? 'Assigned' }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <!-- Arrow -->
+                        <svg class="w-5 h-5 text-gray-300 group-hover:text-accent transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </div>
                 </a>
                 @empty

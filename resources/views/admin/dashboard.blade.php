@@ -413,53 +413,72 @@ document.addEventListener('DOMContentLoaded', function() {
         chart.render();
     }
 
-    // Tactical Density Map
-    const mapData = @json($mapData);
-    
-    if (typeof L !== 'undefined' && (mapData.drivers.length > 0 || mapData.rides.length > 0)) {
-        const map = L.map('tacticalMap').setView([5.6037, -0.1870], 11); // Default to Accra, Ghana
+    // Tactical Density Map - Initialize when Leaflet is ready
+    function initMap() {
+        const mapData = @json($mapData);
+        const mapContainer = document.getElementById('tacticalMap');
+        
+        if (!mapContainer) return;
+        
+        // Wait for Leaflet to be available
+        if (typeof L === 'undefined') {
+            setTimeout(initMap, 100);
+            return;
+        }
+        
+        // Initialize map - center on Ghana (Accra)
+        const map = L.map('tacticalMap').setView([5.6037, -0.1870], 11);
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap &copy; CARTO',
             maxZoom: 19
         }).addTo(map);
 
-        // Driver markers (blue for available, orange for busy)
-        mapData.drivers.forEach(driver => {
-            if (driver.lat && driver.lng) {
-                const icon = driver.status === 'available' 
-                    ? L.divIcon({ className: 'driver-marker available', html: '<div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg"></div>', iconSize: [16, 16] })
-                    : L.divIcon({ className: 'driver-marker busy', html: '<div class="w-4 h-4 bg-orange-500 rounded-full border-2 border-white shadow-lg"></div>', iconSize: [16, 16] });
-                
-                L.marker([driver.lat, driver.lng], { icon })
-                    .bindPopup(`<div class="text-xs"><strong>Driver</strong><br>Status: ${driver.status}</div>`)
-                    .addTo(map);
-            }
-        });
+        // Add markers only if data exists
+        if (mapData.drivers && mapData.drivers.length > 0) {
+            mapData.drivers.forEach(driver => {
+                if (driver.lat && driver.lng) {
+                    const icon = driver.status === 'available' 
+                        ? L.divIcon({ className: 'driver-marker', html: '<div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg"></div>', iconSize: [16, 16] })
+                        : L.divIcon({ className: 'driver-marker', html: '<div class="w-4 h-4 bg-orange-500 rounded-full border-2 border-white shadow-lg"></div>', iconSize: [16, 16] });
+                    
+                    L.marker([driver.lat, driver.lng], { icon })
+                        .bindPopup(`<div class="text-xs"><strong>Driver</strong><br>Status: ${driver.status}</div>`)
+                        .addTo(map);
+                }
+            });
+        }
 
-        // Ride request markers (green)
-        mapData.rides.forEach(ride => {
-            if (ride.lat && ride.lng) {
-                const icon = L.divIcon({ 
-                    className: 'ride-marker', 
-                    html: '<div class="w-3 h-3 bg-green-500 rounded-full border border-white shadow-lg animate-pulse"></div>', 
-                    iconSize: [12, 12] 
-                });
-                
-                L.marker([ride.lat, ride.lng], { icon })
-                    .bindPopup(`<div class="text-xs"><strong>Ride Request</strong><br>${ride.status}<br><span class="text-gray-500">${ride.address?.substring(0, 30) || 'Location'}...</span></div>`)
-                    .addTo(map);
-            }
-        });
-    } else {
-        document.getElementById('tacticalMap').innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full text-brand-muted">
-                <svg class="w-16 h-16 mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-                <p class="text-sm font-bold">No active drivers or rides to display</p>
-                <p class="text-xs mt-1">Map will update when drivers come online</p>
-            </div>
-        `;
+        if (mapData.rides && mapData.rides.length > 0) {
+            mapData.rides.forEach(ride => {
+                if (ride.lat && ride.lng) {
+                    const icon = L.divIcon({ 
+                        className: 'ride-marker', 
+                        html: '<div class="w-3 h-3 bg-green-500 rounded-full border border-white shadow-lg animate-pulse"></div>', 
+                        iconSize: [12, 12] 
+                    });
+                    
+                    L.marker([ride.lat, ride.lng], { icon })
+                        .bindPopup(`<div class="text-xs"><strong>Ride Request</strong><br>${ride.status || 'pending'}<br><span class="text-gray-500">${ride.address ? ride.address.substring(0, 30) + '...' : 'Location'}</span></div>`)
+                        .addTo(map);
+                }
+            });
+        }
+
+        // Show message if no data
+        if ((!mapData.drivers || mapData.drivers.length === 0) && (!mapData.rides || mapData.rides.length === 0)) {
+            mapContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-brand-muted">
+                    <svg class="w-16 h-16 mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                    <p class="text-sm font-bold">No active drivers or rides to display</p>
+                    <p class="text-xs mt-1">Map will update when drivers come online</p>
+                </div>
+            `;
+        }
     }
+
+    // Initialize map after a short delay to ensure Leaflet is loaded
+    setTimeout(initMap, 500);
 });
 </script>
 

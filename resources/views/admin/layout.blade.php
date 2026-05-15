@@ -31,7 +31,13 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @php
+        try {
+            echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']);
+        } catch (\Exception $e) {
+            // Vite manifest not found - CDN fallback active (Tailwind CDN already loaded above)
+        }
+    @endphp
 
     <script>
         tailwind.config = {

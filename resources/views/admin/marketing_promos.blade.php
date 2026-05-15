@@ -2,13 +2,29 @@
 @section('title', 'Promotions & Coupons')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
+<!-- Success Alert -->
+@if(session('success'))
+<div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
+</div>
+@endif
+
 <div class="mb-8 flex items-center justify-between">
     <div>
         <h2 class="text-2xl font-black text-brand tracking-tight">Promotions & Coupons</h2>
         <p class="text-brand-muted font-medium mt-1">Manage discount codes, referral bonuses, and marketing campaigns.</p>
     </div>
     <div class="flex gap-4">
-        <button onclick="document.getElementById('add-modal').classList.remove('hidden')" class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2">
+        <button onclick="document.getElementById('add-modal').classList.remove('hidden')" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Create Campaign
         </button>
@@ -16,26 +32,26 @@
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center shrink-0">
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center shrink-0 group-hover:bg-green-500 group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Active Promos</p>
-            <p class="text-xl font-bold text-brand mt-0.5">{{ number_format($stats['active']) }}</p>
+            <p class="text-2xl font-black text-brand mt-0.5">{{ number_format($stats['active'] ?? 0) }}</p>
         </div>
     </div>
-    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center shrink-0">
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 rounded-2xl bg-gray-100 text-gray-500 flex items-center justify-center shrink-0 group-hover:bg-gray-500 group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Expired</p>
-            <p class="text-xl font-bold text-brand mt-0.5">{{ number_format($stats['expired']) }}</p>
+            <p class="text-2xl font-black text-brand mt-0.5">{{ number_format($stats['expired'] ?? 0) }}</p>
         </div>
     </div>
-    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-brand/5 text-brand flex items-center justify-center shrink-0">
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 rounded-2xl bg-brand/5 text-brand flex items-center justify-center shrink-0 group-hover:bg-brand group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
         </div>
         <div>

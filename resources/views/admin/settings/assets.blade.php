@@ -1,5 +1,5 @@
 @extends('admin.layout')
-@section('title', 'Asset & Media Management')
+@section('title', 'Gallery Assets')
 @section('content')
 
 <div class="p-8 lg:p-12 max-w-[1600px] mx-auto" x-data="{ uploadModal: false, deleteModal: false, selectedAsset: null }">
@@ -11,7 +11,7 @@
                 <span class="text-gray-300">/</span>
                 <span>Asset Library</span>
             </div>
-            <h2 class="text-3xl font-black text-brand tracking-tight">System Asset Library</h2>
+            <h2 class="text-3xl font-black text-brand tracking-tight">Gallery Assets</h2>
             <p class="text-sm text-brand-muted font-medium mt-1">Centralized control for all system uploads, media, and storage nodes.</p>
         </div>
         
@@ -22,10 +22,17 @@
         </div>
     </div>
 
+    @if(session('error'))
+    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+        <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+    </div>
+    @endif
+
     @if(session('success'))
-    <div class="mb-8 p-4 bg-green-50 border border-green-100 text-green-600 rounded-lg flex items-center gap-3 animate-fade-in">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        <span class="text-xs font-bold">{{ session('success') }}</span>
+    <div class="mb-8 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3 animate-fade-in">
+        <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span class="text-sm font-medium text-green-700">{{ session('success') }}</span>
     </div>
     @endif
 

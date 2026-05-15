@@ -2,16 +2,24 @@
 @section('title', 'Driver Registry')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
 <div class="mb-8 flex items-center justify-between">
     <div>
         <h2 class="text-2xl font-black text-brand tracking-tight">Driver Registry</h2>
         <p class="text-brand-muted font-medium mt-1">Manage active drivers, track performance, and handle suspensions.</p>
     </div>
     <div class="flex gap-4">
-        <a href="{{ route('orchestrator.driver.documents') }}" class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition shadow-sm shadow-brand/20 flex items-center gap-2">
+        <a href="{{ route('orchestrator.driver.documents') }}" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             Review Pending KYC
-            @if($stats['pending'] > 0)
+            @if(($stats['pending'] ?? 0) > 0)
                 <span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full ml-1">{{ $stats['pending'] }}</span>
             @endif
         </a>
@@ -19,41 +27,22 @@
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-brand/5 text-brand flex items-center justify-center shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-        </div>
-        <div>
-            <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Total Enrolled</p>
-            <p class="text-xl font-bold text-brand mt-0.5">{{ number_format($stats['total']) }}</p>
-        </div>
-    </div>
-    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <div>
-            <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Active Accounts</p>
-            <p class="text-xl font-bold text-brand mt-0.5">{{ number_format($stats['active']) }}</p>
-        </div>
-    </div>
-    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 group-hover:bg-amber-500 group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Pending Review</p>
-            <p class="text-xl font-bold text-brand mt-0.5">{{ number_format($stats['pending']) }}</p>
+            <p class="text-2xl font-black text-brand mt-0.5">{{ number_format($stats['pending'] ?? 0) }}</p>
         </div>
     </div>
-    <div class="bg-white p-4 rounded-lg border border-red-100 shadow-sm flex items-center gap-4 relative overflow-hidden group">
-        <div class="absolute inset-0 bg-red-500/5 pointer-events-none group-hover:bg-red-500/10 transition"></div>
-        <div class="w-12 h-12 rounded-full bg-white border border-red-200 text-red-600 flex items-center justify-center shrink-0 relative z-10">
+    <div class="bg-white p-5 rounded-2xl border border-red-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 group-hover:bg-red-500 group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
         </div>
-        <div class="relative z-10">
+        <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Suspended</p>
-            <p class="text-xl font-bold text-brand mt-0.5">{{ number_format($stats['suspended']) }}</p>
+            <p class="text-2xl font-black text-brand mt-0.5">{{ number_format($stats['suspended'] ?? 0) }}</p>
         </div>
     </div>
 </div>

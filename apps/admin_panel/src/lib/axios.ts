@@ -130,7 +130,6 @@ export const adminApi = {
     syncSurgeRules: (id: string, rules: any[]) => api.post(`/v1/logistics/admin/surge/${id}/rules`, { rules }),
 
     // Analytics & Reports
-    getAnalyticsOverview: () => api.get('/v1/logistics/admin/analytics/overview'),
     getAnalyticsRevenue: (days?: number) => api.get('/v1/logistics/admin/analytics/revenue', { params: { days } }),
     getAnalyticsRides: () => api.get('/v1/logistics/admin/analytics/rides'),
     getAnalyticsDrivers: () => api.get('/v1/logistics/admin/analytics/drivers'),

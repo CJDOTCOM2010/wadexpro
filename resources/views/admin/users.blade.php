@@ -2,6 +2,14 @@
 @section('title', 'Global Entity Node Matrix')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
 <div x-data="{ 
     showProvisionModal: false, 
     showEditModal: false,
@@ -12,7 +20,7 @@
             <h2 class="text-2xl font-black text-brand tracking-tight">User Matrix Control</h2>
             <p class="text-brand-muted font-medium mt-1">Personnel oversight of the WADEXPRO distributed human node network.</p>
         </div>
-        <button @click="showProvisionModal = true" class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2 shadow-xl shadow-brand/20">
+        <button @click="showProvisionModal = true" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition flex items-center gap-2 shadow-xl shadow-brand/20">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
             Provision New Entity
         </button>
@@ -20,31 +28,31 @@
 
 <!-- Stats Bar -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div class="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center text-accent">
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
         </div>
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Total Nodes</p>
-            <p class="text-2xl font-black text-brand tracking-tight">{{ number_format($stats['total_nodes']) }}</p>
+            <p class="text-2xl font-black text-brand tracking-tight">{{ number_format($stats['total_nodes'] ?? 0) }}</p>
         </div>
     </div>
-    <div class="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center text-green-600">
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 group-hover:bg-green-500 group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
         </div>
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Active Sessions (24H)</p>
-            <p class="text-2xl font-black text-brand tracking-tight">{{ number_format($stats['active_sessions']) }}</p>
+            <p class="text-2xl font-black text-brand tracking-tight">{{ number_format($stats['active_sessions'] ?? 0) }}</p>
         </div>
     </div>
-    <div class="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 bg-brand/5 rounded-lg flex items-center justify-center text-brand">
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-brand/5 rounded-2xl flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </div>
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Revoked Access</p>
-            <p class="text-2xl font-black text-brand tracking-tight">{{ number_format($stats['revoked_access']) }}</p>
+            <p class="text-2xl font-black text-brand tracking-tight">{{ number_format($stats['revoked_access'] ?? 0) }}</p>
         </div>
     </div>
 </div>

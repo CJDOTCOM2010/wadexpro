@@ -2,6 +2,22 @@
 @section('title', 'Vehicle Types')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
+<!-- Success Alert -->
+@if(session('success'))
+<div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
+</div>
+@endif
+
 <div x-data="{ 
     showAddModal: false, 
     showEditModal: false,
@@ -35,7 +51,7 @@
             <p class="text-brand-muted font-medium mt-1">Configure ride categories, capacities, and base fares.</p>
         </div>
         <div class="flex gap-4">
-            <button @click="showAddModal = true" class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2 shadow-xl shadow-brand/20">
+            <button @click="showAddModal = true" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition flex items-center gap-2 shadow-xl shadow-brand/20">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Add Vehicle Type
             </button>
@@ -46,7 +62,7 @@
 
         @forelse($vehicleTypes as $type)
         <!-- Vehicle Type Card -->
-        <div class="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden flex flex-col {{ !$type->is_active ? 'opacity-75' : '' }} group transition hover:shadow-md">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col {{ !$type->is_active ? 'opacity-75' : '' }} group transition hover:shadow-lg">
             <div class="p-6 border-b border-gray-50 flex items-start justify-between bg-surface/30">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-lg bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand">

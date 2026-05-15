@@ -2,13 +2,21 @@
 @section('title', 'Platform Treasury & Financial Ledgers')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
 <div class="mb-12 flex items-center justify-between">
     <div>
         <h2 class="text-3xl font-black text-brand tracking-tight">Financial Infrastructure</h2>
         <p class="text-brand-muted font-medium mt-1">Audit global liquidity, reconcile invoices, and monitor revenue streams.</p>
     </div>
     <div class="flex items-center gap-4">
-        <button class="px-6 py-3 bg-white text-brand border border-gray-100 font-bold rounded-lg hover:bg-surface transition flex items-center gap-2 shadow-sm">
+        <button class="px-6 py-3 bg-white text-brand border border-gray-100 font-bold rounded-xl hover:bg-surface transition flex items-center gap-2 shadow-lg">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
             Export Ledger
         </button>
@@ -17,37 +25,37 @@
 
 <!-- Main Treasury Stats -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-    <div class="bg-brand rounded-lg p-8 text-white relative overflow-hidden shadow-lg">
+    <div class="bg-brand rounded-2xl p-8 text-white relative overflow-hidden shadow-lg hover:shadow-xl transition-all">
         <div class="absolute top-0 right-0 p-6 opacity-10">
             <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <p class="text-xs font-black text-white/40 uppercase tracking-widest mb-4">Gross Revenue (L30D)</p>
-        <p class="text-4xl font-black mt-2 tracking-tighter">₵{{ number_format($stats['gross_revenue'], 2) }}</p>
+        <p class="text-4xl font-black mt-2 tracking-tighter">₵{{ number_format($stats['gross_revenue'] ?? 0, 2) }}</p>
         <div class="mt-4 flex items-center gap-2">
-            <span class="text-[10px] font-black py-1 px-2 {{ $stats['revenue_change'] >= 0 ? 'bg-green-500' : 'bg-red-500' }} rounded-lg">
-                {{ $stats['revenue_change'] >= 0 ? '+' : '' }}{{ $stats['revenue_change'] }}%
+            <span class="text-[10px] font-black py-1 px-2 {{ ($stats['revenue_change'] ?? 0) >= 0 ? 'bg-green-500' : 'bg-red-500' }} rounded-lg">
+                {{ ($stats['revenue_change'] ?? 0) >= 0 ? '+' : '' }}{{ $stats['revenue_change'] ?? 0 }}%
             </span>
             <span class="text-[10px] font-bold text-white/30 lowercase italic">vs previous moon</span>
         </div>
     </div>
     
-    <div class="bg-white border border-gray-100 rounded-lg p-8 shadow-sm">
+    <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all">
         <p class="text-xs font-black text-brand-muted uppercase tracking-widest mb-4">Pending Payouts</p>
-        <p class="text-4xl font-black mt-2 tracking-tighter text-brand">₵{{ number_format($stats['pending_payouts_sum'], 2) }}</p>
+        <p class="text-4xl font-black mt-2 tracking-tighter text-brand">₵{{ number_format($stats['pending_payouts_sum'] ?? 0, 2) }}</p>
         <div class="mt-4 flex items-center gap-2">
-            <span class="text-[10px] font-black py-1 px-2 bg-accent/20 text-brand rounded-lg">{{ $stats['pending_payouts_count'] }} ENTITIES</span>
+            <span class="text-[10px] font-black py-1 px-2 bg-accent/20 text-brand rounded-lg">{{ $stats['pending_payouts_count'] ?? 0 }} ENTITIES</span>
         </div>
     </div>
 
-    <div class="bg-white border border-gray-100 rounded-lg p-8 shadow-sm">
+    <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all">
         <p class="text-xs font-black text-brand-muted uppercase tracking-widest mb-4">Platform Profit</p>
-        <p class="text-4xl font-black mt-2 tracking-tighter text-brand">₵{{ number_format($stats['platform_profit'], 2) }}</p>
+        <p class="text-4xl font-black mt-2 tracking-tighter text-brand">₵{{ number_format($stats['platform_profit'] ?? 0, 2) }}</p>
         <div class="mt-4 flex items-center gap-2">
-            <span class="text-[10px] font-black py-1 px-2 bg-blue-50 text-blue-600 rounded-lg">{{ $stats['profit_margin'] }}% NET</span>
+            <span class="text-[10px] font-black py-1 px-2 bg-blue-50 text-blue-600 rounded-lg">{{ $stats['profit_margin'] ?? 0 }}% NET</span>
         </div>
     </div>
 
-    <div class="bg-white border border-gray-100 rounded-lg p-8 shadow-sm relative overflow-hidden group">
+    <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
         <div class="absolute inset-0 bg-red-500/5 pointer-events-none group-hover:bg-red-500/10 transition"></div>
         <div class="relative z-10">
             <p class="text-xs font-black text-brand-muted uppercase tracking-widest mb-4">Suspicious Flow</p>

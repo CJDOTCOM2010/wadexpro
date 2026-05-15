@@ -2,6 +2,14 @@
 @section('title', 'Analytics & Reports')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
 <div class="mb-8 flex items-center justify-between">
     <div>
         <h2 class="text-2xl font-black text-brand tracking-tight">Business Intelligence</h2>
@@ -9,13 +17,13 @@
     </div>
     <div class="flex gap-4 items-center">
         <form action="{{ route('orchestrator.analytics') }}" method="GET" class="flex items-center gap-4">
-            <select name="period" onchange="this.form.submit()" class="bg-white border border-gray-100 rounded-lg px-4 py-2 text-sm font-bold text-brand outline-none focus:ring-2 focus:ring-brand/20 cursor-pointer shadow-sm">
+            <select name="period" onchange="this.form.submit()" class="bg-white border border-gray-100 rounded-xl px-4 py-2 text-sm font-bold text-brand outline-none focus:ring-2 focus:ring-brand/20 cursor-pointer shadow-sm">
                 <option value="7days" {{ $period === '7days' ? 'selected' : '' }}>Last 7 Days</option>
                 <option value="30days" {{ $period === '30days' ? 'selected' : '' }}>Last 30 Days</option>
                 <option value="quarter" {{ $period === 'quarter' ? 'selected' : '' }}>This Quarter</option>
                 <option value="year" {{ $period === 'year' ? 'selected' : '' }}>Year to Date</option>
             </select>
-            <button type="button" class="px-6 py-2.5 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2 shadow-sm">
+            <button type="button" class="px-6 py-2.5 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition flex items-center gap-2 shadow-lg shadow-brand/20">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                 Export CSV
             </button>
@@ -25,29 +33,29 @@
 
 <!-- Key Performance Indicators -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white p-6 rounded-lg border border-gray-100 shadow-sm relative overflow-hidden group">
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
         <div class="absolute right-0 top-0 w-16 h-full bg-brand/5 group-hover:bg-brand/10 transition flex items-center justify-center">
             <svg class="w-8 h-8 text-brand/20 group-hover:text-brand/40 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest relative z-10">Total Revenue</p>
-        <p class="text-3xl font-black text-brand tracking-tight mt-2 relative z-10">₵ {{ number_format($kpis['revenue']) }}</p>
-        <p class="text-xs font-bold mt-2 flex items-center gap-1 relative z-10 {{ $kpis['revenue_change'] >= 0 ? 'text-green-500' : 'text-red-500' }}">
-            @if($kpis['revenue_change'] >= 0)
+        <p class="text-3xl font-black text-brand tracking-tight mt-2 relative z-10">₵ {{ number_format($kpis['revenue'] ?? 0) }}</p>
+        <p class="text-xs font-bold mt-2 flex items-center gap-1 relative z-10 {{ ($kpis['revenue_change'] ?? 0) >= 0 ? 'text-green-500' : 'text-red-500' }}">
+            @if(($kpis['revenue_change'] ?? 0) >= 0)
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-                +{{ $kpis['revenue_change'] }}% vs last period
+                +{{ $kpis['revenue_change'] ?? 0 }}% vs last period
             @else
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"/></svg>
-                {{ $kpis['revenue_change'] }}% vs last period
+                {{ $kpis['revenue_change'] ?? 0 }}% vs last period
             @endif
         </p>
     </div>
     
-    <div class="bg-white p-6 rounded-lg border border-gray-100 shadow-sm relative overflow-hidden group">
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
         <div class="absolute right-0 top-0 w-16 h-full bg-brand/5 group-hover:bg-brand/10 transition flex items-center justify-center">
             <svg class="w-8 h-8 text-brand/20 group-hover:text-brand/40 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         </div>
         <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest relative z-10">Total Rides</p>
-        <p class="text-3xl font-black text-brand tracking-tight mt-2 relative z-10">{{ number_format($kpis['total_rides']) }}</p>
+        <p class="text-3xl font-black text-brand tracking-tight mt-2 relative z-10">{{ number_format($kpis['total_rides'] ?? 0) }}</p>
         <p class="text-xs font-bold mt-2 flex items-center gap-1 relative z-10 {{ $kpis['rides_change'] >= 0 ? 'text-green-500' : 'text-red-500' }}">
             @if($kpis['rides_change'] >= 0)
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>

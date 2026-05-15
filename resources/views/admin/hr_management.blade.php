@@ -2,13 +2,29 @@
 @section('title', 'HR & Staff Registry')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
+<!-- Success Alert -->
+@if(session('success'))
+<div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
+</div>
+@endif
+
 <div class="mb-8 flex items-center justify-between">
     <div>
         <h2 class="text-2xl font-black text-brand tracking-tight">Staff & Roles</h2>
         <p class="text-brand-muted font-medium mt-1">Manage system administrators, support agents, and access controls.</p>
     </div>
     <div class="flex gap-4">
-        <button onclick="document.getElementById('onboard-modal').classList.remove('hidden')" class="px-6 py-3 bg-brand text-white font-bold rounded-lg hover:bg-brand-light transition flex items-center gap-2">
+        <button onclick="document.getElementById('onboard-modal').classList.remove('hidden')" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition flex items-center gap-2 shadow-lg shadow-brand/20">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
             Onboard New Staff
         </button>
@@ -16,36 +32,36 @@
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group">
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Total Staff</p>
-            <p class="text-xl font-bold text-brand mt-0.5">{{ $stats['total'] }}</p>
+            <p class="text-2xl font-black text-brand mt-0.5">{{ $stats['total'] ?? 0 }}</p>
         </div>
-        <div class="w-10 h-10 rounded-full bg-brand/5 text-brand flex items-center justify-center">
+        <div class="w-12 h-12 rounded-2xl bg-brand/5 text-brand flex items-center justify-center group-hover:bg-brand group-hover:text-white transition-all">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
         </div>
     </div>
-    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group">
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">System Admins</p>
-            <p class="text-xl font-bold text-brand mt-0.5">{{ $stats['admins'] }}</p>
+            <p class="text-2xl font-black text-brand mt-0.5">{{ $stats['admins'] ?? 0 }}</p>
         </div>
-        <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center">
+        <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-all">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
         </div>
     </div>
-    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group">
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Support Agents</p>
-            <p class="text-xl font-bold text-brand mt-0.5">{{ $stats['support'] }}</p>
+            <p class="text-2xl font-black text-brand mt-0.5">{{ $stats['support'] ?? 0 }}</p>
         </div>
-        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
         </div>
     </div>
 </div>
 
-<div class="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
     <div class="p-6 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <form action="{{ route('orchestrator.hr') }}" method="GET" class="relative w-full md:w-96 flex">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search staff by name or email..." class="w-full bg-surface border border-gray-100 rounded-l-lg pl-10 pr-4 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-brand/20 transition-all">

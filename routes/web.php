@@ -10,6 +10,57 @@ Route::get('/', GlobalRedirectController::class);
 // Health Check Operations (Phase 24)
 Route::get('/v1/health', [\App\Http\Controllers\Api\HealthCheckController::class, 'ping']);
 
+// Temporary diagnostic — remove after debugging
+Route::get('/v1/debug-dashboard', function () {
+    try {
+        // Test 1: Can we resolve the Vite manifest?
+        $viteOk = file_exists(public_path('build/manifest.json')) ? 'YES' : 'NO';
+        
+        // Test 2: Can we resolve SystemSetting?
+        try {
+            $settingOk = \App\Modules\Admin\Models\SystemSetting::count() >= 0 ? 'YES' : 'NO';
+        } catch (\Exception $e) {
+            $settingOk = 'FAIL: ' . $e->getMessage();
+        }
+        
+        // Test 3: Can we render the layout?
+        try {
+            $metrics = [
+                'active_drivers' => 0, 'pending_orders' => 0,
+                'system_load' => '0%', 'daily_revenue' => '$0.00',
+            ];
+            $telemetry = ['drivers' => [], 'requests' => []];
+            $view = view('admin.dashboard', compact('metrics', 'telemetry'))->render();
+            $renderOk = 'YES (length: ' . strlen($view) . ')';
+        } catch (\Exception $e) {
+            $renderOk = 'FAIL: ' . get_class($e) . ' — ' . $e->getMessage() . ' in ' . basename($e->getFile()) . ':' . $e->getLine();
+        }
+        
+        // Test 4: Check the Admin auth guard
+        try {
+            $guardOk = auth('admin')->check() ? 'AUTHENTICATED' : 'GUEST';
+        } catch (\Exception $e) {
+            $guardOk = 'FAIL: ' . $e->getMessage();
+        }
+
+        return response()->json([
+            'vite_manifest' => $viteOk,
+            'system_settings_db' => $settingOk,
+            'dashboard_render' => $renderOk,
+            'admin_guard' => $guardOk,
+            'php_version' => PHP_VERSION,
+            'laravel_version' => app()->version(),
+            'session_driver' => config('session.driver'),
+            'cache_driver' => config('cache.default'),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'fatal_error' => get_class($e) . ': ' . $e->getMessage(),
+            'file' => $e->getFile() . ':' . $e->getLine(),
+        ], 500);
+    }
+});
+
 // Localized Public Routes
 Route::prefix('{country}/{lang}')
     ->middleware(['web', \App\Http\Middleware\SetLocaleMiddleware::class])

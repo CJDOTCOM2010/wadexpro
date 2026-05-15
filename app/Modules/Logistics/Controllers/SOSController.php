@@ -16,8 +16,15 @@ class SOSController extends Controller
      */
     public function index(): JsonResponse
     {
+        try {
+            $data = $this->sosService->getActiveEvents();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('SOS Service unavailable: ' . $e->getMessage());
+            $data = [];
+        }
+
         return response()->json([
-            'data' => $this->sosService->getActiveEvents()
+            'data' => $data
         ]);
     }
 

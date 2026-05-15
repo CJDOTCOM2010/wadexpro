@@ -52,6 +52,13 @@ class AnalyticsController extends Controller
         $activeDrivers = DB::table('drivers')->where('status', 'active')->count();
         $inactiveDrivers = DB::table('drivers')->where('status', '!=', 'active')->count();
 
+        try {
+            $pendingSos = DB::table('sos_events')->where('status', 'triggered')->count();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Analytics: sos_events table unavailable: ' . $e->getMessage());
+            $pendingSos = 0;
+        }
+
         $stats = [
             'total_rides' => RideRequest::count(),
             'today_rides' => RideRequest::whereDate('created_at', $today)->count(),
@@ -72,7 +79,7 @@ class AnalyticsController extends Controller
             
             'active_drivers' => $activeDrivers, // Keep for backward compatibility if needed
             'active_search_count' => RideRequest::where('status', 'searching')->count(),
-            'pending_sos' => DB::table('sos_events')->where('status', 'triggered')->count(),
+            'pending_sos' => $pendingSos,
         ];
 
         return $this->success($stats, 'Overview analytics retrieved from live telemetry.');

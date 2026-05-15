@@ -17,9 +17,15 @@ Route::get('/v1/clear-caches', function () {
         \Illuminate\Support\Facades\Artisan::call('config:clear');
         \Illuminate\Support\Facades\Artisan::call('view:clear');
         \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        
+        // Wipe stale sessions to fix the UUID mismatch from old integer IDs
+        if (config('session.driver') === 'database') {
+            \Illuminate\Support\Facades\DB::table(config('session.table'))->truncate();
+        }
+
         return response()->json([
             'status' => 'success',
-            'message' => 'All caches cleared',
+            'message' => 'All caches and sessions cleared',
             'route_cached_now' => file_exists(base_path('bootstrap/cache/routes-v7.php')) ? 'YES' : 'NO',
         ]);
     } catch (\Throwable $e) {

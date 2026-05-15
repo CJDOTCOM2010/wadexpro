@@ -96,7 +96,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               const Text('Category', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryNavy)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: _inputDecoration(),
                 items: _categories.map((c) => DropdownMenuItem(
                   value: c['value'],
@@ -110,7 +110,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               const Text('Priority', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryNavy)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedPriority,
+                initialValue: _selectedPriority,
                 decoration: _inputDecoration(),
                 items: _priorities.map((p) => DropdownMenuItem(
                   value: p['value'],

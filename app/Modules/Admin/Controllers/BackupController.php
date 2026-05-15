@@ -3,12 +3,11 @@
 namespace App\Modules\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Response;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class BackupController extends Controller
 {
@@ -21,31 +20,43 @@ class BackupController extends Controller
             $diskName = config('backup.backup.destination.disks')[0] ?? 'local';
             $disk = Storage::disk($diskName);
             $backupName = config('backup.backup.name', 'Laravel');
-            
-            $files = $disk->allFiles($backupName);
-            
+
+            $files = [];
+            try {
+                $files = $disk->allFiles($backupName);
+            } catch (\Exception $e) {
+                Log::warning('Backup directory scan failed: '.$e->getMessage());
+            }
+
             $backups = [];
             foreach ($files as $file) {
                 if (substr($file, -4) == '.zip') {
-                    $backups[] = [
-                        'file_path' => $file,
-                        'file_name' => str_replace($backupName . '/', '', $file),
-                        'file_size' => $this->formatBytes($disk->size($file)),
-                        'last_modified' => Carbon::createFromTimestamp($disk->lastModified($file))->toDateTimeString(),
-                        'age' => Carbon::createFromTimestamp($disk->lastModified($file))->diffForHumans(),
-                    ];
+                    try {
+                        $backups[] = [
+                            'file_path' => $file,
+                            'file_name' => str_replace($backupName.'/', '', $file),
+                            'file_size' => $this->formatBytes($disk->size($file)),
+                            'last_modified' => Carbon::createFromTimestamp($disk->lastModified($file))->toDateTimeString(),
+                            'age' => Carbon::createFromTimestamp($disk->lastModified($file))->diffForHumans(),
+                        ];
+                    } catch (\Exception $e) {
+                        Log::warning('Failed to process backup file: '.$file.' - '.$e->getMessage());
+                    }
                 }
             }
 
             // Sort by date descending
-            usort($backups, function($a, $b) {
+            usort($backups, function ($a, $b) {
                 return ($b['last_modified'] ?? '') <=> ($a['last_modified'] ?? '');
             });
 
             return view('admin.settings.backup', compact('backups'));
-        } catch (\Exception $e) {
-            Log::error('Backup Index Error: ' . $e->getMessage());
-            return view('admin.settings.backup', ['backups' => []]);
+        } catch (\Throwable $e) {
+            Log::error('Backup Index Critical Error: '.$e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response('Critical System Error: '.$e->getMessage(), 500);
         }
     }
 
@@ -55,7 +66,7 @@ class BackupController extends Controller
     public function create(Request $request)
     {
         $option = $request->get('option', 'all'); // 'all', 'only-db', 'only-files'
-        
+
         try {
             if ($option === 'only-db') {
                 Artisan::queue('backup:run', ['--only-db' => true]);
@@ -67,8 +78,9 @@ class BackupController extends Controller
 
             return back()->with('success', 'Backup process started in the background. It will appear here shortly.');
         } catch (\Exception $e) {
-            Log::error('Backup Error: ' . $e->getMessage());
-            return back()->with('error', 'Failed to start backup: ' . $e->getMessage());
+            Log::error('Backup Error: '.$e->getMessage());
+
+            return back()->with('error', 'Failed to start backup: '.$e->getMessage());
         }
     }
 
@@ -78,7 +90,7 @@ class BackupController extends Controller
     public function download($fileName)
     {
         $disk = Storage::disk(config('backup.backup.destination.disks')[0]);
-        $filePath = config('backup.backup.name') . '/' . $fileName;
+        $filePath = config('backup.backup.name').'/'.$fileName;
 
         if ($disk->exists($filePath)) {
             return $disk->download($filePath);
@@ -93,10 +105,11 @@ class BackupController extends Controller
     public function delete($fileName)
     {
         $disk = Storage::disk(config('backup.backup.destination.disks')[0]);
-        $filePath = config('backup.backup.name') . '/' . $fileName;
+        $filePath = config('backup.backup.name').'/'.$fileName;
 
         if ($disk->exists($filePath)) {
             $disk->delete($filePath);
+
             return back()->with('success', 'Backup deleted successfully.');
         }
 
@@ -110,9 +123,10 @@ class BackupController extends Controller
     {
         try {
             Artisan::call('backup:clean');
+
             return back()->with('success', 'Cleanup process completed successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Cleanup failed: ' . $e->getMessage());
+            return back()->with('error', 'Cleanup failed: '.$e->getMessage());
         }
     }
 
@@ -126,6 +140,7 @@ class BackupController extends Controller
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
         $pow = min($pow, count($units) - 1);
         $bytes /= pow(1024, $pow);
-        return round($bytes, $precision) . ' ' . $units[$pow];
+
+        return round($bytes, $precision).' '.$units[$pow];
     }
 }

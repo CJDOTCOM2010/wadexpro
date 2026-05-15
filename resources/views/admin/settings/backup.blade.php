@@ -233,7 +233,7 @@
             <h3 class="text-xl font-black text-brand mb-2">Purge Snapshot?</h3>
             <p class="text-xs text-brand-muted font-medium mb-8">This action is irreversible. The backup <span class="text-brand font-black" x-text="selectedBackup?.file_name"></span> will be permanently deleted from the vault.</p>
             
-            <form :action="'{{ route('orchestrator.settings.backups.delete', '') }}/' + selectedBackup?.file_name" method="POST">
+            <form :action="'{{ route('orchestrator.settings.backups.delete', ['file' => 'FILE_NAME']) }}'.replace('FILE_NAME', selectedBackup?.file_name)" method="POST">
                 @csrf
                 @method('DELETE')
                 <div class="flex items-center gap-3">

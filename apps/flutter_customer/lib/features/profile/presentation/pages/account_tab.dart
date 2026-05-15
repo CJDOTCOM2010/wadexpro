@@ -229,8 +229,8 @@ class _AccountTabState extends ConsumerState<AccountTab> {
                           backgroundColor: AppColors.obsidianDark,
                           backgroundImage: user?.avatarUrl != null 
                             ? (user!.avatarUrl!.startsWith('http') 
-                                ? NetworkImage(user!.avatarUrl!) 
-                                : FileImage(File(user!.avatarUrl!)) as ImageProvider)
+                                ? NetworkImage(user.avatarUrl!) 
+                                : FileImage(File(user.avatarUrl!)) as ImageProvider)
                             : null,
                           child: user?.avatarUrl == null ? const Icon(Icons.person, size: 50, color: Colors.white54) : null,
                         ),

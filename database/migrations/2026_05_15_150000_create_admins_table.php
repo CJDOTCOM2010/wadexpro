@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role', 50)->default('admin');
-            $table->enum('level', ['admin', 'super_admin', 'super_admin'])->default('admin');
+            $table->enum('level', ['admin', 'super_admin'])->default('admin');
             $table->string('avatar_url')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_super_admin')->default(false);

@@ -43,20 +43,63 @@ Route::get('/v1/debug-dashboard', function () {
             $guardOk = 'FAIL: ' . $e->getMessage();
         }
 
+        // Test 5: Check route cache status
+        $routeCached = file_exists(base_path('bootstrap/cache/routes-v7.php')) ? 'YES' : 'NO';
+        
+        // Test 6: Try calling the DashboardController directly
+        try {
+            $controller = app(\App\Modules\Admin\Controllers\DashboardController::class);
+            $testRequest = \Illuminate\Http\Request::create('/orchestrator/dashboard', 'GET');
+            $response = $controller->index($testRequest);
+            $controllerOk = 'YES (rendered ' . strlen($response->render()) . ' bytes)';
+        } catch (\Throwable $e) {
+            $controllerOk = 'FAIL: ' . get_class($e) . ' — ' . $e->getMessage() . ' in ' . basename($e->getFile()) . ':' . $e->getLine();
+        }
+        
+        // Test 7: Check for the actual route
+        try {
+            $route = \Illuminate\Support\Facades\Route::getRoutes()->getByName('orchestrator.dashboard');
+            $routeInfo = $route ? [
+                'uri' => $route->uri(),
+                'middleware' => $route->middleware(),
+                'action' => $route->getActionName(),
+            ] : 'NOT FOUND';
+        } catch (\Exception $e) {
+            $routeInfo = 'FAIL: ' . $e->getMessage();
+        }
+
+        // Test 8: Check the last Laravel error log
+        try {
+            $logFile = storage_path('logs/laravel.log');
+            if (file_exists($logFile)) {
+                $logContent = file_get_contents($logFile);
+                $lastLines = implode("\n", array_slice(explode("\n", $logContent), -30));
+            } else {
+                $lastLines = 'NO LOG FILE';
+            }
+        } catch (\Exception $e) {
+            $lastLines = 'FAIL: ' . $e->getMessage();
+        }
+
         return response()->json([
             'vite_manifest' => $viteOk,
             'system_settings_db' => $settingOk,
             'dashboard_render' => $renderOk,
             'admin_guard' => $guardOk,
+            'route_cached' => $routeCached,
+            'controller_direct' => $controllerOk,
+            'route_info' => $routeInfo,
             'php_version' => PHP_VERSION,
             'laravel_version' => app()->version(),
             'session_driver' => config('session.driver'),
             'cache_driver' => config('cache.default'),
+            'last_log_lines' => $lastLines,
         ]);
     } catch (\Throwable $e) {
         return response()->json([
             'fatal_error' => get_class($e) . ': ' . $e->getMessage(),
             'file' => $e->getFile() . ':' . $e->getLine(),
+            'trace' => collect($e->getTrace())->take(5)->map(fn($t) => ($t['file'] ?? '') . ':' . ($t['line'] ?? ''))->toArray(),
         ], 500);
     }
 });

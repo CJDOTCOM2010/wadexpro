@@ -85,12 +85,15 @@ Route::get('/v1/debug-dashboard', function () {
             $routeInfo = 'FAIL: ' . $e->getMessage();
         }
 
-        // Test 8: Check the last Laravel error log
+        // Test 8: Check the last Laravel error log — find actual error messages
         try {
             $logFile = storage_path('logs/laravel.log');
             if (file_exists($logFile)) {
                 $logContent = file_get_contents($logFile);
-                $lastLines = implode("\n", array_slice(explode("\n", $logContent), -30));
+                // Find the last exception message (they start with [YYYY-MM-DD)
+                preg_match_all('/\[\d{4}-\d{2}-\d{2}[^\]]*\]\s+\S+\.\S+:\s+[^\n]+/', $logContent, $matches);
+                $errorMessages = array_slice($matches[0] ?? [], -5);
+                $lastLines = implode("\n", $errorMessages);
             } else {
                 $lastLines = 'NO LOG FILE';
             }

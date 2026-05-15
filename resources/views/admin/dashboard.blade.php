@@ -15,6 +15,10 @@
                     <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> LIVE
                 </span>
                 <span class="text-xs text-brand-muted font-medium">{{ now()->format('l, F j, Y • g:i A') }}</span>
+                <span class="text-xs text-brand-muted">•</span>
+                <span class="text-xs font-bold text-accent">
+                    Drivers: {{ $driverStats['total'] ?? 0 }} | Rides Today: {{ $rideStats['today'] ?? 0 }} | Map: {{ $mapData['drivers']->count() ?? 0 }} drivers, {{ $mapData['rides']->count() ?? 0 }} rides
+                </span>
             </div>
             <h1 class="text-3xl font-black text-brand tracking-tight">Command Center</h1>
             <p class="text-brand-muted font-medium mt-1">Welcome back, {{ $admin->name ?? 'Administrator' }} • {{ ucfirst($admin->level ?? 'Admin') }}</p>

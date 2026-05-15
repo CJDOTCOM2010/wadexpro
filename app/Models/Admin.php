@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+class Admin extends Authenticatable
+{
+    use HasFactory, Notifiable, HasApiTokens;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'email_verified_at',
+        'password',
+        'role',
+        'level',
+        'avatar_url',
+        'is_active',
+        'is_super_admin',
+        'last_login_at',
+        'department',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'is_active' => 'boolean',
+            'is_super_admin' => 'boolean',
+        ];
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->is_super_admin === true || $this->level === 'super_admin';
+    }
+
+    public function canAccessModule(string $moduleSlug): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        return true;
+    }
+
+    public function auditLogs()
+    {
+        return $this->hasMany(\App\Modules\Admin\Models\AdminAuditLog::class, 'admin_id');
+    }
+}

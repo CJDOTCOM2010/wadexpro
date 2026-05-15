@@ -30,8 +30,8 @@ class OrchestratorLoginController extends Controller
         if (Auth::guard('admin')->attempt($credentials)) {
             $user = Auth::guard('admin')->user();
 
-            // Strict Orchestrator Clearance Check
-            if ($user->user_type === 'super_admin' || $user->hasRole('super_admin')) {
+            // Strict Orchestrator Clearance Check - use is_super_admin or level
+            if ($user->is_super_admin || $user->level === 'super_admin') {
                 $request->session()->regenerate();
 
                 return response()->json([

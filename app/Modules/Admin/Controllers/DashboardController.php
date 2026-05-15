@@ -122,6 +122,35 @@ class DashboardController extends Controller
                 ];
             }
 
+            // Tactical Density Map - Driver & Ride Locations
+            $driverLocations = Driver::where('is_online', true)
+                ->whereNotNull('current_lat')
+                ->whereNotNull('current_lng')
+                ->limit(100)
+                ->get(['id', 'current_lat', 'current_lng', 'status', 'is_available']);
+
+            $rideLocations = RideRequest::whereIn('status', ['pending', 'searching', 'driver_assigned'])
+                ->whereNotNull('pickup_lat')
+                ->whereNotNull('pickup_lng')
+                ->limit(50)
+                ->get(['id', 'pickup_lat', 'pickup_lng', 'pickup_address', 'status']);
+
+            $mapData = [
+                'drivers' => $driverLocations->map(fn($d) => [
+                    'id' => $d->id,
+                    'lat' => (float) $d->current_lat,
+                    'lng' => (float) $d->current_lng,
+                    'status' => $d->is_available ? 'available' : 'busy',
+                ]),
+                'rides' => $rideLocations->map(fn($r) => [
+                    'id' => $r->id,
+                    'lat' => (float) $r->pickup_lat,
+                    'lng' => (float) $r->pickup_lng,
+                    'address' => $r->pickup_address,
+                    'status' => $r->status,
+                ]),
+            ];
+
             return view('admin.dashboard', compact(
                 'admin',
                 'driverStats',
@@ -133,7 +162,8 @@ class DashboardController extends Controller
                 'recentRides',
                 'pendingActions',
                 'regionStats',
-                'weeklyTrend'
+                'weeklyTrend',
+                'mapData'
             ));
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Dashboard Error: ' . $e->getMessage());
@@ -151,6 +181,7 @@ class DashboardController extends Controller
                 'pendingActions' => ['pending_drivers' => 0],
                 'regionStats' => [],
                 'weeklyTrend' => [],
+                'mapData' => ['drivers' => [], 'rides' => []],
             ]);
         }
     }

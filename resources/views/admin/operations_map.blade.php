@@ -2,6 +2,14 @@
 @section('title', 'Global Operations & Fleet Dynamics')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
 <div class="h-[calc(100vh-12rem)] flex gap-8">
     
     <!-- Left: Core Intelligence Map -->
@@ -27,7 +35,7 @@
             <div class="bg-brand/80 backdrop-blur-xl p-6 rounded-lg border border-white/10 shadow-2xl pointer-events-auto">
                 <p class="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Active Assets</p>
                 <div class="flex items-center gap-4">
-                    <h4 class="text-3xl font-black text-white">{{ number_format($liveNodes) }}</h4>
+                    <h4 class="text-3xl font-black text-white">{{ number_format($liveNodes ?? 0) }}</h4>
                     <span class="px-2 py-1 bg-green-500/20 text-green-400 text-[10px] font-black rounded-lg">LIVE</span>
                 </div>
             </div>

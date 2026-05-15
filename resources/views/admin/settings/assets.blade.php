@@ -2,26 +2,33 @@
 @section('title', 'Gallery Assets')
 @section('content')
 
-<div class="p-8 lg:p-12 max-w-[1600px] mx-auto" x-data="{ uploadModal: false, deleteModal: false, selectedAsset: null }">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
-        <div>
-            <div class="flex items-center gap-2 text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2">
-                <span>System Management</span>
-                <span class="text-gray-300">/</span>
-                <span>Asset Library</span>
+<div class="p-6 lg:p-8" x-data="assetManager()" x-init="init()">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2 text-xs font-bold text-brand-muted mb-2">
+                    <a href="{{ route('orchestrator.settings') }}" class="hover:text-brand transition-colors">Settings</a>
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    <span class="text-accent">Gallery Assets</span>
+                </div>
+                <h2 class="text-3xl font-black text-brand tracking-tight">Gallery Assets</h2>
+                <p class="text-brand-muted font-medium mt-1">Manage your media library, images, and file assets.</p>
             </div>
-            <h2 class="text-3xl font-black text-brand tracking-tight">Gallery Assets</h2>
-            <p class="text-sm text-brand-muted font-medium mt-1">Centralized control for all system uploads, media, and storage nodes.</p>
-        </div>
-        
-            <button @click="uploadModal = true" class="bg-brand text-white px-8 py-4 rounded-xl text-xs font-black shadow-xl hover:shadow-brand/20 hover:-translate-y-0.5 transition-all flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                Upload New Assets
-            </button>
+            <div class="flex items-center gap-3">
+                <button @click="viewMode = viewMode === 'grid' ? 'list' : 'grid'" class="p-3 bg-white border border-gray-100 rounded-xl hover:border-brand/20 hover:shadow-md transition-all">
+                    <svg x-show="viewMode === 'grid'" class="w-5 h-5 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                    <svg x-show="viewMode === 'list'" class="w-5 h-5 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                </button>
+                <button @click="openUploadModal()" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    Upload Assets
+                </button>
+            </div>
         </div>
     </div>
 
+    <!-- Alerts -->
     @if(session('error'))
     <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
         <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
@@ -30,245 +37,488 @@
     @endif
 
     @if(session('success'))
-    <div class="mb-8 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3 animate-fade-in">
-        <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        <span class="text-sm font-medium text-green-700">{{ session('success') }}</span>
+    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
+        <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
     </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
-        
-        <!-- Left: Stats & Config -->
-        <div class="lg:col-span-1 space-y-8">
-            <!-- Storage Health -->
-            <div class="bg-brand rounded-2xl p-8 text-white relative overflow-hidden group shadow-2xl">
-                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
-                <div class="relative z-10">
-                    <p class="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-4">Storage Node Status</p>
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-black">{{ strtoupper($stats['disk']) }}</h4>
-                            <p class="text-[10px] font-bold text-white/50 uppercase tracking-widest">{{ $stats['storage_driver'] }} driver active</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-end">
-                            <span class="text-[10px] font-black text-white/40 uppercase">Total Files</span>
-                            <span class="text-sm font-black">{{ $stats['total_files'] }}</span>
-                        </div>
-                        <div class="flex justify-between items-end">
-                            <span class="text-[10px] font-black text-white/40 uppercase">Directories</span>
-                            <span class="text-sm font-black">{{ $stats['total_dirs'] }}</span>
-                        </div>
-                    </div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gradient-to-br from-brand to-brand-light rounded-2xl p-5 text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <span class="text-[10px] font-black bg-white/20 px-2 py-1 rounded-lg uppercase">Total</span>
+            </div>
+            <p class="text-3xl font-black">{{ $stats['total_files'] }}</p>
+            <p class="text-xs font-medium text-white/70 mt-1">Files stored</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600 group-hover:bg-green-500 group-hover:text-white transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
             </div>
+            <p class="text-2xl font-black text-brand">{{ $stats['total_dirs'] }}</p>
+            <p class="text-xs font-medium text-brand-muted mt-1">Folders</p>
+        </div>
 
-            <!-- Storage Config -->
-            <div class="bg-white rounded-2xl border border-gray-50 shadow-xl p-8">
-                <h3 class="text-sm font-black text-brand mb-6 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    Storage Configuration
-                </h3>
-                
-                <form action="{{ route('orchestrator.settings.assets.config') }}" method="POST" class="space-y-6">
-                    @csrf
-                    <div>
-                        <label class="block text-[10px] font-black text-brand-muted uppercase tracking-widest mb-2">Default Storage Disk</label>
-                        <select name="settings[default_storage_disk]" class="w-full bg-surface border-2 border-transparent focus:border-accent rounded-lg py-3 px-4 text-xs font-bold outline-none">
-                            <option value="public" {{ \App\Modules\Admin\Models\SystemSetting::get('default_storage_disk') == 'public' ? 'selected' : '' }}>Local Public Disk</option>
-                            <option value="s3" {{ \App\Modules\Admin\Models\SystemSetting::get('default_storage_disk') == 's3' ? 'selected' : '' }}>Amazon S3 / DigitalOcean</option>
-                            <option value="supabase" {{ \App\Modules\Admin\Models\SystemSetting::get('default_storage_disk') == 'supabase' ? 'selected' : '' }}>Supabase Storage</option>
-                        </select>
-                    </div>
+        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+                </div>
+            </div>
+            <p class="text-2xl font-black text-brand uppercase">{{ $stats['storage_driver'] }}</p>
+            <p class="text-xs font-medium text-brand-muted mt-1">Storage Driver</p>
+        </div>
 
-                    <div>
-                        <label class="block text-[10px] font-black text-brand-muted uppercase tracking-widest mb-2">Max Upload Size (MB)</label>
-                        <input type="number" name="settings[max_upload_size]" value="{{ \App\Modules\Admin\Models\SystemSetting::get('max_upload_size', '10') }}" class="w-full bg-surface border-2 border-transparent focus:border-accent rounded-lg py-3 px-4 text-xs font-bold outline-none">
-                    </div>
+        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                </div>
+            </div>
+            <p class="text-2xl font-black text-brand">{{ strtoupper($stats['disk']) }}</p>
+            <p class="text-xs font-medium text-brand-muted mt-1">Active Disk</p>
+        </div>
+    </div>
 
-                    <button type="submit" class="w-full py-3 bg-brand text-white text-[10px] font-black rounded-lg hover:bg-brand-hover transition-all">Update Storage Node</button>
-                </form>
+    <!-- Main Content -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <!-- Toolbar -->
+        <div class="p-4 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface/30">
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-sm">
+                <a href="{{ route('orchestrator.settings.assets') }}" class="font-bold text-brand hover:text-accent transition-colors">Root</a>
+                @if($directory)
+                    @php $parts = explode('/', $directory); $currentPath = ''; @endphp
+                    @foreach($parts as $part)
+                        @php $currentPath .= ($currentPath ? '/' : '') . $part; @endphp
+                        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <a href="{{ route('orchestrator.settings.assets', ['disk' => $disk, 'path' => $currentPath]) }}" class="font-bold text-brand hover:text-accent transition-colors">{{ $part }}</a>
+                    @endforeach
+                @endif
+                @if($directory)
+                <button @click="goToParent()" class="ml-2 text-brand-muted hover:text-brand transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                </button>
+                @endif
+            </div>
+
+            <!-- Search & Actions -->
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <input type="text" x-model="searchQuery" @input="filterAssets()" placeholder="Search assets..." class="bg-white border border-gray-100 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all w-64 shadow-sm">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <select x-model="filterType" @change="filterAssets()" class="bg-white border border-gray-100 rounded-xl py-2.5 px-4 text-sm font-medium outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all shadow-sm">
+                    <option value="all">All Types</option>
+                    <option value="image">Images</option>
+                    <option value="video">Videos</option>
+                    <option value="document">Documents</option>
+                    <option value="audio">Audio</option>
+                </select>
             </div>
         </div>
 
-        <!-- Right: File Browser -->
-        <div class="lg:col-span-3">
-            <div class="bg-white rounded-2xl border border-gray-50 shadow-2xl overflow-hidden min-h-[600px]">
-                <!-- Toolbar -->
-                <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-surface/50">
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-2">
-                            <a href="{{ route('orchestrator.settings.assets', ['disk' => $disk]) }}" class="text-xs font-bold text-brand hover:text-accent transition-colors">Root</a>
-                            @if($directory)
-                                @php $parts = explode('/', $directory); $currentPath = ''; @endphp
-                                @foreach($parts as $part)
-                                    @php $currentPath .= ($currentPath ? '/' : '') . $part; @endphp
-                                    <span class="text-gray-300">/</span>
-                                    <a href="{{ route('orchestrator.settings.assets', ['disk' => $disk, 'path' => $currentPath]) }}" class="text-xs font-bold text-brand hover:text-accent transition-colors">{{ $part }}</a>
-                                @endforeach
+        <!-- Content Area -->
+        <div class="p-6 min-h-[500px]">
+            @if(empty($files) && empty($directories))
+                <!-- Empty State -->
+                <div class="flex flex-col items-center justify-center py-20">
+                    <div class="w-24 h-24 bg-surface rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-12 h-12 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-black text-brand mb-2">No assets found</h3>
+                    <p class="text-brand-muted font-medium mb-6">Upload your first asset to get started</p>
+                    <button @click="openUploadModal()" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        Upload First Asset
+                    </button>
+                </div>
+            @else
+                <!-- Grid View -->
+                <div x-show="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <!-- Folders -->
+                    @foreach($directories as $dir)
+                    <div @click="navigateTo('{{ $dir['path'] }}')" class="group bg-surface rounded-2xl p-4 border-2 border-transparent hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+                        <div class="aspect-square bg-gradient-to-br from-amber-100 to-amber-200 rounded-xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                            <svg class="w-12 h-12 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                        </div>
+                        <h5 class="text-sm font-bold text-brand truncate text-center">{{ $dir['name'] }}</h5>
+                        <p class="text-[10px] text-brand-muted text-center mt-1">Folder</p>
+                    </div>
+                    @endforeach
+
+                    <!-- Files -->
+                    @foreach($files as $file)
+                    <div class="group bg-white rounded-2xl p-3 border-2 border-gray-50 hover:border-accent hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative" x-data="{ selected: false }">
+                        <!-- Preview -->
+                        <div class="aspect-square bg-surface rounded-xl flex items-center justify-center mb-3 overflow-hidden relative">
+                            @if($file['is_image'])
+                                <img src="{{ $file['url'] }}" alt="{{ $file['name'] }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            @else
+                                <div class="text-brand-muted">
+                                    @if(in_array($file['extension'], ['pdf']))
+                                        <svg class="w-12 h-12 text-red-400" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                    @elseif(in_array($file['extension'], ['doc','docx']))
+                                        <svg class="w-12 h-12 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                    @else
+                                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                    @endif
+                                </div>
+                            @endif
+
+                            <!-- Hover Overlay -->
+                            <div class="absolute inset-0 bg-brand/90 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2 rounded-xl">
+                                <button @click="previewAsset(@js($file))" class="w-full py-2 bg-white text-brand text-xs font-bold rounded-lg hover:bg-gray-100 transition-colors">Preview</button>
+                                <button @click="copyUrl('{{ $file['url'] }}')" class="w-full py-2 bg-accent text-brand text-xs font-bold rounded-lg hover:bg-accent/80 transition-colors">Copy URL</button>
+                                <a href="{{ $file['url'] }}" download="{{ $file['name'] }}" class="w-full py-2 bg-green-500 text-white text-xs font-bold rounded-lg hover:bg-green-600 transition-colors text-center">Download</a>
+                                <button @click="confirmDelete(@js($file))" class="w-full py-2 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-600 transition-colors">Delete</button>
+                            </div>
+
+                            <!-- Image Badge -->
+                            @if($file['is_image'])
+                            <span class="absolute top-2 left-2 px-2 py-1 bg-black/50 text-white text-[8px] font-bold rounded-lg backdrop-blur-sm">IMG</span>
                             @endif
                         </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-3">
-                        <div class="relative">
-                            <input type="text" placeholder="Search assets..." class="bg-white border border-gray-100 rounded-lg py-2 pl-10 pr-4 text-[11px] font-medium outline-none focus:border-accent transition-all w-64 shadow-sm">
-                            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+
+                        <!-- Info -->
+                        <h5 class="text-xs font-bold text-brand truncate" title="{{ $file['name'] }}">{{ $file['name'] }}</h5>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-[9px] font-black text-brand-muted uppercase bg-surface px-2 py-0.5 rounded">{{ $file['extension'] }}</span>
+                            <span class="text-[9px] font-bold text-brand-muted">{{ $file['size'] }}</span>
                         </div>
                     </div>
+                    @endforeach
                 </div>
 
-                <!-- Content -->
-                <div class="p-8">
-                    @if(empty($files) && empty($directories))
-                        <div class="flex flex-col items-center justify-center py-20 opacity-30">
-                            <svg class="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-                            <p class="text-sm font-black uppercase tracking-widest">No assets found in this path</p>
-                        </div>
-                    @else
-                        <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-6">
-                            <!-- Directories -->
-                            @foreach($directories as $dir)
-                            <a href="{{ route('orchestrator.settings.assets', ['disk' => $disk, 'path' => $dir['path']]) }}" class="group bg-surface rounded-xl p-4 border border-transparent hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                                <div class="w-full aspect-square bg-accent/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                                    <svg class="w-12 h-12 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
-                                </div>
-                                <h5 class="text-[11px] font-black text-brand truncate">{{ $dir['name'] }}</h5>
-                                <p class="text-[9px] font-bold text-brand-muted uppercase tracking-tighter">Directory</p>
-                            </a>
-                            @endforeach
+                <!-- List View -->
+                <div x-show="viewMode === 'list'" class="space-y-2">
+                    <!-- Headers -->
+                    <div class="grid grid-cols-12 gap-4 px-4 py-2 bg-surface rounded-lg text-[10px] font-black text-brand-muted uppercase">
+                        <div class="col-span-1">Type</div>
+                        <div class="col-span-4">Name</div>
+                        <div class="col-span-2">Size</div>
+                        <div class="col-span-2">Modified</div>
+                        <div class="col-span-3 text-right">Actions</div>
+                    </div>
 
-                            <!-- Files -->
-                            @foreach($files as $file)
-                            <div class="group bg-white rounded-xl p-4 border border-gray-50 shadow-sm hover:border-accent hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative">
-                                <div class="w-full aspect-square bg-surface rounded-lg flex items-center justify-center mb-4 overflow-hidden relative">
-                                    @if($file['is_image'])
-                                        <img src="{{ $file['url'] }}" alt="{{ $file['name'] }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                    @else
-                                        <div class="text-brand-muted opacity-50">
-                                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                                        </div>
-                                    @endif
-                                    
-                                    <!-- Actions Overlay -->
-                                    <div class="absolute inset-0 bg-brand/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-4">
-                                        <button @click="selectedAsset = @js($file); deleteModal = true" class="w-full py-2 bg-red-600 text-white text-[9px] font-black rounded-lg hover:bg-red-700 transition-colors uppercase">Delete</button>
-                                        <a href="{{ $file['url'] }}" target="_blank" class="w-full py-2 bg-white text-brand text-[9px] font-black rounded-lg hover:bg-gray-100 transition-colors uppercase text-center">View Original</a>
-                                        <button onclick="copyToClipboard('{{ $file['url'] }}')" class="w-full py-2 bg-accent text-brand text-[9px] font-black rounded-lg hover:bg-accent/80 transition-colors uppercase">Copy URL</button>
-                                    </div>
-                                </div>
-                                <h5 class="text-[11px] font-black text-brand truncate" title="{{ $file['name'] }}">{{ $file['name'] }}</h5>
-                                <div class="flex items-center justify-between mt-1">
-                                    <p class="text-[9px] font-bold text-brand-muted uppercase">{{ $file['extension'] }}</p>
-                                    <p class="text-[9px] font-bold text-brand-muted">{{ $file['size'] }}</p>
-                                </div>
+                    <!-- Folders -->
+                    @foreach($directories as $dir)
+                    <div @click="navigateTo('{{ $dir['path'] }}')" class="grid grid-cols-12 gap-4 px-4 py-3 bg-surface rounded-xl hover:bg-brand/5 hover:shadow-md transition-all cursor-pointer items-center group">
+                        <div class="col-span-1">
+                            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
                             </div>
-                            @endforeach
                         </div>
-                    @endif
+                        <div class="col-span-4">
+                            <p class="text-sm font-bold text-brand group-hover:text-accent transition-colors">{{ $dir['name'] }}</p>
+                            <p class="text-[10px] text-brand-muted">Folder</p>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-xs font-medium text-brand-muted">—</span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-xs font-medium text-brand-muted">—</span>
+                        </div>
+                        <div class="col-span-3 flex justify-end gap-2">
+                            <button class="p-2 text-brand-muted hover:text-brand hover:bg-white rounded-lg transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    @endforeach
+
+                    <!-- Files -->
+                    @foreach($files as $file)
+                    <div class="grid grid-cols-12 gap-4 px-4 py-3 bg-white rounded-xl hover:bg-surface hover:shadow-md transition-all items-center group border border-transparent hover:border-gray-100">
+                        <div class="col-span-1">
+                            @if($file['is_image'])
+                                <img src="{{ $file['url'] }}" class="w-10 h-10 rounded-xl object-cover">
+                            @else
+                                <div class="w-10 h-10 bg-surface rounded-xl flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="col-span-4">
+                            <p class="text-sm font-bold text-brand group-hover:text-accent transition-colors truncate">{{ $file['name'] }}</p>
+                            <p class="text-[10px] text-brand-muted">.{{ $file['extension'] }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-xs font-medium text-brand-muted">{{ $file['size'] }}</span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-xs font-medium text-brand-muted">{{ $file['last_modified'] }}</span>
+                        </div>
+                        <div class="col-span-3 flex justify-end gap-2">
+                            <button @click="previewAsset(@js($file))" class="p-2 text-brand-muted hover:text-brand hover:bg-surface rounded-lg transition-colors" title="Preview">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </button>
+                            <button @click="copyUrl('{{ $file['url'] }}')" class="p-2 text-brand-muted hover:text-brand hover:bg-surface rounded-lg transition-colors" title="Copy URL">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                            </button>
+                            <a href="{{ $file['url'] }}" download="{{ $file['name'] }}" class="p-2 text-brand-muted hover:text-brand hover:bg-surface rounded-lg transition-colors" title="Download">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            </a>
+                            <button @click="confirmDelete(@js($file))" class="p-2 text-brand-muted hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
     <!-- Upload Modal -->
-    <div x-show="uploadModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-6">
-        <div class="absolute inset-0 bg-brand/60 backdrop-blur-sm" @click="uploadModal = false"></div>
-        <div class="bg-white rounded-3xl w-full max-w-xl relative z-10 shadow-2xl overflow-hidden animate-fade-in-up">
-            <div class="p-8 border-b border-gray-50 flex items-center justify-between">
+    <div x-show="uploadModalOpen" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/60 backdrop-blur-sm" @click="uploadModalOpen = false"></div>
+        <div class="bg-white rounded-3xl w-full max-w-2xl relative z-10 shadow-2xl overflow-hidden animate-fade-in-up">
+            <div class="p-6 border-b border-gray-50 flex items-center justify-between">
                 <div>
-                    <h3 class="text-xl font-black text-brand">Upload New Assets</h3>
-                    <p class="text-xs text-brand-muted font-medium">To path: <span class="text-accent font-bold">{{ $directory ?: 'Root' }}</span></p>
+                    <h3 class="text-xl font-black text-brand">Upload Assets</h3>
+                    <p class="text-xs text-brand-muted font-medium mt-1">Upload to: <span class="text-accent font-bold">{{ $directory ?: 'Root' }}</span></p>
                 </div>
-                <button @click="uploadModal = false" class="text-gray-300 hover:text-brand transition-colors">
+                <button @click="uploadModalOpen = false" class="text-gray-300 hover:text-brand transition-colors p-2">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-            <form action="{{ route('orchestrator.settings.assets.upload') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
+            <form action="{{ route('orchestrator.settings.assets.upload') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
                 @csrf
                 <input type="hidden" name="disk" value="{{ $disk }}">
                 <input type="hidden" name="path" value="{{ $directory }}">
-                
-                <div class="border-4 border-dashed border-gray-50 rounded-2xl p-12 text-center group hover:border-accent hover:bg-accent/5 transition-all cursor-pointer relative">
-                    <input type="file" name="files[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" id="file-input" onchange="updateFileList(this)">
+
+                <!-- Drop Zone -->
+                <div class="border-4 border-dashed border-gray-100 rounded-2xl p-12 text-center group hover:border-accent hover:bg-accent/5 transition-all cursor-pointer relative">
+                    <input type="file" name="files[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" id="file-input" @change="handleFileSelect($event)">
                     <div class="pointer-events-none">
-                        <svg class="w-16 h-16 text-accent mx-auto mb-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                        <p class="text-sm font-black text-brand">Drop files here or click to browse</p>
-                        <p class="text-[10px] text-brand-muted font-bold mt-2 uppercase tracking-widest">Max file size: 10MB</p>
+                        <div class="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                        </div>
+                        <p class="text-lg font-black text-brand mb-2">Drop files here or click to browse</p>
+                        <p class="text-xs text-brand-muted font-bold uppercase tracking-widest">Max file size: 10MB per file</p>
                     </div>
                 </div>
-                
-                <div id="file-list" class="space-y-2 max-h-40 overflow-y-auto pr-2"></div>
+
+                <!-- File List -->
+                <div x-show="selectedFiles.length > 0" class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-bold text-brand">Selected Files (<span x-text="selectedFiles.length"></span>)</p>
+                        <button type="button" @click="clearFiles()" class="text-xs font-bold text-red-500 hover:text-red-600">Clear All</button>
+                    </div>
+                    <div class="max-h-48 overflow-y-auto space-y-2 pr-2">
+                        <template x-for="(file, index) in selectedFiles" :key="index">
+                            <div class="flex items-center justify-between p-3 bg-surface rounded-xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-brand truncate max-w-[200px]" x-text="file.name"></p>
+                                        <p class="text-[10px] text-brand-muted" x-text="formatFileSize(file.size)"></p>
+                                    </div>
+                                </div>
+                                <button type="button" @click="removeFile(index)" class="p-1 text-brand-muted hover:text-red-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
 
                 <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" @click="uploadModal = false" class="px-6 py-3 text-xs font-black text-brand-muted hover:text-brand transition-colors uppercase">Cancel</button>
-                    <button type="submit" class="px-8 py-3 bg-brand text-white text-xs font-black rounded-xl shadow-lg hover:shadow-brand/20 transition-all uppercase">Start Upload</button>
+                    <button type="button" @click="uploadModalOpen = false" class="px-6 py-3 text-sm font-bold text-brand-muted hover:text-brand transition-colors uppercase">Cancel</button>
+                    <button type="submit" :disabled="selectedFiles.length === 0" class="px-8 py-3 bg-brand text-white text-sm font-bold rounded-xl shadow-lg hover:shadow-brand/20 transition-all uppercase disabled:opacity-50 disabled:cursor-not-allowed">Upload <span x-text="selectedFiles.length"></span> Files</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Delete Modal -->
-    <div x-show="deleteModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-6">
-        <div class="absolute inset-0 bg-brand/60 backdrop-blur-sm" @click="deleteModal = false"></div>
+    <!-- Preview Modal -->
+    <div x-show="previewModalOpen" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/80 backdrop-blur-sm" @click="previewModalOpen = false"></div>
+        <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] relative z-10 shadow-2xl overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-gray-50 flex items-center justify-between shrink-0">
+                <div>
+                    <h3 class="text-xl font-black text-brand" x-text="previewingAsset?.name"></h3>
+                    <p class="text-xs text-brand-muted font-medium mt-1">
+                        <span x-text="previewingAsset?.extension?.toUpperCase()"></span> • <span x-text="previewingAsset?.size"></span>
+                    </p>
+                </div>
+                <button @click="previewModalOpen = false" class="text-gray-300 hover:text-brand transition-colors p-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="flex-1 p-6 bg-surface/50 flex items-center justify-center overflow-hidden">
+                <template x-if="previewingAsset?.is_image">
+                    <img :src="previewingAsset?.url" class="max-w-full max-h-[60vh] object-contain rounded-xl shadow-lg">
+                </template>
+                <template x-if="!previewingAsset?.is_image">
+                    <div class="text-center">
+                        <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-12 h-12 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        </div>
+                        <p class="text-brand-muted font-medium">Preview not available for this file type</p>
+                    </div>
+                </template>
+            </div>
+            <div class="p-6 border-t border-gray-50 flex justify-between shrink-0">
+                <div class="flex gap-2">
+                    <button @click="copyUrl(previewingAsset?.url)" class="px-4 py-2 bg-surface text-brand text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        Copy URL
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <a :href="previewingAsset?.url" :download="previewingAsset?.name" class="px-4 py-2 bg-green-500 text-white text-sm font-bold rounded-xl hover:bg-green-600 transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Download
+                    </a>
+                    <button @click="previewModalOpen = false; confirmDelete(previewingAsset)" class="px-4 py-2 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div x-show="deleteModalOpen" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/60 backdrop-blur-sm" @click="deleteModalOpen = false"></div>
         <div class="bg-white rounded-3xl w-full max-w-md relative z-10 shadow-2xl overflow-hidden animate-fade-in-up p-8 text-center">
             <div class="w-20 h-20 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </div>
             <h3 class="text-xl font-black text-brand mb-2">Delete Asset?</h3>
-            <p class="text-xs text-brand-muted font-medium mb-8">This action is irreversible. The file <span class="text-brand font-black" x-text="selectedAsset?.name"></span> will be permanently purged.</p>
+            <p class="text-sm text-brand-muted font-medium mb-2">This action is <span class="text-red-500 font-bold">irreversible</span>.</p>
+            <p class="text-sm font-bold text-brand bg-surface rounded-lg py-2 px-4 mb-8" x-text="deletingAsset?.name"></p>
             
             <form action="{{ route('orchestrator.settings.assets.delete') }}" method="POST">
                 @csrf
                 <input type="hidden" name="disk" value="{{ $disk }}">
-                <input type="hidden" name="path" x-model="selectedAsset?.path">
+                <input type="hidden" name="path" x-model="deletingAsset?.path">
                 
                 <div class="flex items-center gap-3">
-                    <button type="button" @click="deleteModal = false" class="flex-1 py-4 bg-surface text-brand-muted text-xs font-black rounded-xl hover:bg-gray-100 transition-all uppercase">Cancel</button>
-                    <button type="submit" class="flex-1 py-4 bg-red-600 text-white text-xs font-black rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 transition-all uppercase">Confirm Purge</button>
+                    <button type="button" @click="deleteModalOpen = false" class="flex-1 py-4 bg-surface text-brand-muted text-sm font-bold rounded-xl hover:bg-gray-100 transition-all uppercase">Cancel</button>
+                    <button type="submit" class="flex-1 py-4 bg-red-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-red-600 transition-all uppercase">Confirm Delete</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- Toast Notification -->
+    <div x-show="toast.show" x-cloak class="fixed bottom-6 right-6 z-[100] bg-brand text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-fade-in-up">
+        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span class="text-sm font-bold" x-text="toast.message"></span>
+    </div>
 </div>
 
 <script>
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('URL copied to clipboard!');
-        });
-    }
+function assetManager() {
+    return {
+        viewMode: 'grid',
+        searchQuery: '',
+        filterType: 'all',
+        uploadModalOpen: false,
+        previewModalOpen: false,
+        deleteModalOpen: false,
+        selectedFiles: [],
+        previewingAsset: null,
+        deletingAsset: null,
+        currentPath: '{{ $directory }}',
+        currentDisk: '{{ $disk }}',
+        toast: { show: false, message: '' },
 
-    function updateFileList(input) {
-        const list = document.getElementById('file-list');
-        list.innerHTML = '';
-        if (input.files.length > 0) {
-            Array.from(input.files).forEach(file => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center justify-between p-3 bg-surface rounded-lg';
-                div.innerHTML = `
-                    <span class="text-[10px] font-black text-brand truncate max-w-[200px]">${file.name}</span>
-                    <span class="text-[9px] font-bold text-brand-muted">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                `;
-                list.appendChild(div);
+        init() {
+            // Initialize
+        },
+
+        openUploadModal() {
+            this.uploadModalOpen = true;
+            this.selectedFiles = [];
+        },
+
+        handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            this.selectedFiles = [...this.selectedFiles, ...files];
+        },
+
+        removeFile(index) {
+            this.selectedFiles.splice(index, 1);
+        },
+
+        clearFiles() {
+            this.selectedFiles = [];
+            document.getElementById('file-input').value = '';
+        },
+
+        formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        },
+
+        navigateTo(path) {
+            window.location.href = "{{ route('orchestrator.settings.assets') }}?disk={{ $disk }}&path=" + encodeURIComponent(path);
+        },
+
+        goToParent() {
+            const parts = this.currentPath.split('/').filter(p => p);
+            parts.pop();
+            const newPath = parts.join('/');
+            window.location.href = "{{ route('orchestrator.settings.assets') }}?disk={{ $disk }}&path=" + encodeURIComponent(newPath);
+        },
+
+        previewAsset(file) {
+            this.previewingAsset = file;
+            this.previewModalOpen = true;
+        },
+
+        copyUrl(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                this.showToast('URL copied to clipboard!');
             });
+        },
+
+        confirmDelete(file) {
+            this.deletingAsset = file;
+            this.deleteModalOpen = true;
+        },
+
+        filterAssets() {
+            // Filtering handled by view
+        },
+
+        showToast(message) {
+            this.toast.message = message;
+            this.toast.show = true;
+            setTimeout(() => {
+                this.toast.show = false;
+            }, 3000);
         }
     }
+}
 </script>
 
 <style>
-    @keyframes fade-in-up {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in-up {
-        animation: fade-in-up 0.3s ease-out forwards;
-    }
+@keyframes fade-in-up {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+    animation: fade-in-up 0.3s ease-out forwards;
+}
+[x-cloak] { display: none !important; }
 </style>
 
 @endsection

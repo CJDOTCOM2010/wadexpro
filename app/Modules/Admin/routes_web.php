@@ -30,7 +30,7 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
     Route::post('/logout', [OrchestratorLoginController::class, 'logout'])->name('orchestrator.logout');
     
     // Protected Dashboard Route
-    Route::middleware(['web', 'auth:admin'])->group(function () {
+    Route::middleware(['auth:admin'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('orchestrator.dashboard');
         
         // Platform Core

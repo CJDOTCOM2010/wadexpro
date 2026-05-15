@@ -10,6 +10,23 @@ Route::get('/', GlobalRedirectController::class);
 // Health Check Operations (Phase 24)
 Route::get('/v1/health', [\App\Http\Controllers\Api\HealthCheckController::class, 'ping']);
 
+// Temporary: Clear all caches (remove after fixing Forge deploy script)
+Route::get('/v1/clear-caches', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('route:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'All caches cleared',
+            'route_cached_now' => file_exists(base_path('bootstrap/cache/routes-v7.php')) ? 'YES' : 'NO',
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
 // Temporary diagnostic — remove after debugging
 Route::get('/v1/debug-dashboard', function () {
     try {

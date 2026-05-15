@@ -17,27 +17,28 @@ class HRManagementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::whereIn('user_type', ['admin', 'support', 'staff', 'manager', 'employee'])
-            ->with('staffProfile')
-            ->latest();
+        try {
+            $query = User::whereIn('user_type', ['admin', 'support', 'staff', 'manager', 'employee'])
+                ->with('staffProfile')
+                ->latest();
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            }
 
-        if ($request->filled('role')) {
-            $query->where('user_type', $request->role);
-        }
+            if ($request->filled('role')) {
+                $query->where('user_type', $request->role);
+            }
 
-        $staff = $query->paginate(20)->withQueryString();
+            $staff = $query->paginate(20)->withQueryString();
 
-        $stats = [
-            'total'    => User::whereIn('user_type', ['admin', 'support', 'staff', 'manager', 'employee'])->count(),
-            'admins'   => User::where('user_type', 'admin')->count(),
+            $stats = [
+                'total'    => User::whereIn('user_type', ['admin', 'support', 'staff', 'manager', 'employee'])->count(),
+                'admins'   => User::where('user_type', 'admin')->count(),
             'support'  => User::where('user_type', 'support')->count(),
         ];
 

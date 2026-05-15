@@ -18,32 +18,40 @@ class DriverManagementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Driver::with(['user', 'activeVehicle'])
-            ->latest();
+        try {
+            $query = Driver::with(['user', 'activeVehicle'])
+                ->latest();
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('phone', 'like', "%{$search}%");
+                });
+            }
+
+            $drivers = $query->paginate(15)->withQueryString();
+
+            $stats = [
+                'total'    => Driver::count(),
+                'active'   => Driver::where('status', 'active')->count(),
+                'pending'  => Driver::where('status', 'pending_verification')->count(),
+                'suspended'=> Driver::where('status', 'suspended')->count(),
+            ];
+
+            return view('admin.driver_management', compact('drivers', 'stats'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Driver Management Error: ' . $e->getMessage());
+            return view('admin.driver_management', [
+                'drivers' => new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15),
+                'stats' => ['total' => 0, 'active' => 0, 'pending' => 0, 'suspended' => 0],
+            ])->with('error', 'Unable to load driver registry.');
         }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
-            });
-        }
-
-        $drivers = $query->paginate(15)->withQueryString();
-
-        $stats = [
-            'total'    => Driver::count(),
-            'active'   => Driver::where('status', 'active')->count(),
-            'pending'  => Driver::where('status', 'pending_verification')->count(),
-            'suspended'=> Driver::where('status', 'suspended')->count(),
-        ];
-
-        return view('admin.driver_management', compact('drivers', 'stats'));
     }
 
     /**

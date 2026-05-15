@@ -17,18 +17,26 @@ class LiveChatController extends Controller
      */
     public function index()
     {
-        $conversations = ChatConversation::where('type', 'support_chat')
-            ->with(['participants.user', 'latestMessage.sender'])
-            ->orderByDesc('updated_at')
-            ->paginate(30);
+        try {
+            $conversations = ChatConversation::where('type', 'support_chat')
+                ->with(['participants.user', 'latestMessage.sender'])
+                ->orderByDesc('updated_at')
+                ->paginate(30);
 
-        $stats = [
-            'active'   => ChatConversation::where('type', 'support_chat')->where('status', 'active')->count(),
-            'waiting'  => ChatConversation::where('type', 'support_chat')->where('status', 'waiting')->count(),
-            'closed'   => ChatConversation::where('type', 'support_chat')->where('status', 'closed')->count(),
-        ];
+            $stats = [
+                'active'   => ChatConversation::where('type', 'support_chat')->where('status', 'active')->count(),
+                'waiting'  => ChatConversation::where('type', 'support_chat')->where('status', 'waiting')->count(),
+                'closed'   => ChatConversation::where('type', 'support_chat')->where('status', 'closed')->count(),
+            ];
 
-        return view('admin.live_chat', compact('conversations', 'stats'));
+            return view('admin.live_chat', compact('conversations', 'stats'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Live Chat Error: ' . $e->getMessage());
+            return view('admin.live_chat', [
+                'conversations' => new \Illuminate\Pagination\LengthAwarePaginator([], 0, 30),
+                'stats' => ['active' => 0, 'waiting' => 0, 'closed' => 0],
+            ])->with('error', 'Unable to load chat conversations.');
+        }
     }
 
     /**

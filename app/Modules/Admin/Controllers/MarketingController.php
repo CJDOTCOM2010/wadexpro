@@ -18,25 +18,33 @@ class MarketingController extends Controller
      */
     public function promos(Request $request)
     {
-        $query = PromoCode::withCount('uses')->latest();
+        try {
+            $query = PromoCode::withCount('uses')->latest();
 
-        if ($request->filled('status')) {
-            $query->where('is_active', $request->status === 'active');
+            if ($request->filled('status')) {
+                $query->where('is_active', $request->status === 'active');
+            }
+
+            if ($request->filled('search')) {
+                $query->where('code', 'like', '%' . $request->search . '%');
+            }
+
+            $promos = $query->paginate(20)->withQueryString();
+
+            $stats = [
+                'active'  => PromoCode::where('is_active', true)->count(),
+                'expired' => PromoCode::where('expires_at', '<', now())->count(),
+                'total_uses' => PromoCode::sum('times_used') ?? 0,
+            ];
+
+            return view('admin.marketing_promos', compact('promos', 'stats'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Marketing Promos Error: ' . $e->getMessage());
+            return view('admin.marketing_promos', [
+                'promos' => new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20),
+                'stats' => ['active' => 0, 'expired' => 0, 'total_uses' => 0],
+            ])->with('error', 'Unable to load promotions.');
         }
-
-        if ($request->filled('search')) {
-            $query->where('code', 'like', '%' . $request->search . '%');
-        }
-
-        $promos = $query->paginate(20)->withQueryString();
-
-        $stats = [
-            'active'  => PromoCode::where('is_active', true)->count(),
-            'expired' => PromoCode::where('expires_at', '<', now())->count(),
-            'total_uses' => PromoCode::sum('times_used'),
-        ];
-
-        return view('admin.marketing_promos', compact('promos', 'stats'));
     }
 
     /**
@@ -117,15 +125,22 @@ class MarketingController extends Controller
      */
     public function banners(Request $request)
     {
-        $query = \App\Models\Banner::latest();
+        try {
+            $query = \App\Models\Banner::latest();
 
-        if ($request->filled('placement')) {
-            $query->where('placement', $request->placement);
+            if ($request->filled('placement')) {
+                $query->where('placement', $request->placement);
+            }
+
+            $banners = $query->paginate(20)->withQueryString();
+
+            return view('admin.marketing_banners', compact('banners'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Marketing Banners Error: ' . $e->getMessage());
+            return view('admin.marketing_banners', [
+                'banners' => new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20),
+            ])->with('error', 'Unable to load banners.');
         }
-
-        $banners = $query->paginate(20)->withQueryString();
-
-        return view('admin.marketing_banners', compact('banners'));
     }
 
     /**

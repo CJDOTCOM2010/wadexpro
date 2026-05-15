@@ -16,36 +16,40 @@ class OperationsController extends Controller
      */
     public function globalQueue(Request $request)
     {
-        // Pipeline stats
-        $activePipeline = Order::whereIn('status', ['pending', 'assigned', 'picked_up', 'in_transit'])->count();
-        $awaitingNode = Order::where('status', 'pending')->count();
-        $inProgress = Order::whereIn('status', ['assigned', 'picked_up', 'in_transit'])->count();
-        
-        // Anomalies (e.g., cancelled in the last 24h or orders with safety alerts)
-        $anomalies = Order::where('status', 'cancelled')->where('updated_at', '>=', now()->subDay())->count() 
-                   + SafetyAlert::where('status', 'open')->count();
+        try {
+            $activePipeline = Order::whereIn('status', ['pending', 'assigned', 'picked_up', 'in_transit'])->count();
+            $awaitingNode = Order::where('status', 'pending')->count();
+            $inProgress = Order::whereIn('status', ['assigned', 'picked_up', 'in_transit'])->count();
+            
+            $anomalies = Order::where('status', 'cancelled')->where('updated_at', '>=', now()->subDay())->count();
 
-        $stats = [
-            'active_pipeline' => $activePipeline,
-            'awaiting_node'   => $awaitingNode,
-            'in_progress'     => $inProgress,
-            'anomalies'       => $anomalies,
-        ];
+            $stats = [
+                'active_pipeline' => $activePipeline,
+                'awaiting_node'   => $awaitingNode,
+                'in_progress'     => $inProgress,
+                'anomalies'       => $anomalies,
+            ];
 
-        // Search functionality
-        $query = Order::with(['customer', 'driver.user', 'transaction'])->orderBy('created_at', 'desc');
+            $query = Order::with(['customer', 'driver.user', 'transaction'])->orderBy('created_at', 'desc');
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('reference', 'like', "%{$search}%")
-                  ->orWhereHas('customer', function ($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  });
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where('reference', 'like', "%{$search}%")
+                      ->orWhereHas('customer', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%");
+                      });
+            }
+
+            $orders = $query->paginate(15);
+
+            return view('admin.global_queue', compact('stats', 'orders'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Global Queue Error: ' . $e->getMessage());
+            return view('admin.global_queue', [
+                'stats' => ['active_pipeline' => 0, 'awaiting_node' => 0, 'in_progress' => 0, 'anomalies' => 0],
+                'orders' => new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15),
+            ])->with('error', 'Unable to load orders queue.');
         }
-
-        $orders = $query->paginate(15);
-
-        return view('admin.global_queue', compact('stats', 'orders'));
     }
 
     /**
@@ -87,29 +91,42 @@ class OperationsController extends Controller
      */
     public function map()
     {
-        $liveNodes = Driver::where('is_online', true)->count();
+        try {
+            $liveNodes = Driver::where('is_online', true)->count();
 
-        // Recent high-value orders
-        $highValueOrders = Order::where('total_amount', '>', 500)
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
+            $highValueOrders = Order::where('total_amount', '>', 500)
+                ->orderBy('created_at', 'desc')
+                ->limit(5)
+                ->get();
 
-        // Active SOS / Safety Alerts
-        $sosAlerts = SafetyAlert::with('ride.customer')
-            ->where('status', 'open')
-            ->orderBy('created_at', 'desc')
-            ->get();
+            $sosAlerts = collect([]); // SafetyAlert may not exist
+            try {
+                $sosAlerts = SafetyAlert::with('ride.customer')
+                    ->where('status', 'open')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('SafetyAlert table not available: ' . $e->getMessage());
+            }
 
-        // Recent Driver Deployments (Drivers who just went online)
-        $recentDeployments = Driver::with('user')
-            ->where('is_online', true)
-            ->orderBy('last_location_at', 'desc')
-            ->limit(5)
-            ->get();
+            $recentDeployments = Driver::with('user')
+                ->where('is_online', true)
+                ->orderBy('last_location_at', 'desc')
+                ->limit(5)
+                ->get();
 
-        $google_maps_api_key = SystemSetting::get('google_maps_api_key');
+            $google_maps_api_key = SystemSetting::get('google_maps_api_key', '');
 
-        return view('admin.operations_map', compact('liveNodes', 'highValueOrders', 'sosAlerts', 'recentDeployments', 'google_maps_api_key'));
+            return view('admin.operations_map', compact('liveNodes', 'highValueOrders', 'sosAlerts', 'recentDeployments', 'google_maps_api_key'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Operations Map Error: ' . $e->getMessage());
+            return view('admin.operations_map', [
+                'liveNodes' => 0,
+                'highValueOrders' => collect([]),
+                'sosAlerts' => collect([]),
+                'recentDeployments' => collect([]),
+                'google_maps_api_key' => '',
+            ])->with('error', 'Unable to load operations map.');
+        }
     }
 }

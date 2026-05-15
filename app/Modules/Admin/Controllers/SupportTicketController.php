@@ -15,49 +15,56 @@ class SupportTicketController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SupportTicket::with(['user', 'assignedTo'])
-            ->latest();
+        try {
+            $query = SupportTicket::with(['user', 'assignedTo'])
+                ->latest();
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->filled('priority')) {
+                $query->where('priority', $request->priority);
+            }
+
+            if ($request->filled('category')) {
+                $query->where('category', $request->category);
+            }
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('subject', 'like', "%{$search}%")
+                      ->orWhere('ticket_number', 'like', "%{$search}%")
+                      ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
+                });
+            }
+
+            if ($request->get('queue') === 'unassigned') {
+                $query->whereNull('assigned_to');
+            } elseif ($request->get('queue') === 'mine') {
+                $query->where('assigned_to', auth('admin')->id());
+            }
+
+            $tickets = $query->paginate(20)->withQueryString();
+
+            $counts = [
+                'unassigned' => SupportTicket::whereNull('assigned_to')->where('status', '!=', 'closed')->count(),
+                'mine'       => SupportTicket::where('assigned_to', auth('admin')->id())->where('status', '!=', 'closed')->count(),
+                'open'       => SupportTicket::whereIn('status', ['open', 'in_progress'])->count(),
+            ];
+
+            $users = User::whereIn('user_type', ['customer', 'driver'])->limit(50)->get(['id', 'name', 'phone', 'user_type']);
+
+            return view('admin.support_tickets', compact('tickets', 'counts', 'users'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Support Tickets Error: ' . $e->getMessage());
+            return view('admin.support_tickets', [
+                'tickets' => new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20),
+                'counts' => ['unassigned' => 0, 'mine' => 0, 'open' => 0],
+                'users' => collect([]),
+            ])->with('error', 'Unable to load tickets. Please try again.');
         }
-
-        if ($request->filled('priority')) {
-            $query->where('priority', $request->priority);
-        }
-
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('subject', 'like', "%{$search}%")
-                  ->orWhere('ticket_number', 'like', "%{$search}%")
-                  ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
-            });
-        }
-
-        // Queue-based filter
-        if ($request->get('queue') === 'unassigned') {
-            $query->whereNull('assigned_to');
-        } elseif ($request->get('queue') === 'mine') {
-            $query->where('assigned_to', auth('admin')->id());
-        }
-
-        $tickets = $query->paginate(20)->withQueryString();
-
-        $counts = [
-            'unassigned' => SupportTicket::whereNull('assigned_to')->where('status', '!=', 'closed')->count(),
-            'mine'       => SupportTicket::where('assigned_to', auth('admin')->id())->where('status', '!=', 'closed')->count(),
-            'open'       => SupportTicket::whereIn('status', ['open', 'in_progress'])->count(),
-        ];
-
-        // For "Compose New" user search
-        $users = User::whereIn('user_type', ['customer', 'driver'])->limit(50)->get(['id', 'name', 'phone', 'user_type']);
-
-        return view('admin.support_tickets', compact('tickets', 'counts', 'users'));
     }
 
     /**

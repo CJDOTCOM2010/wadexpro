@@ -24,7 +24,7 @@
             </div>
             <div>
                 <h2 class="text-2xl font-black text-brand tracking-tight">{{ $admin->name ?? 'Admin Account' }}</h2>
-                <p class="text-brand-muted font-medium text-sm mt-0.5">{{ ucfirst(str_replace('_', ' ', $admin->user_type ?? 'admin')) }} · {{ $admin->email }}</p>
+                <p class="text-brand-muted font-medium text-sm mt-0.5">{{ ucfirst($admin->level ?? $admin->role ?? 'Admin') }} · {{ $admin->email }}</p>
                 <span class="inline-flex items-center gap-1.5 mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black rounded uppercase tracking-wider">
                     <span class="w-1.5 h-1.5 bg-green-500 rounded-full inline-block"></span> Session Active
                 </span>
@@ -116,7 +116,7 @@
                     <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
                         <div class="space-y-2">
                             <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Account Type</label>
-                            <div class="w-full bg-surface border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold text-brand-muted cursor-not-allowed">{{ ucfirst(str_replace('_', ' ', $admin->user_type ?? 'admin')) }}</div>
+                            <div class="w-full bg-surface border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold text-brand-muted cursor-not-allowed">{{ ucfirst($admin->level ?? $admin->role ?? 'Admin') }}</div>
                         </div>
                         <div class="space-y-2">
                             <label class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Account ID</label>

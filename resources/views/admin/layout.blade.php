@@ -378,7 +378,7 @@
                         </div>
                         <div class="text-left hidden sm:block">
                             <p class="text-[11px] font-black text-accent uppercase leading-none mb-0.5">Clearance: Level 5</p>
-                            <p class="text-[13px] font-bold leading-none capitalize">{{ str_replace('_', ' ', $headerUser?->user_type ?? 'Administrator') }}</p>
+                            <p class="text-[13px] font-bold leading-none capitalize">{{ $headerUser?->level ?? $headerUser?->role ?? 'Administrator' }}</p>
                         </div>
                         <svg class="w-4 h-4 text-white/50 transition-transform" :class="userMenuOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
@@ -393,7 +393,7 @@
                         <div class="p-4 border-b border-gray-50 mb-2">
                             <p class="text-sm font-black text-brand">{{ auth('admin')->user()?->name ?? 'Orchestrator Account' }}</p>
                             <p class="text-xs text-brand-muted truncate">{{ auth('admin')->user()?->email ?? 'admin@wadexpro.com' }}</p>
-                            <p class="text-[10px] text-brand-muted mt-0.5">{{ ucfirst(str_replace('_',' ', auth('admin')->user()?->user_type ?? 'admin')) }}</p>
+                            <p class="text-[10px] text-brand-muted mt-0.5">{{ ucfirst(auth('admin')->user()?->level ?? auth('admin')->user()?->role ?? 'Admin') }}</p>
                         </div>
 
                         <a href="{{ route('orchestrator.profile') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface transition text-sm font-semibold text-gray-700">

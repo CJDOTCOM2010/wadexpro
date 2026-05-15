@@ -2,13 +2,29 @@
 @section('title', 'Dispatcher Infrastructure & System Core')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
+<!-- Success Alert -->
+@if(session('success'))
+<div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
+</div>
+@endif
+
 <div class="mb-12 flex items-center justify-between">
     <div>
         <h2 class="text-3xl font-black text-brand tracking-tight">Infrastructure Hub</h2>
         <p class="text-brand-muted font-medium mt-1">Direct oversight of platform modules, core architecture, and system health.</p>
     </div>
     <div class="flex items-center gap-4">
-        <div class="px-6 py-3 bg-white text-brand border border-gray-100 font-bold rounded-lg flex items-center gap-3">
+        <div class="px-6 py-3 bg-white text-brand border border-gray-100 font-bold rounded-xl flex items-center gap-3 shadow-sm">
             <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
             <span class="text-xs uppercase tracking-widest">Global Node Pulse: 99.8%</span>
         </div>
@@ -18,7 +34,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
     
     <!-- Left: Module Matrix -->
-    <div class="bg-white rounded-lg border border-gray-100 shadow-xl overflow-hidden flex flex-col">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden flex flex-col">
         <div class="p-8 border-b border-gray-50 flex items-center justify-between bg-surface/30">
             <div>
                 <h3 class="text-xl font-black text-brand tracking-tight">Module Matrix</h3>
@@ -29,9 +45,9 @@
 
         <div class="p-8 space-y-6 flex-1 overflow-y-auto">
             <!-- Logistic Module -->
-            <div class="p-6 bg-surface rounded-lg flex items-center justify-between group hover:border-accent transition-all border border-transparent">
+            <div class="p-6 bg-surface rounded-2xl flex items-center justify-between group hover:border-accent transition-all border border-transparent hover:shadow-md">
                 <div class="flex items-center gap-5">
-                    <div class="w-12 h-12 bg-brand text-accent rounded-lg flex items-center justify-center shadow-lg">
+                    <div class="w-12 h-12 bg-brand text-accent rounded-2xl flex items-center justify-center shadow-lg">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
                     </div>
                     <div>

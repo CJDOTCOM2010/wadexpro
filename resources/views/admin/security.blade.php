@@ -2,13 +2,21 @@
 @section('title', 'Fraud & Security Operations')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
 <div class="mb-12 flex items-center justify-between">
     <div>
         <h2 class="text-3xl font-black text-brand tracking-tight">Fraud & Security Operations</h2>
         <p class="text-brand-muted font-medium mt-1">Monitor suspicious activities, manage blocked devices, and review access audits.</p>
     </div>
     <div class="flex items-center gap-4">
-        <button onclick="document.getElementById('block-device-modal').classList.remove('hidden')" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition flex items-center gap-2 shadow-sm">
+        <button onclick="document.getElementById('block-device-modal').classList.remove('hidden')" class="px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition flex items-center gap-2 shadow-lg">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
             Block Device Manually
         </button>
@@ -17,27 +25,27 @@
 
 <!-- Key Security Metrics -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-    <div class="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center gap-5">
-        <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
         </div>
         <div>
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Open Fraud Alerts</p>
-            <p class="text-2xl font-black text-brand">{{ number_format($stats['open_alerts']) }}</p>
+            <p class="text-2xl font-black text-brand">{{ number_format($stats['open_alerts'] ?? 0) }}</p>
         </div>
     </div>
-    <div class="bg-white p-6 rounded-lg border border-red-100 shadow-sm flex items-center gap-5 relative overflow-hidden group">
+    <div class="bg-white p-6 rounded-2xl border border-red-100 shadow-sm flex items-center gap-5 relative overflow-hidden group hover:shadow-md transition-all">
         <div class="absolute inset-0 bg-red-500/5 pointer-events-none group-hover:bg-red-500/10 transition"></div>
-        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center text-red-600 relative z-10">
+        <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 relative z-10 group-hover:bg-red-500 group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         </div>
         <div class="relative z-10">
             <p class="text-[10px] font-black text-brand-muted uppercase tracking-widest">Critical / High Risk</p>
-            <p class="text-2xl font-black text-red-600">{{ number_format($stats['high_risk']) }}</p>
+            <p class="text-2xl font-black text-red-600">{{ number_format($stats['high_risk'] ?? 0) }}</p>
         </div>
     </div>
-    <div class="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center gap-5">
-        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600">
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-600 group-hover:bg-gray-500 group-hover:text-white transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </div>
         <div>

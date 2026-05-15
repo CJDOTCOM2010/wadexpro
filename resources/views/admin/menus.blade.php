@@ -2,20 +2,36 @@
 @section('title', 'Mega Menu Management')
 @section('content')
 
+<!-- Error Alert -->
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+</div>
+@endif
+
+<!-- Success Alert -->
+@if(session('success'))
+<div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
+    <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
+</div>
+@endif
+
 <div x-data="menuManager()" x-init="fetchMenus()" class="flex gap-6 h-[calc(100vh-8rem)]">
     
     <!-- Left Column: Menus List -->
-    <div class="w-1/3 bg-white border border-gray-100 rounded-xl shadow-sm flex flex-col h-full">
+    <div class="w-1/3 bg-white border border-gray-100 rounded-2xl shadow-sm flex flex-col h-full">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 class="font-semibold">Menus</h2>
-            <button @click="openMenuModal()" class="text-sm px-3 py-1.5 bg-brand text-white rounded-lg hover:bg-brand-light transition">+ New</button>
+            <button @click="openMenuModal()" class="text-sm px-3 py-1.5 bg-brand text-white rounded-xl hover:bg-brand-light transition">+ New</button>
         </div>
         <div class="flex-1 overflow-y-auto p-3 space-y-1">
             <template x-if="isLoadingMenus">
                 <div class="flex justify-center py-8"><div class="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div></div>
             </template>
             <template x-for="menu in menus" :key="menu.id">
-                <button @click="selectMenu(menu)" class="flex items-center justify-between w-full p-3 rounded-[8px] text-left transition"
+                <button @click="selectMenu(menu)" class="flex items-center justify-between w-full p-3 rounded-xl text-left transition"
                         :class="activeMenu?.id === menu.id ? 'bg-surface border border-gray-200' : 'hover:bg-gray-50 border border-transparent'">
                     <div>
                         <div class="font-medium text-brand text-sm" x-text="menu.name"></div>
@@ -31,7 +47,7 @@
     </div>
 
     <!-- Right Column: Menu Items Builder -->
-    <div class="w-2/3 bg-white border border-gray-100 rounded-xl shadow-sm flex flex-col h-full">
+    <div class="w-2/3 bg-white border border-gray-100 rounded-2xl shadow-sm flex flex-col h-full">
         <template x-if="!activeMenu">
             <div class="flex-1 flex items-center justify-center text-brand-muted">
                 Select a menu to manage its items.

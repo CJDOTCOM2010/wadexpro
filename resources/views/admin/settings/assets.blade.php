@@ -44,67 +44,72 @@
     @endif
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-gradient-to-br from-brand to-brand-light rounded-2xl p-5 text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-brand rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 border border-white/10 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-[100px] -mr-8 -mt-8 transition-transform"></div>
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20">
+                    <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </div>
-                <span class="text-[10px] font-black bg-white/20 px-2 py-1 rounded-lg uppercase">Total</span>
+                <span class="text-[11px] font-black bg-accent text-brand px-3 py-1.5 rounded-lg uppercase tracking-wider shadow-sm">Total</span>
             </div>
-            <p class="text-3xl font-black">{{ $stats['total_files'] }}</p>
-            <p class="text-xs font-medium text-white/70 mt-1">Files stored</p>
+            <p class="text-4xl font-black text-white relative z-10">{{ $stats['total_files'] }}</p>
+            <p class="text-sm font-bold text-white/70 mt-1 relative z-10">Files Stored</p>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600 group-hover:bg-green-500 group-hover:text-white transition-all">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-md hover:shadow-xl hover:border-brand/30 transition-all hover:-translate-y-1 group relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-brand/5 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <div class="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-accent transition-all duration-300">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
             </div>
-            <p class="text-2xl font-black text-brand">{{ $stats['total_dirs'] }}</p>
-            <p class="text-xs font-medium text-brand-muted mt-1">Folders</p>
+            <p class="text-4xl font-black text-brand relative z-10">{{ $stats['total_dirs'] }}</p>
+            <p class="text-sm font-bold text-brand-muted mt-1 relative z-10">Folders</p>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-all">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-md hover:shadow-xl hover:border-accent/50 transition-all hover:-translate-y-1 group relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <div class="w-14 h-14 bg-accent/20 rounded-2xl flex items-center justify-center text-brand group-hover:bg-accent group-hover:text-brand transition-all duration-300">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
                 </div>
             </div>
-            <p class="text-2xl font-black text-brand uppercase">{{ $stats['storage_driver'] }}</p>
-            <p class="text-xs font-medium text-brand-muted mt-1">Storage Driver</p>
+            <p class="text-4xl font-black text-brand uppercase relative z-10">{{ $stats['storage_driver'] }}</p>
+            <p class="text-sm font-bold text-brand-muted mt-1 relative z-10">Storage Driver</p>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 group-hover:bg-purple-500 group-hover:text-white transition-all">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-md hover:shadow-xl hover:border-brand/30 transition-all hover:-translate-y-1 group relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-brand/5 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <div class="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-white transition-all duration-300">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                 </div>
             </div>
-            <p class="text-2xl font-black text-brand">{{ strtoupper($stats['disk']) }}</p>
-            <p class="text-xs font-medium text-brand-muted mt-1">Active Disk</p>
+            <p class="text-4xl font-black text-brand relative z-10">{{ strtoupper($stats['disk']) }}</p>
+            <p class="text-sm font-bold text-brand-muted mt-1 relative z-10">Active Disk</p>
         </div>
     </div>
 
     <!-- Main Content -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden">
         <!-- Toolbar -->
-        <div class="p-4 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface/30">
+        <div class="p-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/80">
             <!-- Breadcrumb -->
             <div class="flex items-center gap-2 text-sm">
-                <a href="{{ route('orchestrator.settings.assets') }}" class="font-bold text-brand hover:text-accent transition-colors">Root</a>
+                <a href="{{ route('orchestrator.settings.assets') }}" class="font-black text-brand hover:text-accent transition-colors">ROOT</a>
                 @if($directory)
                     @php $parts = explode('/', $directory); $currentPath = ''; @endphp
                     @foreach($parts as $part)
                         @php $currentPath .= ($currentPath ? '/' : '') . $part; @endphp
-                        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                        <a href="{{ route('orchestrator.settings.assets', ['disk' => $disk, 'path' => $currentPath]) }}" class="font-bold text-brand hover:text-accent transition-colors">{{ $part }}</a>
+                        <svg class="w-4 h-4 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <a href="{{ route('orchestrator.settings.assets', ['disk' => $disk, 'path' => $currentPath]) }}" class="font-bold text-brand hover:text-accent transition-colors uppercase tracking-wide">{{ $part }}</a>
                     @endforeach
                 @endif
                 @if($directory)
-                <button @click="goToParent()" class="ml-2 text-brand-muted hover:text-brand transition-colors">
+                <button @click="goToParent()" class="ml-3 px-3 py-1 bg-white border border-gray-200 rounded-lg text-brand hover:text-accent hover:border-accent transition-colors flex items-center gap-1 shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <span class="text-xs font-bold">UP</span>
                 </button>
                 @endif
             </div>
@@ -112,15 +117,15 @@
             <!-- Search & Actions -->
             <div class="flex items-center gap-3">
                 <div class="relative">
-                    <input type="text" x-model="searchQuery" @input="filterAssets()" placeholder="Search assets..." class="bg-white border border-gray-100 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all w-64 shadow-sm">
-                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" x-model="searchQuery" @input="filterAssets()" placeholder="Search assets..." class="bg-white border border-gray-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-bold text-brand outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all w-64 shadow-sm placeholder:text-gray-400 placeholder:font-medium">
+                    <svg class="w-5 h-5 text-brand absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
-                <select x-model="filterType" @change="filterAssets()" class="bg-white border border-gray-100 rounded-xl py-2.5 px-4 text-sm font-medium outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all shadow-sm">
-                    <option value="all">All Types</option>
-                    <option value="image">Images</option>
-                    <option value="video">Videos</option>
-                    <option value="document">Documents</option>
-                    <option value="audio">Audio</option>
+                <select x-model="filterType" @change="filterAssets()" class="bg-white border border-gray-200 rounded-xl py-2.5 px-4 text-sm font-bold text-brand outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all shadow-sm cursor-pointer">
+                    <option value="all">ALL TYPES</option>
+                    <option value="image">IMAGES</option>
+                    <option value="video">VIDEOS</option>
+                    <option value="document">DOCUMENTS</option>
+                    <option value="audio">AUDIO</option>
                 </select>
             </div>
         </div>
@@ -129,34 +134,35 @@
         <div class="p-6 min-h-[500px]">
             @if(empty($files) && empty($directories))
                 <!-- Empty State -->
-                <div class="flex flex-col items-center justify-center py-20">
-                    <div class="w-24 h-24 bg-surface rounded-full flex items-center justify-center mb-6">
-                        <svg class="w-12 h-12 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <div class="flex flex-col items-center justify-center py-24 text-center">
+                    <div class="w-28 h-28 bg-brand/5 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-14 h-14 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                     </div>
-                    <h3 class="text-xl font-black text-brand mb-2">No assets found</h3>
-                    <p class="text-brand-muted font-medium mb-6">Upload your first asset to get started</p>
-                    <button @click="openUploadModal()" class="px-6 py-3 bg-brand text-white font-bold rounded-xl hover:bg-brand-light transition shadow-lg shadow-brand/20 flex items-center gap-2">
+                    <h3 class="text-2xl font-black text-brand mb-2">No Assets Found</h3>
+                    <p class="text-brand-muted font-medium mb-8 max-w-sm mx-auto">This folder is currently empty. Upload your first media asset or document to get started.</p>
+                    <button @click="openUploadModal()" class="px-8 py-3 bg-brand text-white font-bold rounded-xl hover:bg-accent hover:text-brand transition-all shadow-xl shadow-brand/20 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                        Upload First Asset
+                        UPLOAD ASSET
                     </button>
                 </div>
             @else
                 <!-- Grid View -->
-                <div x-show="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <div x-show="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                     <!-- Folders -->
                     @foreach($directories as $dir)
-                    <div @click="navigateTo('{{ $dir['path'] }}')" class="group bg-surface rounded-2xl p-4 border-2 border-transparent hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-                        <div class="aspect-square bg-gradient-to-br from-amber-100 to-amber-200 rounded-xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                            <svg class="w-12 h-12 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                    <div @click="navigateTo('{{ $dir['path'] }}')" class="group bg-white rounded-2xl p-5 border-2 border-gray-100 hover:border-brand hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-brand/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                        <div class="aspect-square bg-surface rounded-xl flex items-center justify-center mb-4 group-hover:bg-brand/10 transition-colors">
+                            <svg class="w-14 h-14 text-brand" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
                         </div>
-                        <h5 class="text-sm font-bold text-brand truncate text-center">{{ $dir['name'] }}</h5>
-                        <p class="text-[10px] text-brand-muted text-center mt-1">Folder</p>
+                        <h5 class="text-sm font-black text-brand truncate group-hover:text-accent transition-colors">{{ $dir['name'] }}</h5>
+                        <p class="text-[11px] font-bold text-brand-muted uppercase tracking-wider mt-1">Folder</p>
                     </div>
                     @endforeach
 
                     <!-- Files -->
                     @foreach($files as $file)
-                    <div class="group bg-white rounded-2xl p-3 border-2 border-gray-50 hover:border-accent hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative" x-data="{ selected: false }">
+                    <div class="group bg-white rounded-2xl p-4 border-2 border-gray-100 hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative flex flex-col" x-data="{ selected: false }">
                         <!-- Preview -->
                         <div class="aspect-square bg-surface rounded-xl flex items-center justify-center mb-3 overflow-hidden relative">
                             @if($file['is_image'])
@@ -210,25 +216,26 @@
 
                     <!-- Folders -->
                     @foreach($directories as $dir)
-                    <div @click="navigateTo('{{ $dir['path'] }}')" class="grid grid-cols-12 gap-4 px-4 py-3 bg-surface rounded-xl hover:bg-brand/5 hover:shadow-md transition-all cursor-pointer items-center group">
+                    <div @click="navigateTo('{{ $dir['path'] }}')" class="grid grid-cols-12 gap-4 px-4 py-4 bg-white border border-gray-100 rounded-xl hover:border-brand hover:shadow-lg transition-all cursor-pointer items-center group relative overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div class="col-span-1">
-                            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
-                                <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                            <div class="w-12 h-12 bg-brand/5 rounded-xl flex items-center justify-center group-hover:bg-brand/10 transition-colors">
+                                <svg class="w-6 h-6 text-brand" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
                             </div>
                         </div>
                         <div class="col-span-4">
-                            <p class="text-sm font-bold text-brand group-hover:text-accent transition-colors">{{ $dir['name'] }}</p>
-                            <p class="text-[10px] text-brand-muted">Folder</p>
+                            <p class="text-sm font-black text-brand group-hover:text-accent transition-colors">{{ $dir['name'] }}</p>
+                            <p class="text-[11px] font-bold text-brand-muted uppercase tracking-wider mt-0.5">Folder</p>
                         </div>
                         <div class="col-span-2">
-                            <span class="text-xs font-medium text-brand-muted">—</span>
+                            <span class="text-xs font-bold text-brand-muted">—</span>
                         </div>
                         <div class="col-span-2">
-                            <span class="text-xs font-medium text-brand-muted">—</span>
+                            <span class="text-xs font-bold text-brand-muted">—</span>
                         </div>
                         <div class="col-span-3 flex justify-end gap-2">
-                            <button class="p-2 text-brand-muted hover:text-brand hover:bg-white rounded-lg transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                            <button class="p-2.5 text-brand-muted hover:text-accent hover:bg-brand rounded-lg transition-colors shadow-sm border border-transparent hover:border-brand">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
                             </button>
                         </div>
                     </div>
@@ -236,38 +243,39 @@
 
                     <!-- Files -->
                     @foreach($files as $file)
-                    <div class="grid grid-cols-12 gap-4 px-4 py-3 bg-white rounded-xl hover:bg-surface hover:shadow-md transition-all items-center group border border-transparent hover:border-gray-100">
+                    <div class="grid grid-cols-12 gap-4 px-4 py-4 bg-white rounded-xl hover:border-accent hover:shadow-lg transition-all items-center group border-2 border-gray-100 relative overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-accent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div class="col-span-1">
                             @if($file['is_image'])
-                                <img src="{{ $file['url'] }}" class="w-10 h-10 rounded-xl object-cover">
+                                <img src="{{ $file['url'] }}" class="w-12 h-12 rounded-xl object-cover shadow-sm">
                             @else
-                                <div class="w-10 h-10 bg-surface rounded-xl flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                <div class="w-12 h-12 bg-surface border border-gray-200 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                                 </div>
                             @endif
                         </div>
                         <div class="col-span-4">
-                            <p class="text-sm font-bold text-brand group-hover:text-accent transition-colors truncate">{{ $file['name'] }}</p>
-                            <p class="text-[10px] text-brand-muted">.{{ $file['extension'] }}</p>
+                            <p class="text-sm font-black text-brand group-hover:text-accent transition-colors truncate">{{ $file['name'] }}</p>
+                            <p class="text-[11px] font-bold text-brand-muted uppercase tracking-wider mt-0.5">{{ $file['extension'] }}</p>
                         </div>
                         <div class="col-span-2">
-                            <span class="text-xs font-medium text-brand-muted">{{ $file['size'] }}</span>
+                            <span class="text-xs font-bold text-brand">{{ $file['size'] }}</span>
                         </div>
                         <div class="col-span-2">
-                            <span class="text-xs font-medium text-brand-muted">{{ $file['last_modified'] }}</span>
+                            <span class="text-xs font-bold text-brand-muted">{{ $file['last_modified'] }}</span>
                         </div>
                         <div class="col-span-3 flex justify-end gap-2">
-                            <button @click="previewAsset(@js($file))" class="p-2 text-brand-muted hover:text-brand hover:bg-surface rounded-lg transition-colors" title="Preview">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <button @click="previewAsset(@js($file))" class="p-2.5 text-brand bg-surface hover:text-accent hover:bg-brand rounded-lg transition-colors" title="Preview">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                             </button>
-                            <button @click="copyUrl('{{ $file['url'] }}')" class="p-2 text-brand-muted hover:text-brand hover:bg-surface rounded-lg transition-colors" title="Copy URL">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                            <button @click="copyUrl('{{ $file['url'] }}')" class="p-2.5 text-brand bg-surface hover:text-accent hover:bg-brand rounded-lg transition-colors" title="Copy URL">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
                             </button>
-                            <a href="{{ $file['url'] }}" download="{{ $file['name'] }}" class="p-2 text-brand-muted hover:text-brand hover:bg-surface rounded-lg transition-colors" title="Download">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            <a href="{{ $file['url'] }}" download="{{ $file['name'] }}" class="p-2.5 text-brand bg-surface hover:text-accent hover:bg-brand rounded-lg transition-colors" title="Download">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                             </a>
-                            <button @click="confirmDelete(@js($file))" class="p-2 text-brand-muted hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            <button @click="confirmDelete(@js($file))" class="p-2.5 text-red-500 bg-red-50 hover:bg-red-500 hover:text-white rounded-lg transition-colors" title="Delete">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </button>
                         </div>
                     </div>

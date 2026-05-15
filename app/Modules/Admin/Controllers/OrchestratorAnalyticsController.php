@@ -22,85 +22,95 @@ class OrchestratorAnalyticsController extends Controller
 
         [$startDate, $endDate] = $this->resolvePeriod($period);
 
-        // ── Revenue KPIs ──────────────────────────────────────────────────────
-        $revenue = WalletTransaction::whereBetween('transacted_at', [$startDate, $endDate])
-            ->where('category', 'ride_payment')
-            ->where('type', 'credit')
-            ->sum('amount');
-
-        $prevRevenue = WalletTransaction::whereBetween('transacted_at', [
-                $startDate->copy()->subDays($startDate->diffInDays($endDate)),
-                $startDate,
-            ])
-            ->where('category', 'ride_payment')
-            ->where('type', 'credit')
-            ->sum('amount');
-
-        $revenueChange = $prevRevenue > 0
-            ? round((($revenue - $prevRevenue) / $prevRevenue) * 100, 1)
-            : 0;
-
-        // ── Ride KPIs ─────────────────────────────────────────────────────────
-        $totalRides = Order::whereBetween('created_at', [$startDate, $endDate])
-            ->where('status', 'completed')
-            ->count();
-
-        $prevRides = Order::whereBetween('created_at', [
-                $startDate->copy()->subDays($startDate->diffInDays($endDate)),
-                $startDate,
-            ])
-            ->where('status', 'completed')
-            ->count();
-
-        $ridesChange = $prevRides > 0
-            ? round((($totalRides - $prevRides) / $prevRides) * 100, 1)
-            : 0;
-
-        // ── New Customers ─────────────────────────────────────────────────────
-        $newCustomers = User::whereBetween('created_at', [$startDate, $endDate])
-            ->where('role', 'customer')
-            ->count();
-
-        // ── Cancellation Rate ─────────────────────────────────────────────────
-        $allOrders   = Order::whereBetween('created_at', [$startDate, $endDate])->count();
-        $cancelledOrders = Order::whereBetween('created_at', [$startDate, $endDate])
-            ->where('status', 'cancelled')
-            ->count();
-        $cancelRate = $allOrders > 0
-            ? round(($cancelledOrders / $allOrders) * 100, 1)
-            : 0;
-
-        // ── Daily Revenue (last 7 days) ───────────────────────────────────────
-        $dailyRevenue = WalletTransaction::select(
-                DB::raw('DATE(transacted_at) as date'),
-                DB::raw('SUM(amount) as total')
-            )
-            ->where('category', 'ride_payment')
-            ->where('type', 'credit')
-            ->where('transacted_at', '>=', now()->subDays(7))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get()
-            ->keyBy('date');
-
-        // ── Top Drivers ───────────────────────────────────────────────────────
-        $topDrivers = Driver::with('user')
-            ->withCount(['orders' => function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('created_at', [$startDate, $endDate])
-                  ->where('status', 'completed');
-            }])
-            ->orderByDesc('orders_count')
-            ->limit(5)
-            ->get();
-
         $kpis = [
-            'revenue'        => $revenue,
-            'revenue_change' => $revenueChange,
-            'total_rides'    => $totalRides,
-            'rides_change'   => $ridesChange,
-            'new_customers'  => $newCustomers,
-            'cancel_rate'    => $cancelRate,
+            'revenue'        => 0,
+            'revenue_change' => 0,
+            'total_rides'    => 0,
+            'rides_change'   => 0,
+            'new_customers'  => 0,
+            'cancel_rate'    => 0,
         ];
+        
+        $dailyRevenue = collect();
+        $topDrivers = collect();
+
+        try {
+            // ── Revenue KPIs ──────────────────────────────────────────────────────
+            $revenue = WalletTransaction::whereBetween('transacted_at', [$startDate, $endDate])
+                ->where('category', 'ride_payment')
+                ->where('type', 'credit')
+                ->sum('amount');
+
+            $prevRevenue = WalletTransaction::whereBetween('transacted_at', [
+                    $startDate->copy()->subDays($startDate->diffInDays($endDate)),
+                    $startDate,
+                ])
+                ->where('category', 'ride_payment')
+                ->where('type', 'credit')
+                ->sum('amount');
+
+            $kpis['revenue_change'] = $prevRevenue > 0
+                ? round((($revenue - $prevRevenue) / $prevRevenue) * 100, 1)
+                : 0;
+            $kpis['revenue'] = $revenue;
+
+            // ── Ride KPIs ─────────────────────────────────────────────────────────
+            $totalRides = Order::whereBetween('created_at', [$startDate, $endDate])
+                ->where('status', 'completed')
+                ->count();
+
+            $prevRides = Order::whereBetween('created_at', [
+                    $startDate->copy()->subDays($startDate->diffInDays($endDate)),
+                    $startDate,
+                ])
+                ->where('status', 'completed')
+                ->count();
+
+            $kpis['rides_change'] = $prevRides > 0
+                ? round((($totalRides - $prevRides) / $prevRides) * 100, 1)
+                : 0;
+            $kpis['total_rides'] = $totalRides;
+
+            // ── New Customers ─────────────────────────────────────────────────────
+            $kpis['new_customers'] = User::whereBetween('created_at', [$startDate, $endDate])
+                ->where('user_type', 'customer')
+                ->count();
+
+            // ── Cancellation Rate ─────────────────────────────────────────────────
+            $allOrders   = Order::whereBetween('created_at', [$startDate, $endDate])->count();
+            $cancelledOrders = Order::whereBetween('created_at', [$startDate, $endDate])
+                ->where('status', 'cancelled')
+                ->count();
+            $kpis['cancel_rate'] = $allOrders > 0
+                ? round(($cancelledOrders / $allOrders) * 100, 1)
+                : 0;
+
+            // ── Daily Revenue (last 7 days) ───────────────────────────────────────
+            $dailyRevenue = WalletTransaction::select(
+                    DB::raw('DATE(transacted_at) as date'),
+                    DB::raw('SUM(amount) as total')
+                )
+                ->where('category', 'ride_payment')
+                ->where('type', 'credit')
+                ->where('transacted_at', '>=', now()->subDays(7))
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get()
+                ->keyBy('date');
+
+            // ── Top Drivers ───────────────────────────────────────────────────────
+            $topDrivers = Driver::with('user')
+                ->withCount(['orders' => function ($q) use ($startDate, $endDate) {
+                    $q->whereBetween('created_at', [$startDate, $endDate])
+                      ->where('status', 'completed');
+                }])
+                ->orderByDesc('orders_count')
+                ->limit(5)
+                ->get();
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Orchestrator Analytics DB Error: ' . $e->getMessage());
+        }
 
         return view('admin.analytics', compact('kpis', 'dailyRevenue', 'topDrivers', 'period'));
     }

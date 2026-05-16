@@ -5,6 +5,8 @@ namespace App\Modules\Admin\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Admin\Models\SystemSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 
 class SystemSettingController extends Controller
 {
@@ -53,7 +55,29 @@ class SystemSettingController extends Controller
      */
     public function localization()
     {
-        return view('admin.settings.localization');
+        $settings = SystemSetting::where('group', 'localization')->get()->keyBy('key');
+
+        return view('admin.settings.localization', compact('settings'));
+    }
+
+    /**
+     * Display security settings page.
+     */
+    public function security()
+    {
+        $settings = SystemSetting::where('group', 'security')->get()->keyBy('key');
+
+        return view('admin.settings.security', compact('settings'));
+    }
+
+    /**
+     * Display API rate limiting settings page.
+     */
+    public function apiRateLimiting()
+    {
+        $settings = SystemSetting::where('group', 'api_rate_limiting')->get()->keyBy('key');
+
+        return view('admin.settings.api_rate_limiting', compact('settings'));
     }
 
     /**
@@ -62,6 +86,7 @@ class SystemSettingController extends Controller
     public function payments()
     {
         $settings = SystemSetting::where('group', 'payments')->get()->keyBy('key');
+
         return view('admin.settings.payments', compact('settings'));
     }
 
@@ -71,6 +96,7 @@ class SystemSettingController extends Controller
     public function prefixes()
     {
         $settings = SystemSetting::where('group', 'prefixes')->get()->keyBy('key');
+
         return view('admin.settings.prefixes', compact('settings'));
     }
 
@@ -80,6 +106,7 @@ class SystemSettingController extends Controller
     public function geolocation()
     {
         $settings = SystemSetting::where('group', 'geolocation')->get()->keyBy('key');
+
         return view('admin.settings.geolocation', compact('settings'));
     }
 
@@ -89,6 +116,7 @@ class SystemSettingController extends Controller
     public function socialAuth()
     {
         $settings = SystemSetting::where('group', 'social_auth')->get()->keyBy('key');
+
         return view('admin.settings.social_auth', compact('settings'));
     }
 
@@ -106,6 +134,11 @@ class SystemSettingController extends Controller
             'momo_enabled', 'googlepay_enabled',
             'paystack_enabled', 'flutterwave_enabled', 'stripe_enabled',
             'google_maps_enabled', 'mapbox_enabled',
+            // Security settings
+            'password_require_special', 'password_require_numbers', 'two_factor_auth',
+            'ip_whitelist_enabled',
+            // API settings
+            'api_debug_mode',
         ];
 
         // Encrypted keys with masking pattern
@@ -118,14 +151,49 @@ class SystemSettingController extends Controller
             'apple_client_id', 'apple_client_secret',
         ];
 
+        $groupMap = [
+            // localization
+            'default_language' => 'localization', 'supported_languages' => 'localization',
+            'default_currency' => 'localization', 'supported_currencies' => 'localization',
+            'default_timezone' => 'localization', 'date_format' => 'localization',
+            'time_format' => 'localization', 'measurement_unit' => 'localization',
+            'first_day_of_week' => 'localization', 'country' => 'localization',
+            'decimal_separator' => 'localization', 'thousands_separator' => 'localization',
+            'currency_position' => 'localization', 'localization_configured' => 'localization',
+            // security
+            'password_min_length' => 'security', 'password_require_special' => 'security',
+            'password_require_numbers' => 'security', 'password_expiry_days' => 'security',
+            'session_timeout_minutes' => 'security', 'max_login_attempts' => 'security',
+            'account_lockout_minutes' => 'security', 'two_factor_auth' => 'security',
+            'ip_whitelist' => 'security', 'ip_whitelist_enabled' => 'security',
+            // api rate limiting
+            'api_rate_limit' => 'api_rate_limiting', 'api_rate_limit_burst' => 'api_rate_limiting',
+            'api_debug_mode' => 'api_rate_limiting', 'max_concurrent_requests' => 'api_rate_limiting',
+            'webhook_retry_attempts' => 'api_rate_limiting', 'webhook_retry_delay' => 'api_rate_limiting',
+        ];
+
         foreach ($settings as $key => $value) {
+            // Handle array values (multi-select checkboxes)
+            if (is_array($value)) {
+                $value = json_encode($value);
+                $group = $groupMap[$key] ?? null;
+                $data = ['value' => $value, 'type' => 'json'];
+                if ($group) {
+                    $data['group'] = $group;
+                }
+                SystemSetting::updateOrCreate(['key' => $key], $data);
+
+                continue;
+            }
+
             // Skip masked placeholder values for sensitive keys
             if (in_array($key, $encryptedKeys)) {
                 if ($value === '********' || empty($value)) {
                     continue;
                 }
-                $value = \Illuminate\Support\Facades\Crypt::encryptString($value);
+                $value = Crypt::encryptString($value);
                 SystemSetting::updateOrCreate(['key' => $key], ['value' => $value, 'is_encrypted' => true, 'group' => 'payments']);
+
                 continue;
             }
 
@@ -141,25 +209,25 @@ class SystemSettingController extends Controller
         if ($request->hasFile('brand_logo')) {
             $request->validate(['brand_logo' => 'image|mimes:png,jpg,jpeg,svg,webp|max:2048']);
             $path = $request->file('brand_logo')->store('branding', 'public');
-            SystemSetting::set('brand_logo_url', '/storage/' . $path);
+            SystemSetting::set('brand_logo_url', '/storage/'.$path);
         }
 
         // Handle dashboard logo file upload
         if ($request->hasFile('dashboard_logo')) {
             $request->validate(['dashboard_logo' => 'image|mimes:png,jpg,jpeg,svg,webp|max:2048']);
             $path = $request->file('dashboard_logo')->store('branding/dashboard', 'public');
-            SystemSetting::set('dashboard_logo_url', '/storage/' . $path);
+            SystemSetting::set('dashboard_logo_url', '/storage/'.$path);
         }
 
         // Handle dashboard favicon file upload
         if ($request->hasFile('dashboard_favicon')) {
             $request->validate(['dashboard_favicon' => 'image|mimes:png,jpg,jpeg,svg,webp,ico|max:1024']);
             $path = $request->file('dashboard_favicon')->store('branding/dashboard', 'public');
-            SystemSetting::set('dashboard_favicon_url', '/storage/' . $path);
+            SystemSetting::set('dashboard_favicon_url', '/storage/'.$path);
         }
 
         // Flush the public settings cache so mobile apps pick up changes immediately
-        \Illuminate\Support\Facades\Cache::forget('system:public_settings');
+        Cache::forget('system:public_settings');
 
         return back()->with('success', 'Configuration synchronized successfully.');
     }

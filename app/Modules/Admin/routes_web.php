@@ -107,6 +107,8 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::get('/settings/manifest', [SystemSettingController::class, 'manifest'])->name('orchestrator.settings.manifest');
         Route::get('/settings/localization', [SystemSettingController::class, 'localization'])->name('orchestrator.settings.localization');
         Route::get('/settings/payments', [SystemSettingController::class, 'payments'])->name('orchestrator.settings.payments');
+        Route::get('/settings/security', [SystemSettingController::class, 'security'])->name('orchestrator.settings.security');
+        Route::get('/settings/api-rate-limiting', [SystemSettingController::class, 'apiRateLimiting'])->name('orchestrator.settings.api_rate_limiting');
         Route::post('/settings', [SystemSettingController::class, 'update'])->name('orchestrator.settings.update');
 
         // Communication & Notifications

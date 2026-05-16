@@ -273,6 +273,40 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </div>
         </a>
+
+        <!-- Security Settings Card -->
+        <a href="{{ route('orchestrator.settings.security') }}" class="group relative overflow-hidden bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-5">
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 opacity-[0.02] group-hover:opacity-[0.06] transition-opacity pointer-events-none">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <div class="w-14 h-14 shrink-0 bg-red-50 rounded-2xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors relative z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <div class="relative z-10 flex-1">
+                <h3 class="text-[17px] font-black text-brand mb-1">Security & Access</h3>
+                <p class="text-[11px] text-brand-muted font-bold tracking-tight leading-relaxed">Password policy, session timeouts, IP whitelist, and 2FA.</p>
+            </div>
+            <div class="relative z-10 shrink-0 text-accent opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </a>
+
+        <!-- API Rate Limiting Card -->
+        <a href="{{ route('orchestrator.settings.api_rate_limiting') }}" class="group relative overflow-hidden bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-5">
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 opacity-[0.02] group-hover:opacity-[0.06] transition-opacity pointer-events-none">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div class="w-14 h-14 shrink-0 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors relative z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div class="relative z-10 flex-1">
+                <h3 class="text-[17px] font-black text-brand mb-1">API Rate Limiting</h3>
+                <p class="text-[11px] text-brand-muted font-bold tracking-tight leading-relaxed">Throttle config, burst limits, webhook retries, and debug mode.</p>
+            </div>
+            <div class="relative z-10 shrink-0 text-accent opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </a>
     </div>
 </div>
 

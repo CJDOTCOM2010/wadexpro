@@ -124,10 +124,10 @@
                 <div class="space-y-3">
                     @forelse($auditLogs as $log)
                     <div class="flex gap-2.5">
-                        <span class="text-[10px] font-mono text-brand-muted shrink-0 w-10 pt-0.5">{{ $log->created_at->format('H:i') }}</span>
+                        <span class="text-[10px] font-mono text-brand-muted shrink-0 w-10 pt-0.5">{{ $log->logged_at?->format('H:i') ?? '--:--' }}</span>
                         <div>
-                            <p class="text-xs font-bold {{ str_contains(strtolower($log->action ?? ''), 'fail') || str_contains(strtolower($log->action ?? ''), 'error') ? 'text-red-500' : 'text-brand' }}">{{ $log->action }}</p>
-                            <p class="text-[10px] text-brand-muted">{{ $log->details }}</p>
+                            <p class="text-xs font-bold {{ str_contains(strtolower($log->event ?? ''), 'fail') || str_contains(strtolower($log->event ?? ''), 'error') ? 'text-red-500' : 'text-brand' }}">{{ ucwords(str_replace('_', ' ', $log->event ?? 'N/A')) }}</p>
+                            <p class="text-[10px] text-brand-muted">{{ is_array($log->new_values) ? (isset($log->new_values['status']) ? 'Status: '.$log->new_values['status'] : json_encode($log->new_values)) : ($log->new_values ?? '') }}</p>
                         </div>
                     </div>
                     @empty

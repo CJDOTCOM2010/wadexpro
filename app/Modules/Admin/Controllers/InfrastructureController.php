@@ -70,7 +70,7 @@ class InfrastructureController extends Controller
     {
         // Load some recent audit logs to populate the dynamic log ticker
         $auditLogs = class_exists(AuditLog::class)
-            ? AuditLog::orderBy('created_at', 'desc')->take(5)->get()
+            ? AuditLog::orderBy('logged_at', 'desc')->take(5)->get()
             : [];
 
         return view('admin.module_hardening', compact('auditLogs'));

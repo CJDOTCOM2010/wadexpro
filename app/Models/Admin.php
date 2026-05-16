@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Modules\Admin\Models\AdminAuditLog;
+use App\Modules\Admin\Models\Module;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -9,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Admin extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -61,11 +63,13 @@ class Admin extends Authenticatable
             return true;
         }
 
-        return true;
+        return Module::where('slug', $moduleSlug)
+            ->where('is_enabled', true)
+            ->exists();
     }
 
     public function auditLogs()
     {
-        return $this->hasMany(\App\Modules\Admin\Models\AdminAuditLog::class, 'admin_id');
+        return $this->hasMany(AdminAuditLog::class, 'admin_id');
     }
 }

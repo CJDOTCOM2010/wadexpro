@@ -26,7 +26,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
 </div>
 @endif
 
-<div x-data="mediaManager()" x-init="init()" class="bg-[#f0f2f5] border border-gray-200 rounded-lg shadow-sm flex flex-col h-[calc(100vh-100px)] overflow-hidden text-sm text-[#1c2c44]">
+<div x-data="mediaManager()" x-init="init()" class="bg-[#f0f2f5] border border-gray-200 rounded-lg shadow-sm flex flex-col h-[calc(100vh-100px)] overflow-visible text-sm text-[#1c2c44]">
     
     {{-- Top Toolbar --}}
     <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white shrink-0 gap-4 flex-wrap">

@@ -346,43 +346,58 @@
         @endif
         
         <!-- Premium Topbar -->
-        <header class="h-20 border-b border-gray-100 flex items-center justify-between px-8 bg-white/80 backdrop-blur-md shrink-0 sticky top-0 z-40">
+        <header class="h-16 border-b border-gray-100 flex items-center justify-between px-6 sm:px-8 bg-white/80 backdrop-blur-md shrink-0 sticky top-0 z-40">
             
             <!-- Left: Sidebar Toggle & Search Bar UI -->
             <div class="flex items-center gap-6 flex-1 max-w-2xl">
                 <!-- Topbar Toggle Button -->
                 <button @click="sidebarOpen = !sidebarOpen" 
-                        class="p-2.5 bg-surface text-brand hover:bg-brand hover:text-white rounded-lg transition shadow-sm border border-gray-100 group">
-                    <svg class="w-6 h-6 transform transition-transform duration-500" :class="!sidebarOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="p-2 bg-surface text-brand hover:bg-brand hover:text-white rounded-lg transition shadow-sm border border-gray-100 group">
+                    <svg class="w-5 h-5 transform transition-transform duration-500" :class="!sidebarOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
                     </svg>
                 </button>
 
                 <!-- Search Bar -->
-                <div class="relative flex-1 group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <svg class="w-5 h-5 text-gray-400 group-focus-within:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <div class="relative flex-1 group max-w-md hidden sm:block">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400 group-focus-within:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </div>
-                    <input type="text" placeholder="Global search orders, drivers or node IDs..." 
-                           class="w-full bg-surface border-none rounded-lg py-3 pl-12 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-all placeholder:text-gray-400">
+                    <input type="text" placeholder="Global search..." 
+                           class="w-full bg-surface border-none rounded-lg py-2 pl-10 pr-4 text-xs font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-all placeholder:text-gray-400">
                 </div>
             </div>
 
             <!-- Right: Utilities & Profile -->
-            <div class="flex items-center gap-6">
+            <div class="flex items-center gap-4 sm:gap-6">
                 
+                <!-- Real-time Clock -->
+                <div x-data="{ time: '', date: '' }" 
+                     x-init="setInterval(() => { 
+                        const now = new Date();
+                        time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); 
+                        date = now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+                     }, 1000); 
+                     const now = new Date();
+                     time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); 
+                     date = now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });" 
+                     class="hidden lg:flex flex-col items-end mr-2 border-r border-gray-100 pr-4">
+                    <span class="text-[13px] font-black text-brand tracking-tight" x-text="time"></span>
+                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none" x-text="date"></span>
+                </div>
+
                 <!-- System Status -->
-                <div class="hidden xl:flex items-center gap-3 px-4 py-2 bg-surface rounded-lg border border-gray-100">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
-                    <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Gateway Active</span>
+                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-surface rounded-lg border border-gray-100">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Gateway Active</span>
                 </div>
 
                 <!-- Error Monitoring -->
-                <a href="{{ route('orchestrator.error_monitoring') }}" class="relative p-2.5 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 rounded-lg border border-red-100 transition shadow-sm group">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                <a href="{{ route('orchestrator.error_monitoring') }}" class="relative p-2 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 rounded-lg border border-red-100 transition shadow-sm group">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border-2 border-white"></span>
                     </span>
                     
                     <!-- Tooltip -->
@@ -390,19 +405,19 @@
                 </a>
 
                 <!-- Notifications -->
-                <button class="relative p-2.5 bg-surface text-gray-500 hover:text-brand rounded-lg border border-gray-100 transition shadow-sm">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                    <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-accent border-2 border-white rounded-full"></span>
+                <button class="relative p-2 bg-surface text-gray-500 hover:text-brand rounded-lg border border-gray-100 transition shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-accent border-2 border-white rounded-full"></span>
                 </button>
 
                 <!-- Profile Dropdown -->
                 <div class="relative" @click.away="userMenuOpen = false">
-                    <button @click="userMenuOpen = !userMenuOpen" class="flex items-center gap-3 pl-1 pr-4 py-1.5 bg-brand text-white rounded-lg transition hover:opacity-90 shadow-lg shadow-black/10">
+                    <button @click="userMenuOpen = !userMenuOpen" class="flex items-center gap-2 sm:gap-3 pl-1 pr-3 py-1 bg-brand text-white rounded-lg transition hover:opacity-90 shadow-lg shadow-black/10">
                         @php
                             $headerUser = auth('admin')->user();
                             $headerInitials = strtoupper(substr($headerUser?->first_name ?? $headerUser?->name ?? 'A', 0, 1) . substr($headerUser?->last_name ?? '', 0, 1)) ?: 'AD';
                         @endphp
-                        <div class="w-9 h-9 rounded-lg bg-accent text-brand flex items-center justify-center font-black text-sm overflow-hidden">
+                        <div class="w-7 h-7 rounded-md bg-accent text-brand flex items-center justify-center font-black text-xs overflow-hidden">
                             @if($headerUser?->avatar_url)
                                 <img src="{{ $headerUser->avatar_url }}" class="w-full h-full object-cover">
                             @else
@@ -410,10 +425,10 @@
                             @endif
                         </div>
                         <div class="text-left hidden sm:block">
-                            <p class="text-[11px] font-black text-accent uppercase leading-none mb-0.5">Clearance: Level 5</p>
-                            <p class="text-[13px] font-bold leading-none capitalize">{{ $headerUser?->level ?? $headerUser?->role ?? 'Administrator' }}</p>
+                            <p class="text-[9px] font-black text-accent uppercase leading-none mb-0.5">Clearance 5</p>
+                            <p class="text-[11px] font-bold leading-none capitalize">{{ $headerUser?->level ?? $headerUser?->role ?? 'Administrator' }}</p>
                         </div>
-                        <svg class="w-4 h-4 text-white/50 transition-transform" :class="userMenuOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="w-3.5 h-3.5 text-white/50 transition-transform" :class="userMenuOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
 
                     <!-- Dropdown Content -->

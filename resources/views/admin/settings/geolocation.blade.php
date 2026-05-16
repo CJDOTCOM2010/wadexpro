@@ -1,5 +1,18 @@
 @extends('admin.layout')
 @section('title', 'Geolocation & Mapping Configuration')
+@php
+function getSetting($key, $default = null) {
+    global $settings;
+    return $settings[$key]->value ?? $default;
+}
+function isChecked($key, $value = 'true') {
+    return getSetting($key, 'false') === $value;
+}
+function inArraySetting($key, $needle) {
+    $val = getSetting($key, '[]');
+    return in_array($needle, json_decode($val, true) ?? []);
+}
+@endphp
 @section('content')
 
 <div class="p-8 lg:p-12 max-w-[1400px] mx-auto">
@@ -38,7 +51,7 @@
                         </div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="settings[google_maps_enabled]" value="1" {{ (SystemSetting::get('google_maps_enabled', 'false') == 'true') ? 'checked' : '' }} class="sr-only peer">
+                        <input type="checkbox" name="settings[google_maps_enabled]" value="1" {{ isChecked('google_maps_enabled') ? 'checked' : '' }} class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-[#4285F4]/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#4285F4]"></div>
                     </label>
                 </div>
@@ -47,7 +60,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">API Key</label>
                         <div class="relative">
-                            <input type="password" name="settings[google_maps_key]" value="{{ SystemSetting::get('google_maps_key') ? '********' : '' }}" placeholder="Enter Google Maps API key" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/10 outline-none transition-all">
+                            <input type="password" name="settings[google_maps_key]" value="{{ getSetting('google_maps_key') ? '********' : '' }}" placeholder="Enter Google Maps API key" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/10 outline-none transition-all">
                             <div class="absolute right-3 top-1/2 -translate-y-1/2">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                             </div>
@@ -59,19 +72,19 @@
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Enabled Features</label>
                         <div class="grid grid-cols-2 gap-3">
                             <label class="flex items-center gap-2.5 cursor-pointer group">
-                                <input type="checkbox" name="settings[google_maps_directions][]" value="directions" {{ in_array('directions', json_decode(SystemSetting::get('google_maps_directions', '[]'), true)) ? 'checked' : '' }} class="w-4 h-4 text-[#4285F4] rounded border-gray-300 focus:ring-[#4285F4]">
+                                <input type="checkbox" name="settings[google_maps_directions][]" value="directions" {{ inArraySetting('google_maps_directions', 'directions') ? 'checked' : '' }} class="w-4 h-4 text-[#4285F4] rounded border-gray-300 focus:ring-[#4285F4]">
                                 <span class="text-sm text-gray-600 group-hover:text-gray-900">Directions</span>
                             </label>
                             <label class="flex items-center gap-2.5 cursor-pointer group">
-                                <input type="checkbox" name="settings[google_maps_places][]" value="places" {{ in_array('places', json_decode(SystemSetting::get('google_maps_places', '[]'), true)) ? 'checked' : '' }} class="w-4 h-4 text-[#4285F4] rounded border-gray-300 focus:ring-[#4285F4]">
+                                <input type="checkbox" name="settings[google_maps_places][]" value="places" {{ inArraySetting('google_maps_places', 'places') ? 'checked' : '' }} class="w-4 h-4 text-[#4285F4] rounded border-gray-300 focus:ring-[#4285F4]">
                                 <span class="text-sm text-gray-600 group-hover:text-gray-900">Places Autocomplete</span>
                             </label>
                             <label class="flex items-center gap-2.5 cursor-pointer group">
-                                <input type="checkbox" name="settings[google_maps_geocoding][]" value="geocoding" {{ in_array('geocoding', json_decode(SystemSetting::get('google_maps_geocoding', '[]'), true)) ? 'checked' : '' }} class="w-4 h-4 text-[#4285F4] rounded border-gray-300 focus:ring-[#4285F4]">
+                                <input type="checkbox" name="settings[google_maps_geocoding][]" value="geocoding" {{ inArraySetting('google_maps_geocoding', 'geocoding') ? 'checked' : '' }} class="w-4 h-4 text-[#4285F4] rounded border-gray-300 focus:ring-[#4285F4]">
                                 <span class="text-sm text-gray-600 group-hover:text-gray-900">Geocoding</span>
                             </label>
                             <label class="flex items-center gap-2.5 cursor-pointer group">
-                                <input type="checkbox" name="settings[google_maps_static][]" value="static" {{ in_array('static', json_decode(SystemSetting::get('google_maps_static', '[]'), true)) ? 'checked' : '' }} class="w-4 h-4 text-[#4285F4] rounded border-gray-300 focus:ring-[#4285F4]">
+                                <input type="checkbox" name="settings[google_maps_static][]" value="static" {{ inArraySetting('google_maps_static', 'static') ? 'checked' : '' }} class="w-4 h-4 text-[#4285F4] rounded border-gray-300 focus:ring-[#4285F4]">
                                 <span class="text-sm text-gray-600 group-hover:text-gray-900">Static Maps</span>
                             </label>
                         </div>
@@ -92,7 +105,7 @@
                         </div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="settings[mapbox_enabled]" value="1" {{ (SystemSetting::get('mapbox_enabled', 'false') == 'true') ? 'checked' : '' }} class="sr-only peer">
+                        <input type="checkbox" name="settings[mapbox_enabled]" value="1" {{ isChecked('mapbox_enabled') ? 'checked' : '' }} class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
                     </label>
                 </div>
@@ -101,7 +114,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Public Access Token</label>
                         <div class="relative">
-                            <input type="password" name="settings[mapbox_key]" value="{{ SystemSetting::get('mapbox_key') ? '********' : '' }}" placeholder="Enter Mapbox access token" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 outline-none transition-all">
+                            <input type="password" name="settings[mapbox_key]" value="{{ getSetting('mapbox_key') ? '********' : '' }}" placeholder="Enter Mapbox access token" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 outline-none transition-all">
                             <div class="absolute right-3 top-1/2 -translate-y-1/2">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                             </div>
@@ -122,16 +135,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Default Latitude</label>
-                        <input type="text" name="settings[default_latitude]" value="{{ SystemSetting::get('default_latitude', '5.6037') }}" placeholder="e.g. 5.6037" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
+                        <input type="text" name="settings[default_latitude]" value="{{ getSetting('default_latitude', '5.6037') }}" placeholder="e.g. 5.6037" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Default Longitude</label>
-                        <input type="text" name="settings[default_longitude]" value="{{ SystemSetting::get('default_longitude', '-0.1870') }}" placeholder="e.g. -0.1870" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
+                        <input type="text" name="settings[default_longitude]" value="{{ getSetting('default_longitude', '-0.1870') }}" placeholder="e.g. -0.1870" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Default Zoom Level</label>
                         <select name="settings[default_zoom_level]" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
-                            @php $currentZoom = SystemSetting::get('default_zoom_level', '14'); @endphp
+                            @php $currentZoom = getSetting('default_zoom_level', '14'); @endphp
                             <option value="8" {{ $currentZoom == '8' ? 'selected' : '' }}>8 - Continent View</option>
                             <option value="10" {{ $currentZoom == '10' ? 'selected' : '' }}>10 - Region View</option>
                             <option value="12" {{ $currentZoom == '12' ? 'selected' : '' }}>12 - City View</option>
@@ -146,7 +159,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Default Map Style</label>
                         <select name="settings[default_map_style]" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
-                            @php $currentStyle = SystemSetting::get('default_map_style', 'streets'); @endphp
+                            @php $currentStyle = getSetting('default_map_style', 'streets'); @endphp
                             <option value="streets" {{ $currentStyle == 'streets' ? 'selected' : '' }}>Streets</option>
                             <option value="satellite" {{ $currentStyle == 'satellite' ? 'selected' : '' }}>Satellite</option>
                             <option value="light" {{ $currentStyle == 'light' ? 'selected' : '' }}>Light</option>
@@ -157,7 +170,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Default Distance Unit</label>
                         <select name="settings[distance_unit]" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
-                            @php $currentUnit = SystemSetting::get('distance_unit', 'km'); @endphp
+                            @php $currentUnit = getSetting('distance_unit', 'km'); @endphp
                             <option value="km" {{ $currentUnit == 'km' ? 'selected' : '' }}>Kilometers (km)</option>
                             <option value="miles" {{ $currentUnit == 'miles' ? 'selected' : '' }}>Miles (mi)</option>
                         </select>
@@ -178,7 +191,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Default Country</label>
                         <select name="settings[geocoding_country]" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
-                            @php $currentCountry = SystemSetting::get('geocoding_country', 'GH'); @endphp
+                            @php $currentCountry = getSetting('geocoding_country', 'GH'); @endphp
                             <option value="GH" {{ $currentCountry == 'GH' ? 'selected' : '' }}>Ghana</option>
                             <option value="NG" {{ $currentCountry == 'NG' ? 'selected' : '' }}>Nigeria</option>
                             <option value="KE" {{ $currentCountry == 'KE' ? 'selected' : '' }}>Kenya</option>
@@ -191,7 +204,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Geocoding Language</label>
                         <select name="settings[geocoding_language]" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
-                            @php $currentLang = SystemSetting::get('geocoding_language', 'en'); @endphp
+                            @php $currentLang = getSetting('geocoding_language', 'en'); @endphp
                             <option value="en" {{ $currentLang == 'en' ? 'selected' : '' }}>English</option>
                             <option value="fr" {{ $currentLang == 'fr' ? 'selected' : '' }}>French</option>
                             <option value="es" {{ $currentLang == 'es' ? 'selected' : '' }}>Spanish</option>
@@ -211,7 +224,7 @@
                     <p class="text-xs text-gray-500 mt-1">GPS tracking and driver location settings</p>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="settings[geofencing_enabled]" value="1" {{ (SystemSetting::get('geofencing_enabled', 'false') == 'true') ? 'checked' : '' }} class="sr-only peer">
+                    <input type="checkbox" name="settings[geofencing_enabled]" value="1" {{ isChecked('geofencing_enabled') ? 'checked' : '' }} class="sr-only peer">
                     <div class="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-brand/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
                 </label>
             </div>
@@ -221,21 +234,21 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">GPS Update Interval</label>
                         <div class="relative">
-                            <input type="number" name="settings[gps_update_interval]" value="{{ SystemSetting::get('gps_update_interval', '5') }}" min="1" max="60" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 pr-12 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
+                            <input type="number" name="settings[gps_update_interval]" value="{{ getSetting('gps_update_interval', '5') }}" min="1" max="60" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 pr-12 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">seconds</span>
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Location History Retention</label>
                         <div class="relative">
-                            <input type="number" name="settings[location_history_days]" value="{{ SystemSetting::get('location_history_days', '30') }}" min="1" max="365" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 pr-12 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
+                            <input type="number" name="settings[location_history_days]" value="{{ getSetting('location_history_days', '30') }}" min="1" max="365" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 pr-12 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">days</span>
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Default Search Radius</label>
                         <div class="relative">
-                            <input type="number" name="settings[default_search_radius]" value="{{ SystemSetting::get('default_search_radius', '5') }}" min="1" max="50" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 pr-12 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
+                            <input type="number" name="settings[default_search_radius]" value="{{ getSetting('default_search_radius', '5') }}" min="1" max="50" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 pr-12 text-sm font-medium text-gray-700 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none transition-all">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">km</span>
                         </div>
                     </div>
@@ -252,8 +265,8 @@
             
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-brand hover:bg-brand/5 transition-all {{ SystemSetting::get('default_travel_mode', 'driving') == 'driving' ? 'border-brand bg-brand/5' : '' }}">
-                        <input type="radio" name="settings[default_travel_mode]" value="driving" {{ SystemSetting::get('default_travel_mode', 'driving') == 'driving' ? 'checked' : '' }} class="w-5 h-5 text-brand">
+                    <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-brand hover:bg-brand/5 transition-all {{ getSetting('default_travel_mode', 'driving') == 'driving' ? 'border-brand bg-brand/5' : '' }}">
+                        <input type="radio" name="settings[default_travel_mode]" value="driving" {{ getSetting('default_travel_mode', 'driving') == 'driving' ? 'checked' : '' }} class="w-5 h-5 text-brand">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-brand/10 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17h8M8 17a2 2 0 11-4 0 2 2 0 014 0zM16 17a2 2 0 104 0 2 2 0 00-4 0zM4 16V7a2 2 0 012-2h12a2 2 0 012 2v9"/><circle cx="4" cy="18" r="2"/></svg>
@@ -264,8 +277,8 @@
                             </div>
                         </div>
                     </label>
-                    <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-brand hover:bg-brand/5 transition-all {{ SystemSetting::get('default_travel_mode') == 'walking' ? 'border-brand bg-brand/5' : '' }}">
-                        <input type="radio" name="settings[default_travel_mode]" value="walking" {{ SystemSetting::get('default_travel_mode') == 'walking' ? 'checked' : '' }} class="w-5 h-5 text-brand">
+                    <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-brand hover:bg-brand/5 transition-all {{ getSetting('default_travel_mode') == 'walking' ? 'border-brand bg-brand/5' : '' }}">
+                        <input type="radio" name="settings[default_travel_mode]" value="walking" {{ getSetting('default_travel_mode') == 'walking' ? 'checked' : '' }} class="w-5 h-5 text-brand">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-brand/10 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
@@ -276,8 +289,8 @@
                             </div>
                         </div>
                     </label>
-                    <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-brand hover:bg-brand/5 transition-all {{ SystemSetting::get('default_travel_mode') == 'bicycling' ? 'border-brand bg-brand/5' : '' }}">
-                        <input type="radio" name="settings[default_travel_mode]" value="bicycling" {{ SystemSetting::get('default_travel_mode') == 'bicycling' ? 'checked' : '' }} class="w-5 h-5 text-brand">
+                    <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-brand hover:bg-brand/5 transition-all {{ getSetting('default_travel_mode') == 'bicycling' ? 'border-brand bg-brand/5' : '' }}">
+                        <input type="radio" name="settings[default_travel_mode]" value="bicycling" {{ getSetting('default_travel_mode') == 'bicycling' ? 'checked' : '' }} class="w-5 h-5 text-brand">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-brand/10 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4V1M8 4H5a2 2 0 00-2 2v9a2 2 0 002 2h3M16 4h3a2 2 0 012 2v9a2 2 0 01-2 2h-1M9 20l3-9 3 9"/></svg>

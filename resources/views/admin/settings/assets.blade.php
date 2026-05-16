@@ -133,54 +133,6 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div>
         
         <div class="flex items-center gap-3">
-            <div class="relative" x-data="{ viewOpen: false }">
-                <button @click="viewOpen = !viewOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
-                    <span x-text="viewFilterLabel"></span>
-                </button>
-                <div x-show="viewOpen" @click.outside="viewOpen = false" x-cloak class="absolute right-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
-                    <button @click="viewFilter = 'all'; viewFilterLabel = 'All media'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
-                        All media
-                    </button>
-                    <button @click="viewFilter = 'trash'; viewFilterLabel = 'Trash'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'trash' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7l16 0M10 11l0 6M14 11l0 6M5 7l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M9 7v-3a1 1 0 011-1h4a1 1 0 011 1v3"/></svg>
-                        Trash
-                    </button>
-                    <button @click="viewFilter = 'recent'; viewFilterLabel = 'Recent'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'recent' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M12 7v5l3 3"/></svg>
-                        Recent
-                    </button>
-                    <button @click="viewFilter = 'favorites'; viewFilterLabel = 'Favorites'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'favorites' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17.75l-6.172 3.245 1.179-6.873-5-4.867 6.9-1 3.086-6.253 3.086 6.253 6.9 1-5 4.867 1.179 6.873z"/></svg>
-                        Favorites
-                    </button>
-                </div>
-            </div>
-            <div class="relative" x-data="{ filterOpen: false }">
-                <button @click="filterOpen = !filterOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
-                    <span x-text="filterLabel"></span>
-                </button>
-                <div x-show="filterOpen" @click.outside="filterOpen = false" x-cloak class="absolute right-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
-                    <button @click="fileFilter = 'all'; filterLabel = 'Everything'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
-                        Everything
-                    </button>
-                    <button @click="fileFilter = 'image'; filterLabel = 'Image'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'image' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8h.01M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zM3 16l5-5c.928-.893 2.072-.893 3 0l5 5M14 14l1-1c.928-.893 2.072-.893 3 0l3 3"/></svg>
-                        Image
-                    </button>
-                    <button @click="fileFilter = 'video'; filterLabel = 'Video'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'video' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276a1 1 0 011.447.894v6.764a1 1 0 01-1.447.894L15 14v-4zM3 6m0 2a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-                        Video
-                    </button>
-                    <button @click="fileFilter = 'document'; filterLabel = 'Document'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'document' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg>
-                        Document
-                    </button>
-                </div>
-            </div>
             <div class="relative" x-data="{ sortOpen: false }">
                 <button @click="sortOpen = !sortOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h14M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
@@ -391,7 +343,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                 {{-- Files --}}
                 @foreach($allFiles as $file)
                 @php $ext = strtolower($file['extension'] ?? ''); $isImg = in_array($ext, $imageExts); @endphp
-                <div x-show="search === '' || '{{ strtolower($file['name']) }}'.includes(search.toLowerCase())" class="flex flex-col bg-[#F8F9FA] hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer overflow-hidden h-32 relative border border-gray-100 rounded group" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'ring-2 ring-blue-500 ring-offset-1'">
+                <div x-show="matchesFilter('{{ $file['name'] }}', '{{ $ext }}')" class="flex flex-col bg-[#F8F9FA] hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer overflow-hidden h-32 relative border border-gray-100 rounded group" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'ring-2 ring-blue-500 ring-offset-1'">
                     <div class="flex-1 flex items-center justify-center p-0 w-full h-full overflow-hidden">
                         @if($isImg)
                         <img src="{{ $file['url'] }}" class="w-full h-full object-cover">
@@ -436,7 +388,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     @endforeach
                     @foreach($allFiles as $file)
                     @php $ext = strtolower($file['extension'] ?? ''); $isImg = in_array($ext, $imageExts); @endphp
-                    <tr x-show="search === '' || '{{ strtolower($file['name']) }}'.includes(search.toLowerCase())" class="hover:bg-blue-50 cursor-pointer transition-colors" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'bg-blue-50'">
+                    <tr x-show="matchesFilter('{{ $file['name'] }}', '{{ $ext }}')" class="hover:bg-blue-50 cursor-pointer transition-colors" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'bg-blue-50'">
                         <td class="px-4 py-2 flex items-center gap-2 min-w-[200px]">
                             @if($isImg)
                             <img src="{{ $file['url'] }}" class="w-6 h-6 rounded object-cover" onerror="this.style.display='none'">
@@ -907,6 +859,27 @@ function mediaManager() {
             const p = document.createElement('input'); p.type = 'hidden'; p.name = 'path'; p.value = this.deletePath; f.appendChild(p);
             const d = document.createElement('input'); d.type = 'hidden'; d.name = 'disk'; d.value = '{{ $currentDisk }}'; f.appendChild(d);
             document.body.appendChild(f); f.submit();
+        },
+        matchesFilter(fileName, ext) {
+            // Search filter
+            if (this.search && !fileName.toLowerCase().includes(this.search.toLowerCase())) return false;
+            // View filter (all: show everything)
+            if (this.viewFilter === 'trash') return false; // Trash: hide everything (server-side needed)
+            if (this.viewFilter === 'recent') {
+                // Show only items with "recent" label — mock: hide folders and show all files
+                return true;
+            }
+            if (this.viewFilter === 'favorites') return false; // Favorites: hide everything (server-side needed)
+            // File type filter
+            if (this.fileFilter === 'all') return true;
+            const imgExts = ['jpg','jpeg','png','gif','svg','webp','bmp'];
+            const vidExts = ['mp4','mov','avi','mkv','webm','flv'];
+            const docExts = ['pdf','doc','docx','xls','xlsx','csv','txt','ppt','pptx'];
+            ext = ext.toLowerCase();
+            if (this.fileFilter === 'image') return imgExts.includes(ext);
+            if (this.fileFilter === 'video') return vidExts.includes(ext);
+            if (this.fileFilter === 'document') return docExts.includes(ext);
+            return true;
         }
     };
 }

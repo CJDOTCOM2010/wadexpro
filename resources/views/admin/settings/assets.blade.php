@@ -103,6 +103,30 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     </button>
                 </div>
             </div>
+            <div class="relative" x-data="{ filterOpen: false }">
+                <button @click="filterOpen = !filterOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
+                    <span x-text="filterLabel"></span>
+                </button>
+                <div x-show="filterOpen" @click.outside="filterOpen = false" x-cloak class="absolute right-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                    <button @click="fileFilter = 'all'; filterLabel = 'Everything'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
+                        Everything
+                    </button>
+                    <button @click="fileFilter = 'image'; filterLabel = 'Image'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'image' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8h.01M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zM3 16l5-5c.928-.893 2.072-.893 3 0l5 5M14 14l1-1c.928-.893 2.072-.893 3 0l3 3"/></svg>
+                        Image
+                    </button>
+                    <button @click="fileFilter = 'video'; filterLabel = 'Video'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'video' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276a1 1 0 011.447.894v6.764a1 1 0 01-1.447.894L15 14v-4zM3 6m0 2a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                        Video
+                    </button>
+                    <button @click="fileFilter = 'document'; filterLabel = 'Document'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'document' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg>
+                        Document
+                    </button>
+                </div>
+            </div>
             <div class="relative" x-data="{ sortOpen: false }">
                 <button @click="sortOpen = !sortOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h14M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
@@ -683,7 +707,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
 <script>
 function mediaManager() {
     return {
-        viewMode: 'grid', viewFilter: 'all', viewFilterLabel: 'All media',
+        viewMode: 'grid', viewFilter: 'all', viewFilterLabel: 'All media', fileFilter: 'all', filterLabel: 'Everything',
         showUpload: false, showFolder: false, sidebarOpen: true,
         search: '', sortBy: 'name',
         selectedFile: { name: '', path: '', url: '', size: '', type: '', isImage: false },

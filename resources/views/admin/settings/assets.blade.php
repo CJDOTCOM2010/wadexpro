@@ -416,71 +416,61 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div> <!-- End of Assets Area -->
         
         {{-- Right Sidebar Preview Pane --}}
-        <div x-show="sidebarOpen" class="w-72 border-l border-gray-200 bg-[#F8F9FA] flex flex-col shrink-0 overflow-y-auto z-10 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)]" x-transition>
+        <div x-show="sidebarOpen" class="w-72 border-l border-gray-200 bg-white flex flex-col shrink-0 overflow-y-auto z-10 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)]" x-transition>
             <template x-if="selectedFile.path">
-                <div class="p-4 flex flex-col">
-                    <template x-if="selectedFile.isImage">
-                        <div class="w-full bg-white border border-gray-200 rounded p-2 mb-4 shadow-sm flex items-center justify-center">
-                            <img :src="selectedFile.url" class="max-w-full max-h-48 object-contain">
-                        </div>
-                    </template>
-                    <template x-if="!selectedFile.isImage">
-                        <div class="w-full aspect-square bg-white border border-gray-200 rounded p-2 mb-4 shadow-sm flex items-center justify-center text-gray-300">
-                            <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        </div>
-                    </template>
-                    
-                    <div class="space-y-3 border-t border-gray-200 pt-4">
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Name</p>
-                            <p class="text-sm font-medium text-gray-800 break-all" x-text="selectedFile.name"></p>
-                        </div>
-                        
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Full URL</p>
-                            <p class="text-xs text-gray-600 break-all" x-text="selectedFile.url"></p>
-                        </div>
-                        
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Size</p>
-                            <p class="text-sm text-gray-700" x-text="selectedFile.size"></p>
-                        </div>
-                        
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Uploaded at</p>
-                            <p class="text-sm text-gray-700" x-text="selectedFile.lastModified || 'N/A'"></p>
-                        </div>
-                        
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Modified at</p>
-                            <p class="text-sm text-gray-700" x-text="selectedFile.lastModified || 'N/A'"></p>
-                        </div>
-                        
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Alt text</p>
-                            <p class="text-sm text-gray-700" x-text="selectedFile.name"></p>
-                        </div>
-                        
-                        <template x-if="selectedFile.isImage && selectedFile.width > 0">
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Width</p>
-                                    <p class="text-sm text-gray-700"><span x-text="selectedFile.width"></span>px</p>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Height</p>
-                                    <p class="text-sm text-gray-700"><span x-text="selectedFile.height"></span>px</p>
-                                </div>
+                <div class="rv-media-details">
+                    <div class="rv-media-thumbnail">
+                        <template x-if="selectedFile.isImage">
+                            <img :src="selectedFile.url" :alt="selectedFile.name" class="max-w-full">
+                        </template>
+                        <template x-if="!selectedFile.isImage">
+                            <div class="flex items-center justify-center h-48 bg-gray-100">
+                                <svg class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </div>
                         </template>
                     </div>
-                    
-                    <div class="w-full space-y-2 border-t border-gray-200 pt-4 mt-4">
-                        <a :href="selectedFile.url" target="_blank" class="w-full px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-200 rounded hover:bg-blue-50 transition-colors block">Open in New Tab</a>
-                        <button @click="copyUrlToClipboard(selectedFile.url)" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors block">Copy Link Address</button>
-                        <button @click="openRename()" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors block">Rename</button>
-                        <button @click="downloadFile()" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors block">Download</button>
-                        <button @click="confirmDelete(selectedFile.path, selectedFile.name)" class="w-full px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded hover:bg-red-50 transition-colors block mt-4">Delete Permanently</button>
+                    <div class="rv-media-description p-4 space-y-3">
+                        <div class="mb-3 rv-media-name">
+                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Name</label>
+                            <span class="block text-sm font-medium text-gray-800" x-text="selectedFile.name"></span>
+                        </div>
+                        <div class="mb-3 rv-media-name">
+                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Full URL</label>
+                            <div class="input-group pe-1">
+                                <input type="text" id="file_details_url" class="form-control text-xs" x-model="selectedFile.url" readonly>
+                                <button class="input-group-text bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 px-2" type="button" @click="copyUrlToClipboard(selectedFile.url)">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3 rv-media-name">
+                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Size</label>
+                            <span class="block text-sm text-gray-700" x-text="selectedFile.size"></span>
+                        </div>
+                        <div class="mb-3 rv-media-name">
+                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Uploaded at</label>
+                            <span class="block text-sm text-gray-700" x-text="selectedFile.lastModified || 'N/A'"></span>
+                        </div>
+                        <div class="mb-3 rv-media-name">
+                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Modified at</label>
+                            <span class="block text-sm text-gray-700" x-text="selectedFile.lastModified || 'N/A'"></span>
+                        </div>
+                        <div class="mb-3 rv-media-name">
+                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Alt text</label>
+                            <span class="block text-sm text-gray-700" x-text="selectedFile.name"></span>
+                        </div>
+                        <template x-if="selectedFile.isImage && selectedFile.width > 0">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="mb-3 rv-media-name">
+                                    <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Width</label>
+                                    <span class="block text-sm text-gray-700" x-text="selectedFile.width + 'px'"></span>
+                                </div>
+                                <div class="mb-3 rv-media-name">
+                                    <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Height</label>
+                                    <span class="block text-sm text-gray-700" x-text="selectedFile.height + 'px'"></span>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </template>

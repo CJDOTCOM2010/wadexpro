@@ -180,11 +180,21 @@
                             @endif
 
                             <!-- Hover Overlay -->
-                            <div class="absolute inset-0 bg-brand/90 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2 rounded-xl">
-                                <button @click="previewAsset(@js($file))" class="w-full py-2 bg-white text-brand text-xs font-bold rounded-lg hover:bg-gray-100 transition-colors">Preview</button>
-                                <button @click="copyUrl('{{ $file['url'] }}')" class="w-full py-2 bg-accent text-brand text-xs font-bold rounded-lg hover:bg-accent/80 transition-colors">Copy URL</button>
-                                <a href="{{ $file['url'] }}" download="{{ $file['name'] }}" class="w-full py-2 bg-green-500 text-white text-xs font-bold rounded-lg hover:bg-green-600 transition-colors text-center">Download</a>
-                                <button @click="confirmDelete(@js($file))" class="w-full py-2 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-600 transition-colors">Delete</button>
+                            <div class="absolute inset-0 bg-brand/90 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl backdrop-blur-sm z-10">
+                                <div class="grid grid-cols-2 gap-2 w-full h-full p-3">
+                                    <button @click="previewAsset(@js($file))" class="flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors" title="Preview">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    </button>
+                                    <button @click="copyUrl('{{ $file['url'] }}')" class="flex items-center justify-center bg-white/10 hover:bg-white/20 text-accent rounded-lg transition-colors" title="Copy URL">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                                    </button>
+                                    <a href="{{ $file['url'] }}" download="{{ $file['name'] }}" class="flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors" title="Download">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    </a>
+                                    <button @click="confirmDelete(@js($file))" class="flex items-center justify-center bg-red-500/80 hover:bg-red-500 text-white rounded-lg transition-colors" title="Delete">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Image Badge -->

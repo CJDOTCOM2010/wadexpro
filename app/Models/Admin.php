@@ -15,6 +15,8 @@ class Admin extends Authenticatable
 
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
         'phone',
         'email_verified_at',
@@ -22,6 +24,7 @@ class Admin extends Authenticatable
         'role',
         'level',
         'avatar_url',
+        'banner_url',
         'is_active',
         'is_super_admin',
         'last_login_at',

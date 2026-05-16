@@ -26,64 +26,43 @@ $prefs = json_decode($admin->notification_preferences ?? '{}', true) ?? [];
 </div>
 @endif
 
-<div x-data="profileManager('{{ $admin->avatar_url ?? '' }}')" class="max-w-6xl mx-auto">
+<div x-data="profileManager('{{ $admin->avatar_url ?? '' }}', '{{ $admin->banner_url ?? '' }}')" class="max-w-6xl mx-auto">
     <!-- Premium Profile Header -->
-    <div class="relative bg-gradient-to-br from-brand via-[#1a1a2e] to-brand rounded-xl overflow-hidden mb-8 shadow-lg">
+    <div class="relative bg-gradient-to-br from-brand via-[#1a1a2e] to-brand rounded-xl overflow-hidden mb-8 shadow-lg min-h-[240px] flex flex-col justify-end">
+        <template x-if="bannerPreview">
+            <img :src="bannerPreview" class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay">
+        </template>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(248,184,3,0.12),transparent_60%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(255,255,255,0.04),transparent_50%)]"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
         <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent"></div>
-        <div class="relative z-10">
-            <!-- Back + Breadcrumb -->
-            <div class="px-6 sm:px-10 pt-5 pb-2">
-                <div class="flex items-center gap-2 text-[11px] font-bold">
-                    <a href="{{ route('orchestrator.dashboard') }}" class="text-white/50 hover:text-white transition-colors">Dashboard</a>
-                    <span class="text-white/20">/</span>
-                    <span class="text-accent">Profile</span>
-                </div>
-            </div>
-            <div class="px-6 sm:px-10 pb-6 sm:pb-8">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-                    <div class="relative group cursor-pointer shrink-0" @click="$refs.avatarInput.click()">
-                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white/10 flex items-center justify-center font-black text-3xl sm:text-4xl text-accent overflow-hidden ring-2 ring-white/20 backdrop-blur-sm shadow-lg shadow-black/10">
-                            <template x-if="avatarPreview">
-                                <img :src="avatarPreview" class="w-full h-full object-cover">
-                            </template>
-                            <template x-if="!avatarPreview">
-                                <span>{{ $initials }}</span>
-                            </template>
-                        </div>
-                        <div class="absolute inset-0 rounded-xl bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        </div>
-                        <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full shadow-md"></span>
+        
+        <button @click="$refs.bannerInput.click()" class="absolute top-4 right-4 bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 z-20">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+            Edit Cover
+        </button>
+
+        <div class="relative z-10 px-6 py-8 sm:px-10 sm:py-10">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                <div class="relative group cursor-pointer" @click="$refs.avatarInput.click()">
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white/10 flex items-center justify-center font-black text-3xl sm:text-4xl text-accent overflow-hidden ring-2 ring-white/20 backdrop-blur-sm">
+                        <template x-if="avatarPreview">
+                            <img :src="avatarPreview" class="w-full h-full object-cover">
+                        </template>
+                        <template x-if="!avatarPreview">
+                            <span>{{ $initials }}</span>
+                        </template>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2.5 mb-1 flex-wrap">
-                            <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight truncate">{{ $admin->name ?? 'Admin Account' }}</h2>
-                            <span class="px-2.5 py-0.5 bg-accent/15 text-accent text-[11px] font-bold rounded-lg uppercase tracking-wider border border-accent/20">{{ ucfirst($admin->level ?? $admin->role ?? 'Admin') }}</span>
-                        </div>
-                        <p class="text-white/80 text-sm font-medium">{{ $admin->email }}</p>
-                        <div class="flex items-center gap-4 mt-2.5 flex-wrap">
-                            <span class="flex items-center gap-1.5 text-xs font-bold text-white/70">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                Joined {{ $admin->created_at?->format('M Y') ?? '—' }}
-                            </span>
-                            <span class="flex items-center gap-1.5 text-xs font-bold text-green-400">
-                                <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-                                Active Session
-                            </span>
-                            <span class="flex items-center gap-1.5 text-xs font-bold text-white/50">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0"/></svg>
-                                ID: <span class="font-mono">{{ substr($admin->id, 0, 8) }}</span>
-                            </span>
-                        <span class="flex items-center gap-1.5 text-[11px] font-bold text-green-400">
-                            <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-                            Session Active
-                        </span>
+                    <div class="absolute inset-0 rounded-xl bg-brand/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
                 </div>
-                <div class="hidden sm:flex items-center gap-2">
-                    <span class="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold text-white/70">ID: <span class="font-mono">{{ substr($admin->id, 0, 8) }}</span></span>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight truncate">{{ $admin->name ?? 'Admin Account' }}</h2>
+                        <span class="px-2 py-0.5 bg-accent/20 text-accent text-[10px] font-bold rounded-lg uppercase tracking-wider whitespace-nowrap">{{ ucfirst($admin->level ?? $admin->role ?? 'Admin') }}</span>
+                    </div>
+                    <p class="text-white/60 text-sm font-medium">{{ $admin->email }}</p>
                 </div>
             </div>
         </div>
@@ -141,31 +120,60 @@ $prefs = json_decode($admin->notification_preferences ?? '{}', true) ?? [];
         <form action="{{ route('orchestrator.profile.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="file" name="avatar" accept="image/*" class="hidden" x-ref="avatarInput" @change="previewAvatar($event)">
+            <input type="file" name="banner" accept="image/*" class="hidden" x-ref="bannerInput" @change="previewBanner($event)">
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Avatar Card -->
-                <div class="bg-white border border-gray-100 rounded-xl p-6">
-                    <div class="flex flex-col items-center text-center gap-4">
-                        <div class="relative group cursor-pointer" @click="$refs.avatarInput.click()">
-                            <div class="w-28 h-28 rounded-xl bg-surface flex items-center justify-center font-black text-5xl text-brand-muted overflow-hidden ring-2 ring-gray-100 shadow-inner">
-                                <template x-if="avatarPreview">
-                                    <img :src="avatarPreview" class="w-full h-full object-cover">
-                                </template>
-                                <template x-if="!avatarPreview">
-                                    <span>{{ $initials }}</span>
-                                </template>
+                <div class="space-y-4">
+                    <!-- Avatar Card -->
+                    <div class="bg-white border border-gray-100 rounded-xl p-6">
+                        <div class="flex flex-col items-center text-center gap-4">
+                            <div class="relative group cursor-pointer" @click="$refs.avatarInput.click()">
+                                <div class="w-24 h-24 rounded-xl bg-surface flex items-center justify-center font-black text-4xl text-brand-muted overflow-hidden ring-2 ring-gray-100 shadow-inner">
+                                    <template x-if="avatarPreview">
+                                        <img :src="avatarPreview" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!avatarPreview">
+                                        <span>{{ $initials }}</span>
+                                    </template>
+                                </div>
+                                <div class="absolute inset-0 rounded-xl bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                </div>
                             </div>
-                            <div class="absolute inset-0 rounded-xl bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <div>
+                                <p class="text-sm font-bold text-brand">Profile Photo</p>
+                                <p class="text-[10px] text-brand-muted mt-0.5">JPG, PNG or WebP · Max 2MB</p>
                             </div>
+                            <button type="button" @click="$refs.avatarInput.click()" class="w-full py-2 px-4 border border-gray-200 rounded-lg text-xs font-bold text-brand-muted hover:border-brand hover:text-brand transition-colors">
+                                Choose Photo
+                            </button>
                         </div>
-                        <div>
-                            <p class="text-sm font-bold text-brand">Profile Photo</p>
-                            <p class="text-[10px] text-brand-muted mt-0.5">JPG, PNG or WebP · Max 2MB</p>
+                    </div>
+                    
+                    <!-- Banner Card -->
+                    <div class="bg-white border border-gray-100 rounded-xl p-6">
+                        <div class="flex flex-col items-center text-center gap-4">
+                            <div class="relative group cursor-pointer w-full" @click="$refs.bannerInput.click()">
+                                <div class="w-full h-24 rounded-xl bg-surface flex items-center justify-center text-brand-muted overflow-hidden ring-2 ring-gray-100 shadow-inner">
+                                    <template x-if="bannerPreview">
+                                        <img :src="bannerPreview" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!bannerPreview">
+                                        <svg class="w-6 h-6 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </template>
+                                </div>
+                                <div class="absolute inset-0 rounded-xl bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-brand">Cover Banner</p>
+                                <p class="text-[10px] text-brand-muted mt-0.5">JPG, PNG or WebP · Max 4MB</p>
+                            </div>
+                            <button type="button" @click="$refs.bannerInput.click()" class="w-full py-2 px-4 border border-gray-200 rounded-lg text-xs font-bold text-brand-muted hover:border-brand hover:text-brand transition-colors">
+                                Choose Banner
+                            </button>
                         </div>
-                        <button type="button" @click="$refs.avatarInput.click()" class="w-full py-2.5 px-4 border-2 border-dashed border-gray-200 rounded-lg text-xs font-bold text-brand-muted hover:border-brand hover:text-brand transition-colors">
-                            Choose Photo
-                        </button>
                     </div>
                 </div>
 
@@ -215,7 +223,7 @@ $prefs = json_decode($admin->notification_preferences ?? '{}', true) ?? [];
                     </div>
 
                     <div class="flex justify-end pt-2">
-                        <button type="submit" class="px-6 py-2.5 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors flex items-center gap-2 shadow-md shadow-brand/20">
+                        <button type="submit" class="px-6 py-2.5 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             Save Changes
                         </button>
@@ -470,10 +478,11 @@ $prefs = json_decode($admin->notification_preferences ?? '{}', true) ?? [];
 </div>
 
 <script>
-function profileManager(avatarUrl = '') {
+function profileManager(avatarUrl = '', bannerUrl = '') {
     return {
         tab: 'identity',
         avatarPreview: avatarUrl || null,
+        bannerPreview: bannerUrl || null,
         passwordValue: '',
         strength: { percent: 0, color: 'bg-gray-200', textColor: 'text-gray-400', label: '' },
         tabs: {
@@ -487,6 +496,14 @@ function profileManager(avatarUrl = '') {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (ev) => this.avatarPreview = ev.target.result;
+                reader.readAsDataURL(file);
+            }
+        },
+        previewBanner(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => this.bannerPreview = ev.target.result;
                 reader.readAsDataURL(file);
             }
         },

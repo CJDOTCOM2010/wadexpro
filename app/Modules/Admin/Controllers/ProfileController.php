@@ -33,6 +33,7 @@ class ProfileController extends Controller
             'first_name' => 'nullable|string|max:60',
             'last_name'  => 'nullable|string|max:60',
             'avatar'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'banner'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
         // Handle avatar upload
@@ -44,7 +45,17 @@ class ProfileController extends Controller
             $validated['avatar_url'] = '/storage/' . $path;
         }
 
+        // Handle banner upload
+        if ($request->hasFile('banner')) {
+            if ($admin->banner_url && !str_starts_with($admin->banner_url, 'http')) {
+                Storage::disk('public')->delete(ltrim($admin->banner_url, '/storage/'));
+            }
+            $path = $request->file('banner')->store('admin/banners', 'public');
+            $validated['banner_url'] = '/storage/' . $path;
+        }
+
         unset($validated['avatar']);
+        unset($validated['banner']);
         $admin->update($validated);
 
         return back()->with('success', 'Profile updated successfully.');

@@ -299,21 +299,34 @@
                 </div>
             </div>
             <div class="space-y-4">
+                @php
+                    $regionColors = [
+                        ['bg' => 'bg-blue-50', 'text' => 'text-blue-600', 'bar' => 'bg-blue-500', 'border' => 'border-blue-100'],
+                        ['bg' => 'bg-purple-50', 'text' => 'text-purple-600', 'bar' => 'bg-purple-500', 'border' => 'border-purple-100'],
+                        ['bg' => 'bg-green-50', 'text' => 'text-green-600', 'bar' => 'bg-green-500', 'border' => 'border-green-100'],
+                        ['bg' => 'bg-amber-50', 'text' => 'text-amber-600', 'bar' => 'bg-amber-500', 'border' => 'border-amber-100'],
+                        ['bg' => 'bg-rose-50', 'text' => 'text-rose-600', 'bar' => 'bg-rose-500', 'border' => 'border-rose-100'],
+                        ['bg' => 'bg-teal-50', 'text' => 'text-teal-600', 'bar' => 'bg-teal-500', 'border' => 'border-teal-100'],
+                    ];
+                @endphp
                 @foreach($regionStats as $region)
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-surface rounded-xl flex items-center justify-center text-brand font-bold text-xs">
-                        {{ substr($region['region'], 0, 2) }}
+                @php $color = $regionColors[$loop->index % count($regionColors)]; @endphp
+                <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-surface transition-colors group">
+                    <div class="w-10 h-10 {{ $color['bg'] }} rounded-xl flex items-center justify-center {{ $color['text'] }} font-black text-sm border {{ $color['border'] }} shadow-sm group-hover:scale-105 transition-transform">
+                        {{ strtoupper(substr($region['region'], 0, 2)) }}
                     </div>
                     <div class="flex-1">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-bold text-brand">{{ $region['region'] }}</span>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-sm font-bold text-brand group-hover:text-accent transition-colors">{{ $region['region'] }}</span>
                             <span class="text-xs font-bold text-brand-muted">{{ $region['rides'] }} rides</span>
                         </div>
-                        <div class="h-2 bg-surface rounded-full overflow-hidden">
-                            <div class="h-full bg-brand rounded-full" style="width: {{ ($region['rides'] / 500) * 100 }}%"></div>
+                        <div class="h-2 bg-surface rounded-full overflow-hidden shadow-inner">
+                            <div class="h-full {{ $color['bar'] }} rounded-full relative" style="width: {{ min(100, ($region['rides'] / max(1, 500)) * 100) }}%">
+                                <div class="absolute inset-0 bg-white/20"></div>
+                            </div>
                         </div>
                     </div>
-                    <span class="text-xs font-bold text-green-600">₵{{ number_format($region['revenue']) }}</span>
+                    <span class="text-xs font-black {{ $color['text'] }}">₵{{ number_format($region['revenue']) }}</span>
                 </div>
                 @endforeach
             </div>

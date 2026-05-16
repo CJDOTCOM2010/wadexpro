@@ -31,12 +31,24 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
     {{-- Top Toolbar --}}
     <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white shrink-0 gap-4 overflow-x-auto">
         <div class="flex items-center gap-2 shrink-0">
-            <!-- Upload -->
-            <button @click="showUpload = true" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                Upload
-                <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </button>
+            <!-- Upload Dropdown -->
+            <div class="relative" x-data="{ uploadOpen: false }">
+                <button @click="uploadOpen = !uploadOpen" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    Upload
+                    <svg class="w-3 h-3 ml-1" :class="uploadOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div x-show="uploadOpen" @click.outside="uploadOpen = false" x-cloak class="absolute right-0 mt-1 w-52 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                    <button @click="uploadOpen = false; showUpload = true" class="flex items-center gap-3 w-full px-3 py-2.5 text-xs font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors">
+                        <svg class="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 9l5-5 5 5M12 4v12"/></svg>
+                        Upload from local
+                    </button>
+                    <button @click="uploadOpen = false; showUrlUpload = true" class="flex items-center gap-3 w-full px-3 py-2.5 text-xs font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors">
+                        <svg class="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15l6-6M11 6l.463-.536a5 5 0 017.071 7.072l-.534.464M13 18l-.397.534a5.068 5.068 0 01-7.127 0 4.972 4.972 0 010-7.071l.524-.463"/></svg>
+                        Upload from URL
+                    </button>
+                </div>
+            </div>
             
             <!-- New Folder -->
             <button @click="showFolder = true" class="p-1.5 bg-brand text-white rounded hover:bg-brand-light transition-colors shadow-sm" title="New Folder">
@@ -479,6 +491,41 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div>
     </div>
 
+    {{-- URL Upload Modal --}}
+    <div x-show="showUrlUpload" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showUrlUpload = false"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg relative z-10" @click.outside="showUrlUpload = false">
+            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-accent/10 rounded-lg flex items-center justify-center text-accent">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15l6-6M11 6l.463-.536a5 5 0 017.071 7.072l-.534.464M13 18l-.397.534a5.068 5.068 0 01-7.127 0 4.972 4.972 0 010-7.071l.524-.463"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-brand">Upload from URL</h3>
+                        <p class="text-xs text-brand-muted">Download files from external URLs to your media library.</p>
+                    </div>
+                </div>
+                <button @click="showUrlUpload = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form action="{{ route('orchestrator.settings.assets.upload') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+                @csrf
+                <input type="hidden" name="path" value="{{ $currentPath }}">
+                <input type="hidden" name="disk" value="{{ $currentDisk }}">
+                <div>
+                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">Image URLs</label>
+                    <textarea name="urls" rows="4" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow resize-none"></textarea>
+                    <p class="text-[10px] text-brand-muted mt-1">Enter one URL per line. Supported: jpg, png, gif, svg, webp</p>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
+                    <button type="button" @click="showUrlUpload = false" class="px-4 py-2 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Download</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     {{-- Create Folder Modal --}}
     <div x-show="showFolder" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showFolder = false"></div>
@@ -708,7 +755,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
 function mediaManager() {
     return {
         viewMode: 'grid', viewFilter: 'all', viewFilterLabel: 'All media', fileFilter: 'all', filterLabel: 'Everything',
-        showUpload: false, showFolder: false, sidebarOpen: true,
+        showUpload: false, showUrlUpload: false, showFolder: false, sidebarOpen: true,
         search: '', sortBy: 'name',
         selectedFile: { name: '', path: '', url: '', size: '', type: '', isImage: false },
         showRename: false, renameOldPath: '', renameNewName: '',

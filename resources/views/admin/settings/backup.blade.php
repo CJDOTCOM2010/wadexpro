@@ -1,258 +1,291 @@
 @extends('admin.layout')
-@section('title', 'System Resilience & Backups')
+@section('title', 'System Backups')
 @section('content')
 
-<div class="p-8 lg:p-12 max-w-[1600px] mx-auto" x-data="{ createModal: false, deleteModal: false, selectedBackup: null }">
+@php
+$totalSize = 0;
+$backupCount = count($backups);
+foreach ($backups as $b) {
+    $size = preg_replace('/[^0-9.]/', '', $b['file_size'] ?? '0');
+    $unit = preg_replace('/[0-9. ]/', '', $b['file_size'] ?? 'B');
+    $mult = ['B' => 1, 'KB' => 1024, 'MB' => 1048576, 'GB' => 1073741824, 'TB' => 1099511627776];
+    $totalSize += $size * ($mult[$unit] ?? 1);
+}
+$totalSizeFormatted = '';
+foreach (['TB' => 1099511627776, 'GB' => 1073741824, 'MB' => 1048576, 'KB' => 1024] as $u => $m) {
+    if ($totalSize >= $m) { $totalSizeFormatted = round($totalSize / $m, 2) . ' ' . $u; break; }
+}
+if (!$totalSizeFormatted) $totalSizeFormatted = round($totalSize, 0) . ' B';
+$storagePercent = min(round(($totalSize / 10737418240) * 100), 100); // assume 10GB max
+@endphp
+
+<div class="max-w-6xl mx-auto" x-data="backupManager()">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-            <div class="flex items-center gap-2 text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2">
+            <div class="flex items-center gap-2 text-[10px] font-bold text-accent uppercase tracking-wider mb-1">
                 <a href="{{ route('orchestrator.settings') }}" class="hover:text-brand transition-colors">Settings Hub</a>
                 <span class="text-gray-300">/</span>
-                <span>Data Resilience</span>
+                <span>Backups</span>
             </div>
-            <h2 class="text-3xl font-black text-brand tracking-tight">System Backup Registry</h2>
-            <p class="text-sm text-brand-muted font-medium mt-1">High-integrity data snapshots and automated restoration nodes.</p>
+            <h2 class="text-2xl font-black text-brand tracking-tight">System Backups</h2>
+            <p class="text-sm text-brand-muted font-medium mt-0.5">Manage data snapshots, backups, and restoration points.</p>
         </div>
-        
-        <div class="flex items-center gap-3">
-            <button @click="createModal = true" class="bg-brand text-white px-8 py-4 rounded-xl text-xs font-black shadow-xl hover:shadow-brand/20 hover:-translate-y-0.5 transition-all flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Generate Snapshot
+        <div class="flex items-center gap-2">
+            <button @click="showCreate = true" class="bg-brand text-white px-5 py-2.5 rounded-lg text-xs font-bold hover:bg-brand-light transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                New Backup
             </button>
             <form action="{{ route('orchestrator.settings.backups.clean') }}" method="POST" class="inline">
                 @csrf
-                <button type="submit" class="bg-white border border-gray-100 text-brand-muted hover:bg-gray-50 px-6 py-4 rounded-xl text-xs font-black shadow-sm transition-all flex items-center gap-2">
+                <button type="submit" class="bg-white border border-gray-200 text-brand-muted hover:text-brand hover:border-gray-300 px-5 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                    Clean Old Backups
+                    Clean Old
                 </button>
             </form>
         </div>
     </div>
 
     @if(session('success'))
-    <div class="mb-8 p-4 bg-green-50 border border-green-100 text-green-600 rounded-lg flex items-center gap-3 animate-fade-in">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        <span class="text-xs font-bold">{{ session('success') }}</span>
+    <div class="mb-6 p-3.5 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2.5">
+        <svg class="w-4 h-4 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
     </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
-        <!-- Left: Resilience Stats -->
-        <div class="lg:col-span-1 space-y-8">
-            <div class="bg-brand rounded-3xl p-8 text-white relative overflow-hidden group shadow-2xl">
-                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
-                <div class="relative z-10">
-                    <p class="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-4">System Health Status</p>
-                    <div class="flex items-center gap-4 mb-8">
-                        <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-black">Encrypted</h4>
-                            <p class="text-[10px] font-bold text-white/50 uppercase tracking-widest leading-none">Resilience Level: High</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between text-[10px] font-black text-white/40 uppercase mb-2">
-                                <span>Recent Snapshots</span>
-                                <span>{{ count($backups) }} Total</span>
-                            </div>
-                            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                                <div class="h-full bg-accent rounded-full transition-all duration-1000" style="width: {{ min(count($backups) * 10, 100) }}%"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
-                            <p class="text-[10px] font-bold text-white/60 mb-1">Last Sync Check</p>
-                            <p class="text-xs font-black">{{ count($backups) > 0 ? $backups[0]['age'] : 'Never' }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    @if(session('error'))
+    <div class="mb-6 p-3.5 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2.5">
+        <svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
+    </div>
+    @endif
 
-            <!-- Auto-Backup Config -->
-            <div class="bg-white rounded-3xl border border-gray-50 shadow-xl p-8">
-                <h3 class="text-sm font-black text-brand mb-6 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Scheduled Maintenance
-                </h3>
-                <p class="text-[11px] text-brand-muted font-bold leading-relaxed mb-6">Automated snapshots are performed daily at <span class="text-brand">01:00 AM</span> server time.</p>
-                
-                <div class="space-y-4">
-                    <div class="flex items-center gap-3 p-4 bg-surface rounded-xl">
-                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <div>
-                            <p class="text-[10px] font-black text-brand uppercase">Database Node</p>
-                            <p class="text-[9px] font-bold text-brand-muted">Real-time sync enabled</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3 p-4 bg-surface rounded-xl">
-                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <div>
-                            <p class="text-[10px] font-black text-brand uppercase">File Integrity</p>
-                            <p class="text-[9px] font-bold text-brand-muted">Checksum validation active</p>
-                        </div>
-                    </div>
+    <!-- Stats Row -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white border border-gray-100 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-1">
+                <div class="w-8 h-8 bg-brand/5 rounded-lg flex items-center justify-center text-brand">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
                 </div>
+                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Snapshots</span>
             </div>
+            <p class="text-2xl font-black text-brand mt-1">{{ $backupCount }}</p>
+            <p class="text-[11px] text-brand-muted">total in vault</p>
         </div>
-
-        <!-- Right: Backup History -->
-        <div class="lg:col-span-3">
-            <div class="bg-white rounded-3xl border border-gray-50 shadow-2xl overflow-hidden min-h-[600px]">
-                <div class="p-8 border-b border-gray-50 flex items-center justify-between bg-surface/50">
-                    <h3 class="text-lg font-black text-brand">Snapshot History</h3>
-                    <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-100 shadow-sm">
-                        <svg class="w-4 h-4 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        <input type="text" placeholder="Filter history..." class="text-[11px] font-bold bg-transparent outline-none border-none p-0 w-32">
-                    </div>
+        <div class="bg-white border border-gray-100 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-1">
+                <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center text-green-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 </div>
-
-                @if(empty($backups))
-                <div class="flex flex-col items-center justify-center py-32 opacity-20">
-                    <svg class="w-24 h-24 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
-                    <p class="text-sm font-black uppercase tracking-widest">No snapshots found in system vault</p>
-                </div>
-                @else
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-surface/30">
-                                <th class="text-left px-8 py-5 text-[10px] font-black text-brand-muted uppercase tracking-widest border-b border-gray-50">Timestamp</th>
-                                <th class="text-left px-8 py-5 text-[10px] font-black text-brand-muted uppercase tracking-widest border-b border-gray-50">Payload Size</th>
-                                <th class="text-left px-8 py-5 text-[10px] font-black text-brand-muted uppercase tracking-widest border-b border-gray-50">Age</th>
-                                <th class="text-right px-8 py-5 text-[10px] font-black text-brand-muted uppercase tracking-widest border-b border-gray-50">Protocols</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-50">
-                            @foreach($backups as $backup)
-                            <tr class="hover:bg-surface/50 transition-colors group">
-                                <td class="px-8 py-6">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-brand/5 rounded-xl flex items-center justify-center text-brand">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs font-black text-brand">{{ $backup['file_name'] }}</p>
-                                            <p class="text-[10px] font-bold text-brand-muted">{{ $backup['last_modified'] }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-6">
-                                    <span class="px-3 py-1 bg-surface text-brand text-[10px] font-black rounded-lg border border-gray-100">{{ $backup['file_size'] }}</span>
-                                </td>
-                                <td class="px-8 py-6">
-                                    <span class="text-[11px] font-bold text-brand-muted italic">{{ $backup['age'] }}</span>
-                                </td>
-                                <td class="px-8 py-6 text-right">
-                                    <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0 transition-transform duration-300">
-                                        <a href="{{ route('orchestrator.settings.backups.download', $backup['file_name']) }}" class="w-10 h-10 bg-brand text-white rounded-xl flex items-center justify-center hover:bg-accent hover:text-brand transition-all shadow-lg shadow-brand/10">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                                        </a>
-                                        <button @click="selectedBackup = @js($backup); deleteModal = true" class="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-lg shadow-red-100">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @endif
+                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Storage</span>
             </div>
+            <p class="text-2xl font-black text-brand mt-1">{{ $totalSizeFormatted }}</p>
+            <p class="text-[11px] text-brand-muted">total consumed</p>
+        </div>
+        <div class="bg-white border border-gray-100 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-1">
+                <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Latest</span>
+            </div>
+            <p class="text-base font-black text-brand mt-1 truncate">{{ $backups[0]['age'] ?? 'N/A' }}</p>
+            <p class="text-[11px] text-brand-muted">last snapshot</p>
+        </div>
+        <div class="bg-white border border-gray-100 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-1">
+                <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Schedule</span>
+            </div>
+            <p class="text-base font-black text-brand mt-1">Daily</p>
+            <p class="text-[11px] text-brand-muted">01:00 AM server time</p>
         </div>
     </div>
 
-    <!-- Create Modal -->
-    <div x-show="createModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-6">
-        <div class="absolute inset-0 bg-brand/60 backdrop-blur-sm" @click="createModal = false"></div>
-        <div class="bg-white rounded-3xl w-full max-w-xl relative z-10 shadow-2xl overflow-hidden animate-fade-in-up">
-            <div class="p-8 border-b border-gray-50">
-                <h3 class="text-xl font-black text-brand">System Integrity Protocol</h3>
-                <p class="text-xs text-brand-muted font-medium mt-1">Select the capture scope for this snapshot.</p>
+    <!-- Storage Usage Bar -->
+    <div class="bg-white border border-gray-100 rounded-xl p-5 mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-brand">Storage Usage</span>
+            <span class="text-[11px] font-bold text-brand-muted">{{ $totalSizeFormatted }} / 10 GB</span>
+        </div>
+        <div class="h-2.5 bg-surface rounded-full overflow-hidden">
+            <div class="h-full bg-brand rounded-full transition-all" style="width: {{ $storagePercent }}%"></div>
+        </div>
+        <div class="flex justify-between mt-2 text-[10px] font-bold text-brand-muted">
+            <span>{{ $backupCount }} snapshots</span>
+            <span>{{ $storagePercent }}% utilized</span>
+        </div>
+    </div>
+
+    <!-- Backup Table -->
+    <div class="bg-white border border-gray-100 rounded-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+            <h3 class="text-sm font-bold text-brand">Snapshot History</h3>
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-surface rounded-lg border border-gray-100">
+                <svg class="w-3.5 h-3.5 text-brand-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" x-model="search" placeholder="Filter..." class="text-xs bg-transparent outline-none border-none p-0 w-24 text-brand placeholder:text-brand-muted">
             </div>
-            <form action="{{ route('orchestrator.settings.backups.create') }}" method="POST" class="p-8 space-y-6">
+        </div>
+
+        @if(empty($backups))
+        <div class="flex flex-col items-center justify-center py-20 text-brand-muted">
+            <svg class="w-16 h-16 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+            <p class="text-sm font-bold">No backups yet</p>
+            <p class="text-xs mt-1">Create your first backup snapshot to appear here</p>
+            <button @click="showCreate = true" class="mt-4 px-4 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors flex items-center gap-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Create Backup
+            </button>
+        </div>
+        @else
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-surface/50">
+                        <th class="text-left px-5 py-3.5 text-[10px] font-bold text-brand-muted uppercase tracking-wider">File</th>
+                        <th class="text-left px-5 py-3.5 text-[10px] font-bold text-brand-muted uppercase tracking-wider">Size</th>
+                        <th class="text-left px-5 py-3.5 text-[10px] font-bold text-brand-muted uppercase tracking-wider">Created</th>
+                        <th class="text-left px-5 py-3.5 text-[10px] font-bold text-brand-muted uppercase tracking-wider">Age</th>
+                        <th class="text-right px-5 py-3.5 text-[10px] font-bold text-brand-muted uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @foreach($backups as $backup)
+                    <tr class="hover:bg-surface/30 transition-colors">
+                        <td class="px-5 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 bg-brand/5 rounded-lg flex items-center justify-center text-brand shrink-0">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-brand truncate max-w-[200px]">{{ $backup['file_name'] }}</p>
+                                    <p class="text-[10px] text-brand-muted">{{ $backup['last_modified'] }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-5 py-4">
+                            <span class="px-2.5 py-1 bg-surface text-[10px] font-bold text-brand rounded-lg">{{ $backup['file_size'] }}</span>
+                        </td>
+                        <td class="px-5 py-4 text-xs text-brand-muted">{{ $backup['last_modified'] }}</td>
+                        <td class="px-5 py-4">
+                            <span class="text-xs font-bold text-brand">{{ $backup['age'] }}</span>
+                        </td>
+                        <td class="px-5 py-4 text-right">
+                            <div class="flex items-center justify-end gap-1.5">
+                                <a href="{{ route('orchestrator.settings.backups.download', $backup['file_name']) }}" class="w-8 h-8 bg-brand text-white rounded-lg flex items-center justify-center hover:bg-accent hover:text-brand transition-colors" title="Download">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                </a>
+                                <button @click="confirmDelete('{{ $backup['file_name'] }}')" class="w-8 h-8 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors" title="Delete">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @endif
+    </div>
+
+    <!-- Create Backup Modal -->
+    <div x-show="showCreate" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-brand/40 backdrop-blur-sm" @click="showCreate = false"></div>
+        <div class="bg-white rounded-xl w-full max-w-lg relative z-10 shadow-2xl" @click.outside="showCreate = false">
+            <div class="px-6 py-5 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-brand">New Backup</h3>
+                        <p class="text-xs text-brand-muted mt-0.5">Select what to include in this snapshot.</p>
+                    </div>
+                    <button @click="showCreate = false" class="w-8 h-8 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+            <form action="{{ route('orchestrator.settings.backups.create') }}" method="POST" class="p-6">
                 @csrf
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <label class="relative cursor-pointer group">
+                <div class="grid grid-cols-3 gap-3 mb-6">
+                    <label class="cursor-pointer">
                         <input type="radio" name="option" value="all" checked class="peer sr-only">
-                        <div class="p-6 bg-surface border-2 border-transparent peer-checked:border-brand peer-checked:bg-brand/5 rounded-2xl transition-all h-full">
-                            <svg class="w-8 h-8 text-brand mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                            <h4 class="text-xs font-black text-brand uppercase">Full System</h4>
-                            <p class="text-[9px] font-bold text-brand-muted mt-1 leading-tight">Database & all assets included.</p>
+                        <div class="p-4 bg-surface border-2 border-transparent peer-checked:border-brand peer-checked:bg-brand/5 rounded-lg text-center h-full transition-colors">
+                            <svg class="w-7 h-7 text-brand mb-2 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                            <p class="text-xs font-bold text-brand">Full System</p>
+                            <p class="text-[9px] text-brand-muted mt-0.5">DB + files</p>
                         </div>
                     </label>
-                    <label class="relative cursor-pointer group">
+                    <label class="cursor-pointer">
                         <input type="radio" name="option" value="only-db" class="peer sr-only">
-                        <div class="p-6 bg-surface border-2 border-transparent peer-checked:border-brand peer-checked:bg-brand/5 rounded-2xl transition-all h-full">
-                            <svg class="w-8 h-8 text-accent mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
-                            <h4 class="text-xs font-black text-brand uppercase">Database</h4>
-                            <p class="text-[9px] font-bold text-brand-muted mt-1 leading-tight">High-speed SQL dump only.</p>
+                        <div class="p-4 bg-surface border-2 border-transparent peer-checked:border-brand peer-checked:bg-brand/5 rounded-lg text-center h-full transition-colors">
+                            <svg class="w-7 h-7 text-accent mb-2 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                            <p class="text-xs font-bold text-brand">Database</p>
+                            <p class="text-[9px] text-brand-muted mt-0.5">SQL dump</p>
                         </div>
                     </label>
-                    <label class="relative cursor-pointer group">
+                    <label class="cursor-pointer">
                         <input type="radio" name="option" value="only-files" class="peer sr-only">
-                        <div class="p-6 bg-surface border-2 border-transparent peer-checked:border-brand peer-checked:bg-brand/5 rounded-2xl transition-all h-full">
-                            <svg class="w-8 h-8 text-blue-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-                            <h4 class="text-xs font-black text-brand uppercase">Media Vault</h4>
-                            <p class="text-[9px] font-bold text-brand-muted mt-1 leading-tight">Files and assets only.</p>
+                        <div class="p-4 bg-surface border-2 border-transparent peer-checked:border-brand peer-checked:bg-brand/5 rounded-lg text-center h-full transition-colors">
+                            <svg class="w-7 h-7 text-blue-500 mb-2 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                            <p class="text-xs font-bold text-brand">Media Vault</p>
+                            <p class="text-[9px] text-brand-muted mt-0.5">Files only</p>
                         </div>
                     </label>
                 </div>
-
-                <div class="p-4 bg-accent/10 border border-accent/20 rounded-xl">
-                    <p class="text-[10px] font-black text-brand uppercase mb-1 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Operational Warning
+                <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-lg mb-6">
+                    <p class="text-[10px] font-bold text-amber-800 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Performance may slightly degrade during full snapshots. The process runs asynchronously.
                     </p>
-                    <p class="text-[9px] font-bold text-brand-muted leading-relaxed">System performance may slightly degrade during full snapshot cycles. The process will run asynchronously.</p>
                 </div>
-
-                <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" @click="createModal = false" class="px-6 py-3 text-xs font-black text-brand-muted hover:text-brand transition-colors uppercase">Cancel</button>
-                    <button type="submit" class="px-8 py-4 bg-brand text-white text-xs font-black rounded-2xl shadow-xl shadow-brand/10 hover:shadow-brand/30 transition-all uppercase flex items-center gap-3">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        Execute Protocol
+                <div class="flex justify-end gap-2">
+                    <button type="button" @click="showCreate = false" class="px-5 py-2.5 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors flex items-center gap-2">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        Start Backup
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Delete Modal -->
-    <div x-show="deleteModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-6">
-        <div class="absolute inset-0 bg-brand/60 backdrop-blur-sm" @click="deleteModal = false"></div>
-        <div class="bg-white rounded-3xl w-full max-w-md relative z-10 shadow-2xl overflow-hidden animate-fade-in-up p-8 text-center">
-            <div class="w-20 h-20 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    <!-- Delete Confirm Modal -->
+    <div x-show="showDelete" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-brand/40 backdrop-blur-sm" @click="showDelete = false"></div>
+        <div class="bg-white rounded-xl w-full max-w-sm relative z-10 shadow-2xl p-6 text-center" @click.outside="showDelete = false">
+            <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </div>
-            <h3 class="text-xl font-black text-brand mb-2">Purge Snapshot?</h3>
-            <p class="text-xs text-brand-muted font-medium mb-8">This action is irreversible. The backup <span class="text-brand font-black" x-text="selectedBackup?.file_name"></span> will be permanently deleted from the vault.</p>
-            
-            <form :action="'{{ route('orchestrator.settings.backups.delete', ['file' => 'FILE_NAME']) }}'.replace('FILE_NAME', selectedBackup?.file_name)" method="POST">
+            <h3 class="text-lg font-bold text-brand mb-1">Delete Backup?</h3>
+            <p class="text-xs text-brand-muted mb-6">This action is irreversible. <span class="font-bold text-brand" x-text="deletingFile"></span> will be permanently deleted.</p>
+            <form method="POST" :action="deleteUrl">
                 @csrf
                 @method('DELETE')
-                <div class="flex items-center gap-3">
-                    <button type="button" @click="deleteModal = false" class="flex-1 py-4 bg-surface text-brand-muted text-xs font-black rounded-xl hover:bg-gray-100 transition-all uppercase">Cancel</button>
-                    <button type="submit" class="flex-1 py-4 bg-red-600 text-white text-xs font-black rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 transition-all uppercase">Confirm Purge</button>
+                <div class="flex gap-2">
+                    <button type="button" @click="showDelete = false" class="flex-1 px-4 py-2.5 bg-surface text-brand-muted rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors">Cancel</button>
+                    <button type="submit" class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700 transition-colors">Delete</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<style>
-    @keyframes fade-in-up {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in-up {
-        animation: fade-in-up 0.3s ease-out forwards;
-    }
-</style>
+<script>
+function backupManager() {
+    return {
+        showCreate: false,
+        showDelete: false,
+        deletingFile: '',
+        deleteUrl: '',
+        search: '',
+        confirmDelete(file) {
+            this.deletingFile = file;
+            this.deleteUrl = '{{ route('orchestrator.settings.backups.delete', ['file' => '__FILE__']) }}'.replace('__FILE__', file);
+            this.showDelete = true;
+        }
+    };
+}
+</script>
 
 @endsection

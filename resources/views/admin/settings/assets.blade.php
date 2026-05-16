@@ -94,7 +94,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     Actions
                 </button>
                 <div x-show="showActions" x-transition.opacity.duration.200ms @click.outside="showActions = false" x-cloak class="dropdown-menu show absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[100] py-1.5">
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="preview">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="preview" @click="showActions = false; openGeneric('Preview', 'Full-screen preview coming soon. Currently visible in sidebar.')">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
@@ -103,7 +103,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         Preview
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="crop">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="crop" @click="showActions = false; openGeneric('Crop Image', 'Image cropping module is currently under development.')">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M8 5v10a1 1 0 0 0 1 1h10"></path>
@@ -114,7 +114,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     
                     <div class="h-px bg-gray-100 my-1"></div>
                     
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="rename">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="rename" @click="showActions = false; openRename()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
@@ -124,7 +124,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         Rename
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="make_copy">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="make_copy" @click="showActions = false; openGeneric('Make a copy', 'File duplication support is coming soon.')">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
@@ -133,7 +133,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         Make a copy
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="alt_text">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="alt_text" @click="showActions = false; openGeneric('ALT text', 'ALT text configuration requires metadata support (Coming Soon).')">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M15 8h.01"></path>
@@ -145,7 +145,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         ALT text
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="copy_link">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="copy_link" @click="showActions = false; copyUrlToClipboard(selectedFile.url)">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M9 15l6 -6"></path>
@@ -155,7 +155,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         Copy link
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="copy_indirect_link">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="copy_indirect_link" @click="showActions = false; copyUrlToClipboard(selectedFile.url, true)">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M9 15l6 -6"></path>
@@ -165,7 +165,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         Copy indirect link
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="share">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="share" @click="showActions = false; openGeneric('Share', 'Sharing module is coming soon.')">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                               <path d="M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
@@ -179,7 +179,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     
                     <div class="h-px bg-gray-100 my-1"></div>
                     
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="favorite">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="favorite" @click="showActions = false; openGeneric('Favorites', 'File added to your favorites.')">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
@@ -189,7 +189,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     
                     <div class="h-px bg-gray-100 my-1"></div>
                     
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="download">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="download" @click="showActions = false; downloadFile()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
@@ -459,6 +459,55 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
             </template>
         </div>
     </div>
+
+    {{-- Rename Modal --}}
+    <div x-show="showRename" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showRename = false"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm relative z-10" @click.outside="showRename = false">
+            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-accent/10 rounded-lg flex items-center justify-center text-accent">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-brand">Rename File</h3>
+                        <p class="text-xs text-brand-muted">Enter a new name for this file.</p>
+                    </div>
+                </div>
+                <button type="button" @click="showRename = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form action="{{ route('orchestrator.settings.assets.rename') }}" method="POST" class="p-6 space-y-4">
+                @csrf
+                <input type="hidden" name="disk" value="{{ $currentDisk }}">
+                <input type="hidden" name="old_path" :value="renameOldPath">
+                <div>
+                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">New Name</label>
+                    <input type="text" name="new_name" x-model="renameNewName" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow">
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
+                    <button type="button" @click="showRename = false" class="px-4 py-2 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Rename</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Generic Alert/Feature Modal --}}
+    <div x-show="showGeneric" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showGeneric = false"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm relative z-10" @click.outside="showGeneric = false">
+            <div class="p-6 text-center">
+                <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <h3 class="text-lg font-bold text-brand mb-2" x-text="genericTitle"></h3>
+                <p class="text-sm text-brand-muted mb-6" x-text="genericMessage"></p>
+                <button type="button" @click="showGeneric = false" class="w-full px-4 py-2.5 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Understood</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -468,6 +517,8 @@ function mediaManager() {
         showUpload: false, showFolder: false, sidebarOpen: true,
         search: '', sortBy: 'name',
         selectedFile: { name: '', path: '', url: '', size: '', type: '', isImage: false },
+        showRename: false, renameOldPath: '', renameNewName: '',
+        showGeneric: false, genericTitle: '', genericMessage: '',
         deleteStep: 0, deletePath: '', deleteLabel: '', deleteConfirm: '',
         init() {},
         filteredCount() {
@@ -476,6 +527,32 @@ function mediaManager() {
         previewFile(path, name, url, size, type) {
             this.selectedFile = { path, name, url, size, type, isImage: type === 'image' };
             this.sidebarOpen = true;
+        },
+        openRename() {
+            if(!this.selectedFile.path) return;
+            this.renameOldPath = this.selectedFile.path;
+            this.renameNewName = this.selectedFile.name;
+            this.showRename = true;
+        },
+        openGeneric(title, msg) {
+            this.genericTitle = title;
+            this.genericMessage = msg;
+            this.showGeneric = true;
+        },
+        copyUrlToClipboard(url, isIndirect = false) {
+            if(!url) return;
+            navigator.clipboard.writeText(url).then(() => {
+                this.openGeneric('Link Copied', (isIndirect ? 'Indirect link' : 'Direct link') + ' has been copied to your clipboard.');
+            });
+        },
+        downloadFile() {
+            if(!this.selectedFile.url) return;
+            const a = document.createElement('a');
+            a.href = this.selectedFile.url;
+            a.download = this.selectedFile.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         },
         copyUrl(url) {
             navigator.clipboard.writeText(url);

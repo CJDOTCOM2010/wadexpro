@@ -79,6 +79,30 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div>
         
         <div class="flex items-center gap-3">
+            <div class="relative" x-data="{ viewOpen: false }">
+                <button @click="viewOpen = !viewOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
+                    <span x-text="viewFilterLabel"></span>
+                </button>
+                <div x-show="viewOpen" @click.outside="viewOpen = false" x-cloak class="absolute right-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                    <button @click="viewFilter = 'all'; viewFilterLabel = 'All media'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
+                        All media
+                    </button>
+                    <button @click="viewFilter = 'trash'; viewFilterLabel = 'Trash'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'trash' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7l16 0M10 11l0 6M14 11l0 6M5 7l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M9 7v-3a1 1 0 011-1h4a1 1 0 011 1v3"/></svg>
+                        Trash
+                    </button>
+                    <button @click="viewFilter = 'recent'; viewFilterLabel = 'Recent'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'recent' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M12 7v5l3 3"/></svg>
+                        Recent
+                    </button>
+                    <button @click="viewFilter = 'favorites'; viewFilterLabel = 'Favorites'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'favorites' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17.75l-6.172 3.245 1.179-6.873-5-4.867 6.9-1 3.086-6.253 3.086 6.253 6.9 1-5 4.867 1.179 6.873z"/></svg>
+                        Favorites
+                    </button>
+                </div>
+            </div>
             <div class="relative" x-data="{ sortOpen: false }">
                 <button @click="sortOpen = !sortOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h14M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
@@ -659,7 +683,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
 <script>
 function mediaManager() {
     return {
-        viewMode: 'grid',
+        viewMode: 'grid', viewFilter: 'all', viewFilterLabel: 'All media',
         showUpload: false, showFolder: false, sidebarOpen: true,
         search: '', sortBy: 'name',
         selectedFile: { name: '', path: '', url: '', size: '', type: '', isImage: false },

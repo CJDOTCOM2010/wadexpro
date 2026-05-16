@@ -318,24 +318,24 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
             <div x-show="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
                 {{-- Up one level --}}
                 @if($currentPath)
-                <a href="{{ route('orchestrator.settings.assets', ['disk' => $currentDisk, 'path' => dirname($currentPath) === '.' ? '' : dirname($currentPath)]) }}" class="flex flex-col bg-[#F8F9FA] hover:bg-[#F1F3F5] transition-colors cursor-pointer overflow-hidden h-32 relative border border-gray-100 rounded">
-                    <div class="flex-1 flex items-center justify-center p-4">
+                <a href="{{ route('orchestrator.settings.assets', ['disk' => $currentDisk, 'path' => dirname($currentPath) === '.' ? '' : dirname($currentPath)]) }}" class="flex flex-col bg-white hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer border border-gray-100 rounded group">
+                    <div class="aspect-square flex items-center justify-center bg-[#F8F9FA]">
                         <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     </div>
-                    <div class="h-7 bg-[#E9ECEF] flex items-center justify-center px-2">
-                        <span class="text-xs font-medium text-gray-600">..</span>
+                    <div class="px-1.5 py-1 border-t border-gray-100 bg-white min-w-0">
+                        <p class="text-[11px] text-gray-500 truncate text-center">..</p>
                     </div>
                 </a>
                 @endif
 
                 {{-- Folders --}}
                 @foreach($allDirs as $dir)
-                <a href="{{ route('orchestrator.settings.assets', ['disk' => $currentDisk, 'path' => $dir['path']]) }}" class="flex flex-col bg-[#F8F9FA] hover:bg-[#F1F3F5] transition-colors cursor-pointer overflow-hidden h-32 relative border border-gray-100 rounded">
-                    <div class="flex-1 flex items-center justify-center p-4">
+                <a href="{{ route('orchestrator.settings.assets', ['disk' => $currentDisk, 'path' => $dir['path']]) }}" class="flex flex-col bg-white hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer border border-gray-100 rounded group">
+                    <div class="aspect-square flex items-center justify-center bg-[#F8F9FA]">
                         <svg class="w-10 h-10 text-[#1e293b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                     </div>
-                    <div class="h-7 bg-[#F1F3F5] flex items-center justify-center px-2">
-                        <span class="text-xs font-medium text-gray-600 truncate text-center w-full">{{ $dir['name'] }}</span>
+                    <div class="px-1.5 py-1 border-t border-gray-100 bg-white min-w-0">
+                        <p class="text-[11px] text-gray-600 truncate" title="{{ $dir['name'] }}">{{ $dir['name'] }}</p>
                     </div>
                 </a>
                 @endforeach
@@ -343,13 +343,16 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                 {{-- Files --}}
                 @foreach($allFiles as $file)
                 @php $ext = strtolower($file['extension'] ?? ''); $isImg = in_array($ext, $imageExts); @endphp
-                <div x-show="matchesFilter('{{ $file['name'] }}', '{{ $ext }}')" class="flex flex-col bg-[#F8F9FA] hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer overflow-hidden h-32 relative border border-gray-100 rounded group" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}', '{{ $file['last_modified'] ?? '' }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'ring-2 ring-blue-500 ring-offset-1'">
-                    <div class="flex-1 flex items-center justify-center p-0 w-full h-full overflow-hidden">
+                <div x-show="matchesFilter('{{ $file['name'] }}', '{{ $ext }}')" class="flex flex-col bg-white hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer border border-gray-100 rounded group" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}', '{{ $file['last_modified'] ?? '' }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'ring-2 ring-blue-500 ring-offset-1'">
+                    <div class="aspect-square flex items-center justify-center overflow-hidden bg-[#F8F9FA]">
                         @if($isImg)
                         <img src="{{ $file['url'] }}" class="w-full h-full object-cover">
                         @else
                         <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                         @endif
+                    </div>
+                    <div class="px-1.5 py-1 border-t border-gray-100 bg-white min-w-0">
+                        <p class="text-[11px] text-gray-600 truncate" title="{{ $file['name'] }}">{{ $file['name'] }}</p>
                     </div>
                 </div>
                 @endforeach

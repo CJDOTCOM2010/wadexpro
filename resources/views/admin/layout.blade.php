@@ -66,11 +66,16 @@
         }
     </style>
 </head>
-<body class="bg-surface text-brand min-h-screen flex selection:bg-accent/30 overflow-hidden" x-data="{ sidebarOpen: true, userMenuOpen: false, searchOpen: false }" @keydown.window.ctrl.k.prevent="searchOpen = true" @keydown.window.cmd.k.prevent="searchOpen = true">
+<body class="bg-surface text-brand min-h-screen flex selection:bg-accent/30 overflow-hidden" 
+      x-data="{ sidebarOpen: window.innerWidth >= 1024, userMenuOpen: false, searchOpen: false }" 
+      @resize.window="sidebarOpen = window.innerWidth >= 1024"
+      @keydown.window.ctrl.k.prevent="searchOpen = true" 
+      @keydown.window.cmd.k.prevent="searchOpen = true">
     
     <!-- Sidebar -->
-    <aside class="bg-brand text-white flex flex-col shrink-0 h-screen border-r border-white/10 transition-all duration-500 ease-in-out relative z-50 overflow-hidden"
-           :class="sidebarOpen ? 'w-72' : 'w-0 border-none'">
+    <aside class="bg-brand text-white flex flex-col shrink-0 h-screen border-r border-white/10 transition-all duration-500 ease-in-out relative z-50 overflow-hidden absolute lg:static"
+           :class="sidebarOpen ? 'w-64' : 'w-0 lg:w-20'"
+           @click.away="if(window.innerWidth < 1024) { sidebarOpen = false }">
         
         <!-- Sticky Logo Area -->
         <div class="h-20 flex items-center px-6 border-b border-white/10 shrink-0 bg-brand sticky top-0 z-20">

@@ -17,7 +17,7 @@
                 <span class="text-xs text-brand-muted font-medium">{{ now()->format('l, F j, Y • g:i A') }}</span>
                 <span class="text-xs text-brand-muted hidden sm:inline">•</span>
                 <span class="text-xs font-bold text-accent hidden sm:inline">
-                    Drivers: {{ $driverStats['total'] ?? 0 }} | Rides Today: {{ $rideStats['today'] ?? 0 }} | Map: {{ $mapData['drivers']->count() ?? 0 }} drivers
+                    Drivers: {{ $driverStats['total'] ?? 0 }} | Rides Today: {{ $rideStats['today'] ?? 0 }} | Map: {{ isset($mapData['drivers']) ? $mapData['drivers']->count() : 0 }} drivers
                 </span>
             </div>
             <h1 class="text-3xl font-black text-brand tracking-tight">Super Admin Dashboard</h1>
@@ -222,7 +222,7 @@
                 </div>
                 <p class="text-xs font-bold text-brand-muted uppercase">Pending Actions</p>
             </div>
-            <p class="text-2xl font-black text-brand">{{ array_sum($pendingActions) }}</p>
+            <p class="text-2xl font-black text-brand">{{ ($pendingActions['pending_drivers'] ?? 0) + ($pendingActions['pending_documents'] ?? 0) }}</p>
             <div class="flex gap-2 mt-2 flex-wrap">
                 <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded">Drivers: {{ $pendingActions['pending_drivers'] ?? 0 }}</span>
                 <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded">Docs: {{ $pendingActions['pending_documents'] ?? 0 }}</span>
@@ -477,7 +477,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Weekly Chart
-    const weeklyData = @json($weeklyTrend);
+    const weeklyData = @json($weeklyTrend ?? []);
     const weeklyOptions = {
         series: [{
             name: 'Rides',
@@ -518,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new ApexCharts(document.querySelector('#weeklyChart'), weeklyOptions).render();
 
     // Monthly Chart
-    const monthlyData = @json($monthlyTrend);
+    const monthlyData = @json($monthlyTrend ?? []);
     const monthlyOptions = {
         series: [{
             name: 'Revenue',

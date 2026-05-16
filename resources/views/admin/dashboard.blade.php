@@ -93,12 +93,15 @@
     <!-- Main Metrics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Revenue Card -->
-        <div class="bg-gradient-to-br from-brand to-brand-light rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+        <div class="bg-brand rounded-2xl p-6 text-white border-2 border-brand hover:border-accent shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+            <!-- Background Swoosh -->
+            <div class="absolute -right-6 -top-6 w-32 h-32 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition-colors"></div>
+            
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/20 group-hover:bg-accent group-hover:text-brand group-hover:border-accent transition-all">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
-                <span class="px-2 py-1 bg-white/20 text-xs font-bold rounded-full {{ ($revenueStats['growth'] ?? 0) >= 0 ? 'text-green-300' : 'text-red-300' }}">
+                <span class="px-3 py-1 bg-white/10 text-xs font-black rounded-full {{ ($revenueStats['growth'] ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }} border border-white/10">
                     {{ ($revenueStats['growth'] ?? 0) >= 0 ? '+' : '' }}{{ number_format($revenueStats['growth'] ?? 0, 1) }}%
                 </span>
             </div>
@@ -113,12 +116,12 @@
         </div>
 
         <!-- Drivers Card -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-accent hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:bg-accent group-hover:text-white transition-all">
+                    <svg class="w-6 h-6 text-brand group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
                 </div>
-                <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">{{ $driverStats['online'] ?? 0 }} Online</span>
+                <span class="px-3 py-1 bg-green-50 text-green-700 text-xs font-black rounded-full border border-green-100">{{ $driverStats['online'] ?? 0 }} Online</span>
             </div>
             <p class="text-xs font-bold text-brand-muted uppercase tracking-wider mb-1">Fleet Status</p>
             <div class="flex items-baseline gap-2">
@@ -142,12 +145,12 @@
         </div>
 
         <!-- Rides Card -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-accent hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white transition-all">
+                    <svg class="w-6 h-6 text-brand group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 </div>
-                <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">{{ $rideStats['active'] ?? 0 }} Active</span>
+                <span class="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-black rounded-full border border-purple-100">{{ $rideStats['active'] ?? 0 }} Active</span>
             </div>
             <p class="text-xs font-bold text-brand-muted uppercase tracking-wider mb-1">Rides Today</p>
             <div class="flex items-baseline gap-2">
@@ -171,12 +174,12 @@
         </div>
 
         <!-- Customers Card -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-accent hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <svg class="w-6 h-6 text-brand group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                 </div>
-                <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">+{{ $customerStats['new_today'] ?? 0 }} Today</span>
+                <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-black rounded-full border border-blue-100">+{{ $customerStats['new_today'] ?? 0 }} Today</span>
             </div>
             <p class="text-xs font-bold text-brand-muted uppercase tracking-wider mb-1">Customer Base</p>
             <div class="flex items-baseline gap-2">
@@ -203,68 +206,68 @@
     <!-- Secondary Metrics Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Year Revenue -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:border-brand transition-all hover:-translate-y-1 group">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
+                <div class="w-10 h-10 bg-surface rounded-xl flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-white transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                 </div>
-                <p class="text-xs font-bold text-brand-muted uppercase">Year Revenue</p>
+                <p class="text-xs font-black text-brand uppercase tracking-widest">Year Revenue</p>
             </div>
             <p class="text-2xl font-black text-brand">₵{{ number_format($revenueStats['this_year'] ?? 0) }}</p>
-            <p class="text-xs text-brand-muted mt-1">Year {{ now()->year }}</p>
+            <p class="text-xs font-bold text-brand-muted mt-1">Year {{ now()->year }}</p>
         </div>
 
         <!-- Pending Actions -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:border-accent transition-all hover:-translate-y-1 group">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
+                <div class="w-10 h-10 bg-surface rounded-xl flex items-center justify-center text-brand group-hover:bg-accent group-hover:text-brand transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
-                <p class="text-xs font-bold text-brand-muted uppercase">Pending Actions</p>
+                <p class="text-xs font-black text-brand uppercase tracking-widest">Action Required</p>
             </div>
             <p class="text-2xl font-black text-brand">{{ array_sum($pendingActions) }}</p>
             <div class="flex gap-2 mt-2 flex-wrap">
-                <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded">Drivers: {{ $pendingActions['pending_drivers'] ?? 0 }}</span>
-                <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded">Docs: {{ $pendingActions['pending_documents'] ?? 0 }}</span>
+                <span class="text-[10px] font-bold bg-amber-50 text-amber-700 px-2 py-0.5 rounded border border-amber-100">Drivers: {{ $pendingActions['pending_drivers'] ?? 0 }}</span>
+                <span class="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-100">Docs: {{ $pendingActions['pending_documents'] ?? 0 }}</span>
             </div>
         </div>
 
         <!-- Staff Stats -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:border-brand transition-all hover:-translate-y-1 group">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+                <div class="w-10 h-10 bg-surface rounded-xl flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-white transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                 </div>
-                <p class="text-xs font-bold text-brand-muted uppercase">Admin Staff</p>
+                <p class="text-xs font-black text-brand uppercase tracking-widest">Admin Staff</p>
             </div>
             <p class="text-2xl font-black text-brand">{{ $staffStats['total_admins'] ?? 0 }}</p>
-            <p class="text-xs text-brand-muted mt-1">{{ $staffStats['active_today'] ?? 0 }} active today</p>
+            <p class="text-xs font-bold text-brand-muted mt-1">{{ $staffStats['active_today'] ?? 0 }} active today</p>
         </div>
 
         <!-- Vehicle Types -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:border-brand transition-all hover:-translate-y-1 group">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center text-brand">
+                <div class="w-10 h-10 bg-surface rounded-xl flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-white transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                 </div>
-                <p class="text-xs font-bold text-brand-muted uppercase">Vehicle Types</p>
+                <p class="text-xs font-black text-brand uppercase tracking-widest">Fleet Composition</p>
             </div>
             <div class="grid grid-cols-2 gap-2 mt-2">
-                <div class="bg-surface rounded-lg p-2 text-center">
+                <div class="bg-surface rounded-lg p-2 text-center border border-gray-100 group-hover:border-brand/10 transition-colors">
                     <p class="text-lg font-black text-brand">{{ $vehicleStats['economy'] ?? 0 }}</p>
-                    <p class="text-[10px] text-brand-muted">Economy</p>
+                    <p class="text-[10px] font-bold text-brand-muted">Economy</p>
                 </div>
-                <div class="bg-surface rounded-lg p-2 text-center">
+                <div class="bg-surface rounded-lg p-2 text-center border border-gray-100 group-hover:border-brand/10 transition-colors">
                     <p class="text-lg font-black text-brand">{{ $vehicleStats['premium'] ?? 0 }}</p>
-                    <p class="text-[10px] text-brand-muted">Premium</p>
+                    <p class="text-[10px] font-bold text-brand-muted">Premium</p>
                 </div>
-                <div class="bg-surface rounded-lg p-2 text-center">
+                <div class="bg-surface rounded-lg p-2 text-center border border-gray-100 group-hover:border-brand/10 transition-colors">
                     <p class="text-lg font-black text-brand">{{ $vehicleStats['bike'] ?? 0 }}</p>
-                    <p class="text-[10px] text-brand-muted">Bike</p>
+                    <p class="text-[10px] font-bold text-brand-muted">Bike</p>
                 </div>
-                <div class="bg-surface rounded-lg p-2 text-center">
+                <div class="bg-surface rounded-lg p-2 text-center border border-gray-100 group-hover:border-brand/10 transition-colors">
                     <p class="text-lg font-black text-brand">{{ $vehicleStats['van'] ?? 0 }}</p>
-                    <p class="text-[10px] text-brand-muted">Van</p>
+                    <p class="text-[10px] font-bold text-brand-muted">Van</p>
                 </div>
             </div>
         </div>
@@ -273,7 +276,7 @@
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Weekly Trend Chart -->
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div class="lg:col-span-2 bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h3 class="text-lg font-black text-brand">Weekly Performance</h3>
@@ -288,7 +291,7 @@
         </div>
 
         <!-- Regional Stats -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h3 class="text-lg font-black text-brand">Regional Distribution</h3>
@@ -320,7 +323,7 @@
     <!-- Bottom Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Top Drivers -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h3 class="text-lg font-black text-brand">Top Drivers Today</h3>
@@ -349,7 +352,7 @@
         </div>
 
         <!-- Recent Rides -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h3 class="text-lg font-black text-brand">Recent Rides</h3>
@@ -378,7 +381,7 @@
         </div>
 
         <!-- Recent Activity -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h3 class="text-lg font-black text-brand">System Activity</h3>
@@ -413,7 +416,7 @@
     </div>
 
     <!-- Monthly Trend Chart -->
-    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+    <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h3 class="text-lg font-black text-brand">Monthly Revenue Trend</h3>
@@ -428,7 +431,7 @@
     </div>
 
     <!-- Tactical Density Map -->
-    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+    <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center">
@@ -460,47 +463,47 @@
 
     <!-- Quick Actions Footer -->
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <a href="{{ route('orchestrator.driver.documents') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
-            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-amber-500 group-hover:text-white transition-all">
+        <a href="{{ route('orchestrator.driver.documents') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-amber-100 group-hover:bg-amber-500 group-hover:text-white transition-all">
                 <svg class="w-6 h-6 text-amber-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             </div>
-            <p class="text-xs font-bold text-brand">Driver KYC</p>
-            <p class="text-[10px] text-brand-muted mt-1">{{ $pendingActions['pending_drivers'] ?? 0 }} pending</p>
+            <p class="text-xs font-black text-brand tracking-wide">Driver KYC</p>
+            <p class="text-[10px] font-bold text-brand-muted mt-1">{{ $pendingActions['pending_drivers'] ?? 0 }} pending</p>
         </a>
-        <a href="{{ route('orchestrator.support.tickets') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
-            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500 group-hover:text-white transition-all">
+        <a href="{{ route('orchestrator.support.tickets') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all">
                 <svg class="w-6 h-6 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
             </div>
-            <p class="text-xs font-bold text-brand">Support</p>
-            <p class="text-[10px] text-brand-muted mt-1">View tickets</p>
+            <p class="text-xs font-black text-brand tracking-wide">Support</p>
+            <p class="text-[10px] font-bold text-brand-muted mt-1">View tickets</p>
         </a>
-        <a href="{{ route('orchestrator.financials') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
-            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-green-500 group-hover:text-white transition-all">
+        <a href="{{ route('orchestrator.financials') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-green-100 group-hover:bg-green-500 group-hover:text-white transition-all">
                 <svg class="w-6 h-6 text-green-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
-            <p class="text-xs font-bold text-brand">Payouts</p>
-            <p class="text-[10px] text-brand-muted mt-1">Manage</p>
+            <p class="text-xs font-black text-brand tracking-wide">Payouts</p>
+            <p class="text-[10px] font-bold text-brand-muted mt-1">Manage</p>
         </a>
-        <a href="{{ route('orchestrator.users') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
-            <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-purple-500 group-hover:text-white transition-all">
+        <a href="{{ route('orchestrator.users') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-purple-100 group-hover:bg-purple-500 group-hover:text-white transition-all">
                 <svg class="w-6 h-6 text-purple-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
             </div>
-            <p class="text-xs font-bold text-brand">Users</p>
-            <p class="text-[10px] text-brand-muted mt-1">{{ $customerStats['total'] ?? 0 }} total</p>
+            <p class="text-xs font-black text-brand tracking-wide">Users</p>
+            <p class="text-[10px] font-bold text-brand-muted mt-1">{{ $customerStats['total'] ?? 0 }} total</p>
         </a>
-        <a href="{{ route('orchestrator.settings.assets') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
-            <div class="w-12 h-12 bg-brand/10 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-brand group-hover:text-white transition-all">
+        <a href="{{ route('orchestrator.settings.assets') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="w-12 h-12 bg-surface rounded-xl flex items-center justify-center mx-auto mb-3 border border-gray-200 group-hover:bg-brand group-hover:border-brand group-hover:text-white transition-all">
                 <svg class="w-6 h-6 text-brand group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </div>
-            <p class="text-xs font-bold text-brand">Assets</p>
-            <p class="text-[10px] text-brand-muted mt-1">Gallery</p>
+            <p class="text-xs font-black text-brand tracking-wide">Assets</p>
+            <p class="text-[10px] font-bold text-brand-muted mt-1">Gallery</p>
         </a>
-        <a href="{{ route('orchestrator.settings') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
-            <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-gray-500 group-hover:text-white transition-all">
-                <svg class="w-6 h-6 text-gray-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <a href="{{ route('orchestrator.settings') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-gray-200 group-hover:bg-brand group-hover:border-brand group-hover:text-white transition-all">
+                <svg class="w-6 h-6 text-brand group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
-            <p class="text-xs font-bold text-brand">Settings</p>
-            <p class="text-[10px] text-brand-muted mt-1">Configure</p>
+            <p class="text-xs font-black text-brand tracking-wide">Settings</p>
+            <p class="text-[10px] font-bold text-brand-muted mt-1">Configure</p>
         </a>
     </div>
 </div>

@@ -32,13 +32,13 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
     <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white shrink-0 gap-4 flex-wrap">
         <div class="flex items-center gap-2 shrink-0">
             <!-- Upload Dropdown -->
-            <div class="relative" x-data="{ uploadOpen: false }">
-                <button @click="uploadOpen = !uploadOpen" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
+            <div class="relative">
+                <button @click="toggleDropdown('uploadOpen')" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     Upload
                     <svg class="w-3 h-3 ml-1" :class="uploadOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div x-show="uploadOpen" @click.outside="uploadOpen = false" x-cloak class="absolute right-0 mt-1 w-52 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                <div x-show="uploadOpen" @click.outside="closeAllDropdowns()" x-cloak class="absolute right-0 mt-1 w-52 bg-white border border-gray-100 rounded-lg shadow-xl z-[100] py-1">
                     <button @click="uploadOpen = false; showUpload = true" class="flex items-center gap-3 w-full px-3 py-2.5 text-xs font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors">
                         <svg class="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 9l5-5 5 5M12 4v12"/></svg>
                         Upload from local
@@ -61,13 +61,13 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
             </a>
             
             <!-- File Type Filter -->
-            <div class="relative" x-data="{ topFileFilterOpen: false }">
-                <button @click.stop="topFileFilterOpen = !topFileFilterOpen" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
+            <div class="relative">
+                <button @click.stop="toggleDropdown('topFileFilterOpen')" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
                     <span x-text="filterLabel"></span>
                     <svg class="w-3 h-3 ml-1 transition-transform" :class="topFileFilterOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div x-show="topFileFilterOpen" x-transition @click.outside="topFileFilterOpen = false" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[60] py-1">
+                <div x-show="topFileFilterOpen" x-transition @click.outside="closeAllDropdowns()" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[100] py-1">
                     <button @click="fileFilter = 'all'; filterLabel = 'Everything'; topFileFilterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
                         Everything
@@ -88,13 +88,13 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
             </div>
 
             <!-- View Filter -->
-            <div class="relative" x-data="{ topViewFilterOpen: false }">
-                <button @click.stop="topViewFilterOpen = !topViewFilterOpen" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
+            <div class="relative">
+                <button @click.stop="toggleDropdown('topViewFilterOpen')" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                     <span x-text="viewFilterLabel"></span>
                     <svg class="w-3 h-3 ml-1 transition-transform" :class="topViewFilterOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div x-show="topViewFilterOpen" x-transition @click.outside="topViewFilterOpen = false" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[60] py-1">
+                <div x-show="topViewFilterOpen" x-transition @click.outside="closeAllDropdowns()" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[100] py-1">
                     <button @click="viewFilter = 'all'; viewFilterLabel = 'All media'; topViewFilterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
                         All media
@@ -133,12 +133,12 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div>
         
         <div class="flex items-center gap-3">
-            <div class="relative" x-data="{ sortOpen: false }">
-                <button @click="sortOpen = !sortOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
+            <div class="relative">
+                <button @click="toggleDropdown('sortOpen')" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h14M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
                     Sort
                 </button>
-                <div x-show="sortOpen" @click.outside="sortOpen = false" x-cloak class="absolute right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                <div x-show="sortOpen" @click.outside="closeAllDropdowns()" x-cloak class="absolute right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl z-[100] py-1">
                     <button @click="sortBy = 'name-asc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="sortBy === 'name-asc' ? 'text-brand font-bold' : 'text-brand-muted'">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10v-5c0-1.38.62-2 2-2s2 .62 2 2v5m0-3h-4M19 21h-4l4-7h-4M4 15l3 3 3-3M7 6v12"/></svg>
                         Name A-Z
@@ -168,12 +168,12 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                 </div>
             </div>
             
-            <div class="relative" x-data="{ showActions: false }">
-                <button @click="if(selectedFile.path) showActions = !showActions" :class="!selectedFile.path ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'" class="flex items-center gap-1.5 px-3 py-1 text-gray-600 font-medium border border-gray-200 rounded transition-colors">
+            <div class="relative">
+                <button @click="if(selectedFile.path) toggleDropdown('showActions')" :class="!selectedFile.path ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'" class="flex items-center gap-1.5 px-3 py-1 text-gray-600 font-medium border border-gray-200 rounded transition-colors">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
                     Actions
                 </button>
-                <div x-show="showActions" x-transition.opacity.duration.200ms @click.outside="showActions = false" x-cloak class="dropdown-menu show absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[100] py-1.5">
+                <div x-show="showActions" x-transition.opacity.duration.200ms @click.outside="closeAllDropdowns()" x-cloak class="dropdown-menu show absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[100] py-1.5">
                     <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="preview" @click="showActions = false; openPreview()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -787,6 +787,8 @@ function mediaManager() {
         viewMode: 'grid', viewFilter: 'all', viewFilterLabel: 'All media', fileFilter: 'all', filterLabel: 'Everything',
         showUpload: false, showUrlUpload: false, showFolder: false, sidebarOpen: true,
         search: '', sortBy: 'name',
+        uploadOpen: false, topFileFilterOpen: false, topViewFilterOpen: false,
+        sortOpen: false, showActions: false,
         selectedFile: { name: '', path: '', url: '', size: '', type: '', isImage: false },
         showRename: false, renameOldPath: '', renameNewName: '',
         
@@ -799,6 +801,19 @@ function mediaManager() {
 
         deleteStep: 0, deletePath: '', deleteLabel: '', deleteConfirm: '',
         init() {},
+        toggleDropdown(name) {
+            ['uploadOpen','topFileFilterOpen','topViewFilterOpen','sortOpen','showActions'].forEach(d => {
+                if (d !== name) this[d] = false;
+            });
+            this[name] = !this[name];
+        },
+        closeAllDropdowns() {
+            this.uploadOpen = false;
+            this.topFileFilterOpen = false;
+            this.topViewFilterOpen = false;
+            this.sortOpen = false;
+            this.showActions = false;
+        },
         get shareResult() {
             if (!this.selectedFile || !this.selectedFile.url) return '';
             const url = this.selectedFile.url;

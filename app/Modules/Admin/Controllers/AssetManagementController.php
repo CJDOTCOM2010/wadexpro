@@ -24,29 +24,49 @@ class AssetManagementController extends Controller
         
         $files = [];
         $directories = [];
+        $storageDriver = 'Unknown';
         
-        if (Storage::disk($disk)->exists($directory)) {
-            $allFiles = Storage::disk($disk)->files($directory);
-            $allDirs = Storage::disk($disk)->directories($directory);
+        try {
+            $storageDriver = config("filesystems.disks.{$disk}.driver") ?? 'unknown';
             
-            foreach ($allFiles as $file) {
-                $files[] = [
-                    'name' => basename($file),
-                    'path' => $file,
-                    'url' => Storage::disk($disk)->url($file),
-                    'size' => $this->formatBytes(Storage::disk($disk)->size($file)),
-                    'last_modified' => date('Y-m-d H:i:s', Storage::disk($disk)->lastModified($file)),
-                    'extension' => pathinfo($file, PATHINFO_EXTENSION),
-                    'is_image' => in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
-                ];
+            if (Storage::disk($disk)->exists($directory)) {
+                $allFiles = Storage::disk($disk)->files($directory);
+                $allDirs = Storage::disk($disk)->directories($directory);
+                
+                foreach ($allFiles as $file) {
+                    try {
+                        $files[] = [
+                            'name' => basename($file),
+                            'path' => $file,
+                            'url' => Storage::disk($disk)->url($file),
+                            'size' => $this->formatBytes(Storage::disk($disk)->size($file)),
+                            'last_modified' => date('Y-m-d H:i:s', Storage::disk($disk)->lastModified($file)),
+                            'extension' => pathinfo($file, PATHINFO_EXTENSION),
+                            'is_image' => in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
+                        ];
+                    } catch (\Exception $e) {
+                        // Gracefully degrade if file metadata is missing on remote Supabase/S3 disk
+                        $files[] = [
+                            'name' => basename($file),
+                            'path' => $file,
+                            'url' => '#',
+                            'size' => 'Unknown',
+                            'last_modified' => 'Unknown',
+                            'extension' => pathinfo($file, PATHINFO_EXTENSION),
+                            'is_image' => in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
+                        ];
+                    }
+                }
+                
+                foreach ($allDirs as $dir) {
+                    $directories[] = [
+                        'name' => basename($dir),
+                        'path' => $dir,
+                    ];
+                }
             }
-            
-            foreach ($allDirs as $dir) {
-                $directories[] = [
-                    'name' => basename($dir),
-                    'path' => $dir,
-                ];
-            }
+        } catch (\Exception $e) {
+            // Handle unreachable cloud storage gracefully (returns empty lists)
         }
 
         // Storage Stats
@@ -54,7 +74,7 @@ class AssetManagementController extends Controller
             'disk' => $disk,
             'total_files' => count($files),
             'total_dirs' => count($directories),
-            'storage_driver' => config("filesystems.disks.{$disk}.driver"),
+            'storage_driver' => $storageDriver,
         ];
 
         return view('admin.settings.assets', compact('files', 'directories', 'directory', 'stats', 'disk'));

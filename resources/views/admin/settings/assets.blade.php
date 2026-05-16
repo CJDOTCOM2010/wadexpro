@@ -592,32 +592,30 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showShareModal = false"></div>
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md relative z-10" @click.outside="showShareModal = false">
             <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-                <h3 class="text-base font-bold text-brand">Share Asset</h3>
+                <h3 class="text-base font-bold text-brand">Share</h3>
                 <button type="button" @click="showShareModal = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-            <div class="p-6 space-y-6">
+            <div class="p-6 space-y-4">
                 <div>
-                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">Direct Link</label>
-                    <div class="flex gap-2">
-                        <input type="text" readonly :value="selectedFile.url" class="flex-1 border border-gray-200 rounded-lg px-4 py-2 text-sm bg-gray-50 outline-none text-gray-600">
-                        <button type="button" @click="copyUrlToClipboard(selectedFile.url)" class="px-4 py-2 bg-accent/10 text-accent rounded-lg text-sm font-bold hover:bg-accent hover:text-white transition-colors">Copy</button>
-                    </div>
+                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">Share Type</label>
+                    <select x-model="shareType" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow text-gray-700">
+                        <option value="url">URL</option>
+                        <option value="indirect_url">Indirect URL</option>
+                        <option value="html">HTML</option>
+                        <option value="markdown">Markdown</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-2 block">Share via</label>
-                    <div class="flex gap-3">
-                        <button @click="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(selectedFile.url))" class="w-10 h-10 rounded-full bg-[#1DA1F2]/10 text-[#1DA1F2] flex items-center justify-center hover:bg-[#1DA1F2] hover:text-white transition-colors">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-                        </button>
-                        <button @click="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(selectedFile.url))" class="w-10 h-10 rounded-full bg-[#1877F2]/10 text-[#1877F2] flex items-center justify-center hover:bg-[#1877F2] hover:text-white transition-colors">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        </button>
-                        <button @click="window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(selectedFile.url))" class="w-10 h-10 rounded-full bg-[#25D366]/10 text-[#25D366] flex items-center justify-center hover:bg-[#25D366] hover:text-white transition-colors">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.964 9.964 0 001.333 4.976L2 22l5.233-1.337a9.936 9.936 0 004.779 1.217h.004c5.505 0 9.988-4.478 9.989-9.9840-2.752-1.071-5.337-3.018-7.284C20.038 2.663 17.456 2 12.012 2zM12.012 20.15c-1.474 0-2.91-.396-4.168-1.144l-.299-.178-3.097.79.805-3.017-.195-.31c-.822-1.306-1.255-2.827-1.255-4.385 0-4.606 3.75-8.358 8.358-8.358 2.234 0 4.332.87 5.912 2.451a8.334 8.334 0 012.449 5.908c-.001 4.605-3.751 8.356-8.358 8.356zm4.582-6.248c-.251-.126-1.488-.735-1.718-.819-.23-.084-.398-.126-.566.126-.168.252-.647.819-.794.987-.146.168-.293.189-.544.063-.251-.126-1.062-.391-2.023-1.248-.748-.667-1.253-1.492-1.4-1.744-.147-.252-.016-.388.11-.513.113-.113.251-.293.377-.44.126-.146.168-.251.252-.419.084-.168.042-.314-.021-.44-.063-.126-.566-1.365-.776-1.87-.204-.492-.412-.425-.566-.433-.146-.008-.314-.008-.482-.008-.168 0-.44.063-.67.315-.23.251-.88 .86-.88 2.096 0 1.236.901 2.43 1.026 2.598.126.168 1.77 2.702 4.286 3.788 2.516 1.086 2.516.712 2.977.67.461-.042 1.488-.608 1.698-1.195.21-.587.21-1.09.147-1.195-.063-.105-.23-.168-.482-.293z"/></svg>
-                        </button>
-                    </div>
+                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">Share Results</label>
+                    <textarea readonly :value="shareResult" rows="4" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium bg-gray-50 text-gray-600 outline-none resize-none"></textarea>
+                </div>
+                <div class="flex justify-end pt-2">
+                    <button type="button" @click="copyUrlToClipboard(shareResult)" class="px-5 py-2 bg-brand text-white rounded-lg text-sm font-bold hover:bg-brand-light transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5h-2a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        Copy
+                    </button>
                 </div>
             </div>
         </div>
@@ -644,12 +642,23 @@ function mediaManager() {
         showPreviewPopup: false,
         showCropModal: false,
         showAltTextModal: false, altTextValue: '',
-        showShareModal: false,
+        showShareModal: false, shareType: 'url',
         showMakeCopyModal: false, copyNewName: '',
         toastMessage: '', toastTimeout: null,
 
         deleteStep: 0, deletePath: '', deleteLabel: '', deleteConfirm: '',
         init() {},
+        get shareResult() {
+            if (!this.selectedFile || !this.selectedFile.url) return '';
+            const url = this.selectedFile.url;
+            switch(this.shareType) {
+                case 'url': return url;
+                case 'indirect_url': return url + '?indirect=1'; // Mock indirect URL logic
+                case 'html': return `<img src="${url}" alt="${this.selectedFile.name}">`;
+                case 'markdown': return `![${this.selectedFile.name}](${url})`;
+                default: return url;
+            }
+        },
         filteredCount() {
             return 0; // handled by Alpine x-show
         },

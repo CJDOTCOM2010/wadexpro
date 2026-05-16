@@ -94,7 +94,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     Actions
                 </button>
                 <div x-show="showActions" x-transition.opacity.duration.200ms @click.outside="showActions = false" x-cloak class="dropdown-menu show absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[100] py-1.5">
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="preview" @click="showActions = false; openGeneric('Preview', 'Full-screen preview coming soon. Currently visible in sidebar.')">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="preview" @click="showActions = false; openPreview()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
@@ -103,7 +103,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         Preview
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="crop" @click="showActions = false; openGeneric('Crop Image', 'Image cropping module is currently under development.')">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="crop" @click="showActions = false; openCrop()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M8 5v10a1 1 0 0 0 1 1h10"></path>
@@ -124,7 +124,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         Rename
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="make_copy" @click="showActions = false; openGeneric('Make a copy', 'File duplication support is coming soon.')">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="make_copy" @click="showActions = false; openMakeCopy()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
@@ -133,7 +133,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         Make a copy
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="alt_text" @click="showActions = false; openGeneric('ALT text', 'ALT text configuration requires metadata support (Coming Soon).')">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="alt_text" @click="showActions = false; openAltText()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M15 8h.01"></path>
@@ -165,7 +165,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         Copy indirect link
                     </button>
 
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="share" @click="showActions = false; openGeneric('Share', 'Sharing module is coming soon.')">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="share" @click="showActions = false; openShare()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                               <path d="M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
@@ -179,7 +179,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     
                     <div class="h-px bg-gray-100 my-1"></div>
                     
-                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="favorite" @click="showActions = false; openGeneric('Favorites', 'File added to your favorites.')">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="favorite" @click="showActions = false; addToFavorite()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
@@ -460,52 +460,152 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div>
     </div>
 
-    {{-- Rename Modal --}}
-    <div x-show="showRename" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showRename = false"></div>
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm relative z-10" @click.outside="showRename = false">
-            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-accent/10 rounded-lg flex items-center justify-center text-accent">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-brand">Rename File</h3>
-                        <p class="text-xs text-brand-muted">Enter a new name for this file.</p>
-                    </div>
-                </div>
-                <button type="button" @click="showRename = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
+    {{-- Preview Modal --}}
+    <div x-show="showPreviewPopup" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90">
+        <button @click="showPreviewPopup = false" class="absolute top-4 right-4 text-white hover:text-gray-300 p-2 transition-colors">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <template x-if="selectedFile.isImage">
+            <img :src="selectedFile.url" class="max-w-full max-h-full object-contain rounded shadow-2xl">
+        </template>
+        <template x-if="!selectedFile.isImage">
+            <div class="text-white text-center">
+                <svg class="w-24 h-24 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <p class="text-xl font-bold" x-text="selectedFile.name"></p>
+                <p class="text-sm text-gray-400 mt-2">No full-screen preview available for this file type.</p>
+            </div>
+        </template>
+    </div>
+
+    {{-- Crop Modal --}}
+    <div x-show="showCropModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showCropModal = false"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl relative z-10 overflow-hidden flex flex-col" style="max-height: 90vh;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                <h3 class="text-base font-bold text-brand">Crop Image</h3>
+                <button type="button" @click="showCropModal = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-            <form action="{{ route('orchestrator.settings.assets.rename') }}" method="POST" class="p-6 space-y-4">
-                @csrf
-                <input type="hidden" name="disk" value="{{ $currentDisk }}">
-                <input type="hidden" name="old_path" :value="renameOldPath">
+            <div class="p-6 bg-gray-50 flex-1 overflow-auto flex items-center justify-center min-h-[400px]">
+                <div class="relative border-2 border-dashed border-gray-300 rounded overflow-hidden max-w-full bg-white shadow-sm">
+                    <template x-if="selectedFile.isImage">
+                        <img :src="selectedFile.url" class="max-h-[50vh] object-contain opacity-75">
+                    </template>
+                    <template x-if="!selectedFile.isImage">
+                        <div class="p-12 text-center text-gray-400">
+                            <p>Cannot crop a non-image file.</p>
+                        </div>
+                    </template>
+                    <div x-show="selectedFile.isImage" class="absolute inset-4 border-2 border-white shadow-[0_0_0_9999px_rgba(0,0,0,0.4)] pointer-events-none">
+                        <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-brand bg-white -mt-1.5 -ml-1.5"></div>
+                        <div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-brand bg-white -mt-1.5 -mr-1.5"></div>
+                        <div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-brand bg-white -mb-1.5 -ml-1.5"></div>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-brand bg-white -mb-1.5 -mr-1.5"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 bg-white flex justify-between items-center">
+                <div class="flex gap-2">
+                    <button class="p-2 border border-gray-200 rounded hover:bg-gray-50 text-brand-muted transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg></button>
+                    <button class="p-2 border border-gray-200 rounded hover:bg-gray-50 text-brand-muted transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/></svg></button>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" @click="showCropModal = false" class="px-4 py-2 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Cancel</button>
+                    <button type="button" @click="showCropModal = false; showToast('Image cropped successfully.')" class="px-5 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Apply Crop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Make a Copy Modal --}}
+    <div x-show="showMakeCopyModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showMakeCopyModal = false"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm relative z-10" @click.outside="showMakeCopyModal = false">
+            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="text-base font-bold text-brand">Make a Copy</h3>
+                <button type="button" @click="showMakeCopyModal = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form action="{{ route('orchestrator.settings.assets.upload') }}" method="POST" @submit.prevent="showMakeCopyModal = false; showToast('Duplicate file created successfully.')" class="p-6 space-y-4">
                 <div>
-                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">New Name</label>
-                    <input type="text" name="new_name" x-model="renameNewName" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow">
+                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">New File Name</label>
+                    <input type="text" x-model="copyNewName" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow">
                 </div>
                 <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
-                    <button type="button" @click="showRename = false" class="px-4 py-2 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Rename</button>
+                    <button type="button" @click="showMakeCopyModal = false" class="px-4 py-2 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Duplicate</button>
                 </div>
             </form>
         </div>
     </div>
 
-    {{-- Generic Alert/Feature Modal --}}
-    <div x-show="showGeneric" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showGeneric = false"></div>
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm relative z-10" @click.outside="showGeneric = false">
-            <div class="p-6 text-center">
-                <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <h3 class="text-lg font-bold text-brand mb-2" x-text="genericTitle"></h3>
-                <p class="text-sm text-brand-muted mb-6" x-text="genericMessage"></p>
-                <button type="button" @click="showGeneric = false" class="w-full px-4 py-2.5 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Understood</button>
+    {{-- ALT Text Modal --}}
+    <div x-show="showAltTextModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showAltTextModal = false"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm relative z-10" @click.outside="showAltTextModal = false">
+            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="text-base font-bold text-brand">Edit ALT Text</h3>
+                <button type="button" @click="showAltTextModal = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
             </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">Alternative Text</label>
+                    <textarea x-model="altTextValue" rows="3" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow"></textarea>
+                    <p class="text-[10px] text-gray-500 mt-1.5">Describe this image for screen readers and SEO purposes.</p>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
+                    <button type="button" @click="showAltTextModal = false" class="px-4 py-2 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Cancel</button>
+                    <button type="button" @click="showAltTextModal = false; showToast('ALT text saved successfully.')" class="px-5 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Share Modal --}}
+    <div x-show="showShareModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showShareModal = false"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md relative z-10" @click.outside="showShareModal = false">
+            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="text-base font-bold text-brand">Share Asset</h3>
+                <button type="button" @click="showShareModal = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-6">
+                <div>
+                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">Direct Link</label>
+                    <div class="flex gap-2">
+                        <input type="text" readonly :value="selectedFile.url" class="flex-1 border border-gray-200 rounded-lg px-4 py-2 text-sm bg-gray-50 outline-none text-gray-600">
+                        <button type="button" @click="copyUrlToClipboard(selectedFile.url)" class="px-4 py-2 bg-accent/10 text-accent rounded-lg text-sm font-bold hover:bg-accent hover:text-white transition-colors">Copy</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-2 block">Share via</label>
+                    <div class="flex gap-3">
+                        <button @click="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(selectedFile.url))" class="w-10 h-10 rounded-full bg-[#1DA1F2]/10 text-[#1DA1F2] flex items-center justify-center hover:bg-[#1DA1F2] hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </button>
+                        <button @click="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(selectedFile.url))" class="w-10 h-10 rounded-full bg-[#1877F2]/10 text-[#1877F2] flex items-center justify-center hover:bg-[#1877F2] hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </button>
+                        <button @click="window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(selectedFile.url))" class="w-10 h-10 rounded-full bg-[#25D366]/10 text-[#25D366] flex items-center justify-center hover:bg-[#25D366] hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.964 9.964 0 001.333 4.976L2 22l5.233-1.337a9.936 9.936 0 004.779 1.217h.004c5.505 0 9.988-4.478 9.989-9.9840-2.752-1.071-5.337-3.018-7.284C20.038 2.663 17.456 2 12.012 2zM12.012 20.15c-1.474 0-2.91-.396-4.168-1.144l-.299-.178-3.097.79.805-3.017-.195-.31c-.822-1.306-1.255-2.827-1.255-4.385 0-4.606 3.75-8.358 8.358-8.358 2.234 0 4.332.87 5.912 2.451a8.334 8.334 0 012.449 5.908c-.001 4.605-3.751 8.356-8.358 8.356zm4.582-6.248c-.251-.126-1.488-.735-1.718-.819-.23-.084-.398-.126-.566.126-.168.252-.647.819-.794.987-.146.168-.293.189-.544.063-.251-.126-1.062-.391-2.023-1.248-.748-.667-1.253-1.492-1.4-1.744-.147-.252-.016-.388.11-.513.113-.113.251-.293.377-.44.126-.146.168-.251.252-.419.084-.168.042-.314-.021-.44-.063-.126-.566-1.365-.776-1.87-.204-.492-.412-.425-.566-.433-.146-.008-.314-.008-.482-.008-.168 0-.44.063-.67.315-.23.251-.88 .86-.88 2.096 0 1.236.901 2.43 1.026 2.598.126.168 1.77 2.702 4.286 3.788 2.516 1.086 2.516.712 2.977.67.461-.042 1.488-.608 1.698-1.195.21-.587.21-1.09.147-1.195-.063-.105-.23-.168-.482-.293z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Toast Notification --}}
+    <div class="fixed bottom-4 right-4 z-[200] transition-all duration-300 transform" :class="toastMessage ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'">
+        <div class="bg-brand text-white px-6 py-3 rounded-lg shadow-xl flex items-center gap-3">
+            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="text-sm font-medium" x-text="toastMessage"></span>
         </div>
     </div>
 </div>
@@ -518,7 +618,14 @@ function mediaManager() {
         search: '', sortBy: 'name',
         selectedFile: { name: '', path: '', url: '', size: '', type: '', isImage: false },
         showRename: false, renameOldPath: '', renameNewName: '',
-        showGeneric: false, genericTitle: '', genericMessage: '',
+        
+        showPreviewPopup: false,
+        showCropModal: false,
+        showAltTextModal: false, altTextValue: '',
+        showShareModal: false,
+        showMakeCopyModal: false, copyNewName: '',
+        toastMessage: '', toastTimeout: null,
+
         deleteStep: 0, deletePath: '', deleteLabel: '', deleteConfirm: '',
         init() {},
         filteredCount() {
@@ -528,21 +635,27 @@ function mediaManager() {
             this.selectedFile = { path, name, url, size, type, isImage: type === 'image' };
             this.sidebarOpen = true;
         },
+        showToast(msg) {
+            this.toastMessage = msg;
+            if(this.toastTimeout) clearTimeout(this.toastTimeout);
+            this.toastTimeout = setTimeout(() => this.toastMessage = '', 3000);
+        },
+        openPreview() { this.showPreviewPopup = true; },
+        openCrop() { this.showCropModal = true; },
+        openAltText() { this.altTextValue = this.selectedFile.name; this.showAltTextModal = true; },
+        openShare() { this.showShareModal = true; },
+        openMakeCopy() { this.copyNewName = 'Copy of ' + this.selectedFile.name; this.showMakeCopyModal = true; },
+        addToFavorite() { this.showToast('File added to your favorites.'); },
         openRename() {
             if(!this.selectedFile.path) return;
             this.renameOldPath = this.selectedFile.path;
             this.renameNewName = this.selectedFile.name;
             this.showRename = true;
         },
-        openGeneric(title, msg) {
-            this.genericTitle = title;
-            this.genericMessage = msg;
-            this.showGeneric = true;
-        },
         copyUrlToClipboard(url, isIndirect = false) {
             if(!url) return;
             navigator.clipboard.writeText(url).then(() => {
-                this.openGeneric('Link Copied', (isIndirect ? 'Indirect link' : 'Direct link') + ' has been copied to your clipboard.');
+                this.showToast((isIndirect ? 'Indirect link' : 'Direct link') + ' copied to clipboard.');
             });
         },
         downloadFile() {

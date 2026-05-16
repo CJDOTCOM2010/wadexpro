@@ -66,7 +66,7 @@
         }
     </style>
 </head>
-<body class="bg-surface text-brand min-h-screen flex selection:bg-accent/30 overflow-hidden" x-data="{ sidebarOpen: true, userMenuOpen: false }">
+<body class="bg-surface text-brand min-h-screen flex selection:bg-accent/30 overflow-hidden" x-data="{ sidebarOpen: true, userMenuOpen: false, searchOpen: false }" @keydown.window.ctrl.k.prevent="searchOpen = true" @keydown.window.cmd.k.prevent="searchOpen = true">
     
     <!-- Sidebar -->
     <aside class="bg-brand text-white flex flex-col shrink-0 h-screen border-r border-white/10 transition-all duration-500 ease-in-out relative z-50 overflow-hidden"
@@ -358,14 +358,13 @@
                     </svg>
                 </button>
 
-                <!-- Search Bar -->
-                <div class="relative flex-1 group max-w-md hidden sm:block">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-400 group-focus-within:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    </div>
-                    <input type="text" placeholder="Global search..." 
-                           class="w-full bg-surface border-none rounded-lg py-2 pl-10 pr-4 text-xs font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-all placeholder:text-gray-400">
-                </div>
+                <!-- Search Button Modal Trigger -->
+                <button @click="searchOpen = true" 
+                        class="p-2 bg-surface text-gray-400 hover:text-brand hover:bg-gray-50 rounded-lg transition shadow-sm border border-gray-100 flex items-center gap-3 group w-64">
+                    <svg class="w-4 h-4 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <span class="text-xs font-medium text-gray-400 group-hover:text-gray-600">Quick search...</span>
+                    <span class="ml-auto px-1.5 py-0.5 rounded border border-gray-200 text-[9px] font-bold text-gray-400 shadow-sm">Ctrl K</span>
+                </button>
             </div>
 
             <!-- Right: Utilities & Profile -->
@@ -474,6 +473,49 @@
             </div>
         </div>
     </main>
+
+    <!-- Global Search Modal Layer -->
+    <div x-show="searchOpen" 
+         x-effect="if(searchOpen) $nextTick(() => $refs.searchInput.focus())"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[9990] flex items-start justify-center pt-20 px-4 sm:px-6" x-cloak>
+        
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-brand/40 backdrop-blur-sm" @click="searchOpen = false"></div>
+        
+        <!-- Modal -->
+        <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.2)] border border-gray-100 overflow-hidden transform transition-all" @click.stop
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95 -translate-y-4"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+             x-transition:leave-end="opacity-0 scale-95 -translate-y-4">
+            
+            <div class="flex items-center px-4 py-3 border-b border-gray-100">
+                <svg class="w-5 h-5 text-accent mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" x-ref="searchInput" placeholder="Search orders, drivers, node IDs..." 
+                       class="w-full bg-transparent border-none text-sm font-medium outline-none placeholder:text-gray-400 py-1"
+                       @keydown.escape="searchOpen = false">
+                <div class="flex items-center gap-2 ml-3 shrink-0">
+                    <span class="px-1.5 py-0.5 rounded border border-gray-200 text-[10px] font-bold text-gray-400 shadow-sm">ESC</span>
+                </div>
+            </div>
+            
+            <div class="p-6 bg-surface/50 min-h-[160px] flex flex-col items-center justify-center text-center">
+                <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-300 mb-3 border border-gray-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                </div>
+                <p class="text-xs font-bold text-brand mb-1">No Recent Searches</p>
+                <p class="text-[11px] text-brand-muted">Type above to instantly search across the entire platform.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Global SOS Interrupt Layer -->
     <div x-data="sosManager()" 

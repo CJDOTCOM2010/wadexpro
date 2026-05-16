@@ -93,115 +93,121 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
                     Actions
                 </button>
-                <div x-show="showActions" @click.outside="showActions = false" x-cloak class="dropdown-menu show absolute left-0 top-full mt-1 z-50">
-                    <button class="dropdown-item js-files-action" data-action="preview">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <div x-show="showActions" x-transition.opacity.duration.200ms @click.outside="showActions = false" x-cloak class="dropdown-menu show absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[100] py-1.5">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="preview">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
                                 <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Preview
                     </button>
 
-                    <button class="dropdown-item js-files-action" data-action="crop">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="crop">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M8 5v10a1 1 0 0 0 1 1h10"></path>
                                 <path d="M5 8h10a1 1 0 0 1 1 1v10"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Crop
                     </button>
-                    <li role="separator" class="divider"></li>
-                    <button class="dropdown-item js-files-action" data-action="rename">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    
+                    <div class="h-px bg-gray-100 my-1"></div>
+                    
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="rename">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
                                 <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
                                 <path d="M16 5l3 3"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Rename
                     </button>
 
-                    <button class="dropdown-item js-files-action" data-action="make_copy">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="make_copy">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
                                 <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Make a copy
                     </button>
 
-                    <button class="dropdown-item js-files-action" data-action="alt_text">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="alt_text">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M15 8h.01"></path>
                                 <path d="M11 20h-4a3 3 0 0 1 -3 -3v-10a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v4"></path>
                                 <path d="M4 15l4 -4c.928 -.893 2.072 -.893 3 0l3 3"></path>
                                 <path d="M14 14l1 -1c.31 -.298 .644 -.497 .987 -.596"></path>
                                 <path d="M18.42 15.61a2.1 2.1 0 0 1 2.97 2.97l-3.39 3.42h-3v-3l3.42 -3.39z"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         ALT text
                     </button>
 
-                    <button class="dropdown-item js-files-action" data-action="copy_link">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="copy_link">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M9 15l6 -6"></path>
                                 <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
                                 <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Copy link
                     </button>
 
-                    <button class="dropdown-item js-files-action" data-action="copy_indirect_link">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="copy_indirect_link">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M9 15l6 -6"></path>
                                 <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
                                 <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Copy indirect link
                     </button>
 
-                    <button class="dropdown-item js-files-action" data-action="share">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="share">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                               <path d="M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
                               <path d="M18 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
                               <path d="M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
                               <path d="M8.7 10.7l6.6 -3.4"></path>
                               <path d="M8.7 13.3l6.6 3.4"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Share
                     </button>
-                    <li role="separator" class="divider"></li>
-                    <button class="dropdown-item js-files-action" data-action="favorite">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    
+                    <div class="h-px bg-gray-100 my-1"></div>
+                    
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="favorite">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Add to favorite
                     </button>
-                    <li role="separator" class="divider"></li>
-                    <button class="dropdown-item js-files-action" data-action="download">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    
+                    <div class="h-px bg-gray-100 my-1"></div>
+                    
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="download">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
                                 <path d="M7 11l5 5l5 -5"></path>
                                 <path d="M12 4l0 12"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Download
                     </button>
 
-                    <button class="dropdown-item js-files-action text-red-600" data-action="trash" @click="confirmDelete(selectedFile.path, selectedFile.name)">
-                        <span class="icon-tabler-wrapper dropdown-item-icon"><span class="icon-tabler-wrapper dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left" data-action="trash" @click="showActions = false; confirmDelete(selectedFile.path, selectedFile.name)">
+                        <span class="icon-tabler-wrapper dropdown-item-icon text-red-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M4 7l16 0"></path>
                                 <path d="M10 11l0 6"></path>
                                 <path d="M14 11l0 6"></path>
                                 <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
                                 <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                            </svg></span></span>    
+                            </svg></span>
                         Move to trash
                     </button>
                 </div>

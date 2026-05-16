@@ -480,41 +480,63 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
     {{-- Crop Modal --}}
     <div x-show="showCropModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showCropModal = false"></div>
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl relative z-10 overflow-hidden flex flex-col" style="max-height: 90vh;">
-            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
-                <h3 class="text-base font-bold text-brand">Crop Image</h3>
-                <button type="button" @click="showCropModal = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="p-6 bg-gray-50 flex-1 overflow-auto flex items-center justify-center min-h-[400px]">
-                <div class="relative border-2 border-dashed border-gray-300 rounded overflow-hidden max-w-full bg-white shadow-sm">
-                    <template x-if="selectedFile.isImage">
-                        <img :src="selectedFile.url" class="max-h-[50vh] object-contain opacity-75">
-                    </template>
-                    <template x-if="!selectedFile.isImage">
-                        <div class="p-12 text-center text-gray-400">
-                            <p>Cannot crop a non-image file.</p>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl relative z-10 overflow-hidden flex flex-col" style="max-height: 90vh;">
+            <form action="" method="POST" @submit.prevent="showCropModal = false; showToast('Image cropped successfully.')" class="flex flex-col h-full">
+                <input type="hidden" name="image_id" :value="selectedFile.path">
+                <input type="hidden" name="crop_data" value="">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                    <h3 class="text-base font-bold text-brand">Crop</h3>
+                    <button type="button" @click="showCropModal = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                
+                <div class="p-6 bg-gray-50 flex-1 overflow-auto">
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <div class="col-span-3 flex items-center justify-center bg-gray-100 rounded-lg p-4 border border-gray-200 min-h-[400px]">
+                            <div class="relative overflow-hidden w-full h-full flex items-center justify-center">
+                                <template x-if="selectedFile.isImage">
+                                    <div class="relative inline-block max-w-full">
+                                        <img :src="selectedFile.url" class="max-w-full max-h-[50vh] block opacity-75">
+                                        <div class="absolute inset-4 border-2 border-white shadow-[0_0_0_9999px_rgba(0,0,0,0.4)] pointer-events-none">
+                                            <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-brand bg-white -mt-1.5 -ml-1.5"></div>
+                                            <div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-brand bg-white -mt-1.5 -mr-1.5"></div>
+                                            <div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-brand bg-white -mb-1.5 -ml-1.5"></div>
+                                            <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-brand bg-white -mb-1.5 -mr-1.5"></div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template x-if="!selectedFile.isImage">
+                                    <div class="text-center text-gray-400">
+                                        <p>Cannot crop a non-image file.</p>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
-                    </template>
-                    <div x-show="selectedFile.isImage" class="absolute inset-4 border-2 border-white shadow-[0_0_0_9999px_rgba(0,0,0,0.4)] pointer-events-none">
-                        <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-brand bg-white -mt-1.5 -ml-1.5"></div>
-                        <div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-brand bg-white -mt-1.5 -mr-1.5"></div>
-                        <div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-brand bg-white -mb-1.5 -ml-1.5"></div>
-                        <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-brand bg-white -mb-1.5 -mr-1.5"></div>
+                        <div class="col-span-1">
+                            <div class="space-y-4 pt-2">
+                                <div>
+                                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block" for="dataHeight">Height</label>
+                                    <input class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow" type="text" name="dataHeight" id="dataHeight">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block" for="dataWidth">Width</label>
+                                    <input class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow" type="text" name="dataWidth" id="dataWidth">
+                                </div>
+                                <label class="flex items-center gap-2 cursor-pointer mt-2">
+                                    <input type="checkbox" id="aspectRatio" name="aspectRatio" class="w-4 h-4 text-brand rounded border-gray-300 focus:ring-brand">
+                                    <span class="text-sm font-medium text-brand-muted">Aspect ratio</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100 bg-white flex justify-between items-center">
-                <div class="flex gap-2">
-                    <button class="p-2 border border-gray-200 rounded hover:bg-gray-50 text-brand-muted transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg></button>
-                    <button class="p-2 border border-gray-200 rounded hover:bg-gray-50 text-brand-muted transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/></svg></button>
+                
+                <div class="px-6 py-4 border-t border-gray-100 bg-white flex justify-end gap-2">
+                    <button type="button" @click="showCropModal = false" class="px-4 py-2 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Close</button>
+                    <button type="submit" class="px-5 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Crop</button>
                 </div>
-                <div class="flex gap-2">
-                    <button type="button" @click="showCropModal = false" class="px-4 py-2 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Cancel</button>
-                    <button type="button" @click="showCropModal = false; showToast('Image cropped successfully.')" class="px-5 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Apply Crop</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 

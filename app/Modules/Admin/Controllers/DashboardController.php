@@ -12,9 +12,16 @@ class DashboardController extends Controller
 {
     public function index(Request $request): View
     {
+        $admin = null;
+        try {
+            $admin = auth('admin')->user();
+        } catch (\Exception $e) {
+            // Ignore for safe fallback
+        }
+
         // ALWAYS provide safe fallback data
         $safeData = [
-            'admin' => auth('admin')->user(),
+            'admin' => $admin,
             'driverStats' => ['total' => 0, 'online' => 0, 'available' => 0, 'busy' => 0, 'offline' => 0, 'pending_verification' => 0],
             'customerStats' => ['total' => 0, 'active_30d' => 0, 'new_today' => 0, 'verified' => 0],
             'rideStats' => ['total' => 0, 'today' => 0, 'active' => 0, 'completed_today' => 0, 'cancelled_today' => 0],

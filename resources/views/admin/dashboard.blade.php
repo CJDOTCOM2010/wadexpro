@@ -247,7 +247,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-brand truncate">{{ $ride->pickup_address ?? 'Unknown Location' }}</p>
-                        <p class="text-xs text-brand-muted">{{ $ride->created_at->diffForHumans() ?? '' }}</p>
+                        <p class="text-xs text-brand-muted">{{ !empty($ride->created_at) ? \Carbon\Carbon::parse($ride->created_at)->diffForHumans() : 'Unknown time' }}</p>
                     </div>
                     <span class="text-xs font-bold {{ $ride->status === 'completed' ? 'text-green-600' : ($ride->status === 'cancelled' ? 'text-red-600' : 'text-amber-600') }}">
                         {{ ucfirst($ride->status ?? 'pending') }}

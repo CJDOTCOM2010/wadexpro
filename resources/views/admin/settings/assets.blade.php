@@ -38,7 +38,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     Upload
                     <svg class="w-3 h-3 ml-1" :class="uploadOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div x-show="uploadOpen" @click.outside="closeAllDropdowns()" x-cloak class="absolute right-0 mt-1 w-52 bg-white border border-gray-100 rounded-lg shadow-xl z-[100] py-1">
+                <div x-show="uploadOpen" @click.outside="closeAllDropdowns()" x-cloak class="absolute right-0 mt-1 w-52 bg-white border border-gray-100 rounded-lg shadow-xl z-[9999] py-1">
                     <button @click="uploadOpen = false; showUpload = true" class="flex items-center gap-3 w-full px-3 py-2.5 text-xs font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors">
                         <svg class="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 9l5-5 5 5M12 4v12"/></svg>
                         Upload from local
@@ -67,7 +67,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     <span x-text="filterLabel"></span>
                     <svg class="w-3 h-3 ml-1 transition-transform" :class="topFileFilterOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div x-show="topFileFilterOpen" x-transition @click.outside="closeAllDropdowns()" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[100] py-1">
+                <div x-show="topFileFilterOpen" x-transition @click.outside="closeAllDropdowns()" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[9999] py-1">
                     <button @click="fileFilter = 'all'; filterLabel = 'Everything'; topFileFilterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
                         Everything
@@ -94,7 +94,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     <span x-text="viewFilterLabel"></span>
                     <svg class="w-3 h-3 ml-1 transition-transform" :class="topViewFilterOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div x-show="topViewFilterOpen" x-transition @click.outside="closeAllDropdowns()" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[100] py-1">
+                <div x-show="topViewFilterOpen" x-transition @click.outside="closeAllDropdowns()" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[9999] py-1">
                     <button @click="viewFilter = 'all'; viewFilterLabel = 'All media'; topViewFilterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
                         All media
@@ -138,7 +138,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h14M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
                     Sort
                 </button>
-                <div x-show="sortOpen" @click.outside="closeAllDropdowns()" x-cloak class="absolute right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl z-[100] py-1">
+                <div x-show="sortOpen" @click.outside="closeAllDropdowns()" x-cloak class="absolute right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl z-[9999] py-1">
                     <button @click="sortBy = 'name-asc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="sortBy === 'name-asc' ? 'text-brand font-bold' : 'text-brand-muted'">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10v-5c0-1.38.62-2 2-2s2 .62 2 2v5m0-3h-4M19 21h-4l4-7h-4M4 15l3 3 3-3M7 6v12"/></svg>
                         Name A-Z
@@ -173,7 +173,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
                     Actions
                 </button>
-                <div x-show="showActions" x-transition.opacity.duration.200ms @click.outside="closeAllDropdowns()" x-cloak class="dropdown-menu show absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[100] py-1.5">
+                <div x-show="showActions" x-transition.opacity.duration.200ms @click.outside="closeAllDropdowns()" x-cloak class="dropdown-menu show absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[9999] py-1.5">
                     <button class="dropdown-item js-files-action w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors text-left" data-action="preview" @click="showActions = false; openPreview()">
                         <span class="icon-tabler-wrapper dropdown-item-icon text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="icon w-4 h-4 shrink-0" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

@@ -29,7 +29,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
 <div x-data="mediaManager()" x-init="init()" class="bg-[#f0f2f5] border border-gray-200 rounded-lg shadow-sm flex flex-col h-[calc(100vh-100px)] overflow-hidden text-sm text-[#1c2c44]">
     
     {{-- Top Toolbar --}}
-    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white shrink-0 gap-4 overflow-x-auto">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white shrink-0 gap-4 flex-wrap">
         <div class="flex items-center gap-2 shrink-0">
             <!-- Upload Dropdown -->
             <div class="relative" x-data="{ uploadOpen: false }">
@@ -67,7 +67,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     <span x-text="filterLabel"></span>
                     <svg class="w-3 h-3 ml-1 transition-transform" :class="topFileFilterOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div x-show="topFileFilterOpen" x-transition @click.outside="topFileFilterOpen = false" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[60] py-1" style="position: fixed;" x-effect="if(topFileFilterOpen) { const r = $el.previousElementSibling.getBoundingClientRect(); $el.style.top = (r.bottom + 4) + 'px'; $el.style.left = r.left + 'px'; }">
+                <div x-show="topFileFilterOpen" x-transition @click.outside="topFileFilterOpen = false" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[60] py-1">
                     <button @click="fileFilter = 'all'; filterLabel = 'Everything'; topFileFilterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
                         Everything
@@ -94,7 +94,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     <span x-text="viewFilterLabel"></span>
                     <svg class="w-3 h-3 ml-1 transition-transform" :class="topViewFilterOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div x-show="topViewFilterOpen" x-transition @click.outside="topViewFilterOpen = false" x-cloak class="w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[60] py-1" style="position: fixed;" x-effect="if(topViewFilterOpen) { const r = $el.previousElementSibling.getBoundingClientRect(); $el.style.top = (r.bottom + 4) + 'px'; $el.style.left = r.left + 'px'; }">
+                <div x-show="topViewFilterOpen" x-transition @click.outside="topViewFilterOpen = false" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-[60] py-1">
                     <button @click="viewFilter = 'all'; viewFilterLabel = 'All media'; topViewFilterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
                         All media

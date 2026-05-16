@@ -60,27 +60,35 @@ class BackupController extends Controller
         }
     }
 
-    /**
-     * Create a new backup.
-     */
     public function create(Request $request)
     {
         $option = $request->get('option', 'all'); // 'all', 'only-db', 'only-files'
 
         try {
+            $exitCode = 0;
             if ($option === 'only-db') {
-                Artisan::queue('backup:run', ['--only-db' => true]);
+                $exitCode = Artisan::call('backup:run', ['--only-db' => true]);
             } elseif ($option === 'only-files') {
-                Artisan::queue('backup:run', ['--only-files' => true]);
+                $exitCode = Artisan::call('backup:run', ['--only-files' => true]);
             } else {
-                Artisan::queue('backup:run');
+                $exitCode = Artisan::call('backup:run');
             }
 
-            return back()->with('success', 'Backup process started in the background. It will appear here shortly.');
+            $output = Artisan::output();
+
+            if ($exitCode !== 0) {
+                // Determine if it's the pg_dump issue
+                if (str_contains($output, 'pg_dump') || str_contains($output, 'dump process failed')) {
+                    return back()->with('error', 'Database backup failed: Your server does not have PostgreSQL utilities (pg_dump) installed to backup the remote Supabase database. Please use the Supabase Dashboard for database backups, or select "Media Vault (Files only)" to backup your uploaded files.');
+                }
+                return back()->with('error', 'Backup failed with exit code ' . $exitCode . '. Check system logs.');
+            }
+
+            return back()->with('success', 'Backup completed successfully and is now securely stored in your vault.');
         } catch (\Exception $e) {
             Log::error('Backup Error: '.$e->getMessage());
 
-            return back()->with('error', 'Failed to start backup: '.$e->getMessage());
+            return back()->with('error', 'Failed to execute backup: '.$e->getMessage());
         }
     }
 

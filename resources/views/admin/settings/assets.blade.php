@@ -185,7 +185,23 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     </button>
                 </div>
             </div>
-            
+
+            <!-- Grid/List Toggle -->
+            <div class="flex items-center border border-gray-200 rounded overflow-hidden shrink-0">
+                <button @click="viewMode = 'grid'" class="p-1.5 transition-colors" :class="viewMode === 'grid' ? 'bg-brand text-white' : 'text-gray-500 hover:bg-gray-50'" title="Grid View">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4m0 1a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1zM14 4m0 1a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1zM4 14m0 1a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1zM14 14m0 1a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 011-1z"/></svg>
+                </button>
+                <button @click="viewMode = 'list'" class="p-1.5 transition-colors" :class="viewMode === 'list' ? 'bg-brand text-white' : 'text-gray-500 hover:bg-gray-50'" title="List View">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                </button>
+            </div>
+
+            <!-- Details Panel Toggle -->
+            <button @click="showDetails = !showDetails" class="p-1.5 border border-gray-200 rounded transition-colors shrink-0" :class="showDetails ? 'bg-brand text-white' : 'text-gray-500 hover:bg-gray-50'" title="Toggle Details Panel">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12l-10 0M20 12l-4 4M20 12l-4 -4M4 4l0 16"/></svg>
+            </button>
+
+            <!-- Actions Dropdown -->
             <div class="relative" x-data="{ showActions: false }">
                 <button @click="if(selectedFile.path) showActions = !showActions" :class="!selectedFile.path ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'" class="flex items-center gap-1.5 px-3 py-1 text-gray-600 font-medium border border-gray-200 rounded transition-colors">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
@@ -331,8 +347,9 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
     <div class="flex flex-1 min-h-0 relative bg-white">
         
         {{-- Assets Area --}}
-        <div class="flex-1 overflow-y-auto p-4 bg-white relative">
-            {{-- Grid View --}}
+        <div class="flex flex-1 overflow-hidden bg-white">
+            <div class="flex-1 overflow-y-auto p-4 relative" x-show="!showDetails || true">
+                {{-- Grid View --}}
             <div x-show="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
                 {{-- Up one level --}}
                 @if($currentPath)
@@ -478,7 +495,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div> <!-- End of Assets Area -->
         
         {{-- Right Sidebar Preview Pane --}}
-        <div x-show="sidebarOpen" class="w-72 border-l border-gray-200 bg-[#F8F9FA] flex flex-col shrink-0 overflow-y-auto z-10 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)]" x-transition>
+        <div x-show="showDetails" class="w-72 border-l border-gray-200 bg-[#F8F9FA] flex flex-col shrink-0 overflow-y-auto z-10 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)]" x-transition>
             <template x-if="selectedFile.path">
                 <div class="p-6 flex flex-col items-center text-center">
                     <template x-if="selectedFile.isImage">
@@ -850,7 +867,7 @@ function mediaManager() {
         showUpload: false, showUrlUpload: false, showFolder: false, sidebarOpen: true,
         search: '', sortBy: 'name-asc',
         selectedFile: { name: '', path: '', url: '', size: '', type: '', lastModified: '', isImage: false },
-        showRename: false, renameOldPath: '', renameNewName: '',
+        showDetails: false,
         dataHeight: '', dataWidth: '',
         showPreviewPopup: false,
         showCropModal: false,

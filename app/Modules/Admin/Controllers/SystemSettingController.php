@@ -133,7 +133,7 @@ class SystemSettingController extends Controller
             'cash_on_delivery_enabled', 'wallet_payments_enabled',
             'momo_enabled', 'googlepay_enabled',
             'paystack_enabled', 'flutterwave_enabled', 'stripe_enabled',
-            'google_maps_enabled', 'mapbox_enabled',
+            'google_maps_enabled', 'mapbox_enabled', 'geofencing_enabled',
             // Security settings
             'password_require_special', 'password_require_numbers', 'two_factor_auth',
             'ip_whitelist_enabled',
@@ -160,6 +160,18 @@ class SystemSettingController extends Controller
             'first_day_of_week' => 'localization', 'country' => 'localization',
             'decimal_separator' => 'localization', 'thousands_separator' => 'localization',
             'currency_position' => 'localization', 'localization_configured' => 'localization',
+            // geolocation
+            'google_maps_enabled' => 'geolocation', 'google_maps_key' => 'geolocation',
+            'google_maps_directions' => 'geolocation', 'google_maps_places' => 'geolocation',
+            'google_maps_geocoding' => 'geolocation', 'google_maps_static' => 'geolocation',
+            'google_maps_streetview' => 'geolocation',
+            'mapbox_enabled' => 'geolocation', 'mapbox_key' => 'geolocation',
+            'default_latitude' => 'geolocation', 'default_longitude' => 'geolocation',
+            'default_zoom_level' => 'geolocation', 'default_map_style' => 'geolocation',
+            'geocoding_country' => 'geolocation', 'geocoding_language' => 'geolocation',
+            'gps_update_interval' => 'geolocation', 'location_history_days' => 'geolocation',
+            'geofencing_enabled' => 'geolocation', 'default_search_radius' => 'geolocation',
+            'distance_unit' => 'geolocation', 'default_travel_mode' => 'geolocation',
             // security
             'password_min_length' => 'security', 'password_require_special' => 'security',
             'password_require_numbers' => 'security', 'password_expiry_days' => 'security',

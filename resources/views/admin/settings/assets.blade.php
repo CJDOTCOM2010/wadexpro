@@ -79,13 +79,39 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div>
         
         <div class="flex items-center gap-3">
-            <div class="flex items-center border border-gray-200 rounded overflow-hidden">
-                <span class="px-2 py-1 text-xs text-gray-800 font-medium bg-gray-50 border-r border-gray-200 tracking-wide">A-Z</span>
-                <select @change="sortBy = $event.target.value" class="py-1 px-2 pr-6 text-sm text-gray-700 outline-none bg-white cursor-pointer">
-                    <option value="name">Sort</option>
-                    <option value="date">Date</option>
-                    <option value="size">Size</option>
-                </select>
+            <div class="relative" x-data="{ sortOpen: false }">
+                <button @click="sortOpen = !sortOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h14M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
+                    Sort
+                </button>
+                <div x-show="sortOpen" @click.outside="sortOpen = false" x-cloak class="absolute right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                    <button @click="sortBy = 'name-asc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="sortBy === 'name-asc' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10v-5c0-1.38.62-2 2-2s2 .62 2 2v5m0-3h-4M19 21h-4l4-7h-4M4 15l3 3 3-3M7 6v12"/></svg>
+                        Name A-Z
+                    </button>
+                    <button @click="sortBy = 'name-desc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="sortBy === 'name-desc' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 21v-5c0-1.38.62-2 2-2s2 .62 2 2v5m0-3h-4M19 10h-4l4-7h-4M4 15l3 3 3-3M7 6v12"/></svg>
+                        Name Z-A
+                    </button>
+                    <div class="border-t border-gray-100 my-1"></div>
+                    <button @click="sortBy = 'date-desc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="sortBy === 'date-desc' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15l3 3 3-3M7 6v12M17 3a2 2 0 012 2v3a2 2 0 11-4 0V5a2 2 0 012-2zM17 16m-2 0a2 2 0 104 0 2 2 0 10-4 0M19 16v3a2 2 0 01-2 2h-1.5"/></svg>
+                        Newest first
+                    </button>
+                    <button @click="sortBy = 'date-asc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="sortBy === 'date-asc' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15l3 3 3-3M7 6v12M17 14a2 2 0 012 2v3a2 2 0 11-4 0v-3a2 2 0 012-2zM17 5m-2 0a2 2 0 104 0 2 2 0 10-4 0M19 5v3a2 2 0 01-2 2h-1.5"/></svg>
+                        Oldest first
+                    </button>
+                    <div class="border-t border-gray-100 my-1"></div>
+                    <button @click="sortBy = 'size-desc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="sortBy === 'size-desc' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5m0 .5a.5.5 0 01.5-.5h4a.5.5 0 01.5.5v4a.5.5 0 01-.5.5h-4a.5.5 0 01-.5-.5zM14 15l3 3 3-3M17 18v-12M5 14m0 .5a.5.5 0 01.5-.5h4a.5.5 0 01.5.5v4a.5.5 0 01-.5.5h-4a.5.5 0 01-.5-.5z"/></svg>
+                        Largest first
+                    </button>
+                    <button @click="sortBy = 'size-asc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="sortBy === 'size-asc' ? 'text-brand font-bold' : 'text-brand-muted'">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5m0 .5a.5.5 0 01.5-.5h4a.5.5 0 01.5.5v4a.5.5 0 01-.5.5h-4a.5.5 0 01-.5-.5zM14 9l3-3 3 3M17 6v12M5 14m0 .5a.5.5 0 01.5-.5h4a.5.5 0 01.5.5v4a.5.5 0 01-.5.5h-4a.5.5 0 01-.5-.5z"/></svg>
+                        Smallest first
+                    </button>
+                </div>
             </div>
             
             <div class="relative" x-data="{ showActions: false }">

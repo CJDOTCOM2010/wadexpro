@@ -1,176 +1,134 @@
 @extends('admin.layout')
-@section('title', 'Dispatcher Infrastructure & System Core')
+@section('title', 'Infrastructure Hub')
 @section('content')
 
-<!-- Error Alert -->
 @if(session('error'))
-<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
-    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+<div class="mb-4 p-3.5 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2.5">
+    <svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
     <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
 </div>
 @endif
-
-<!-- Success Alert -->
 @if(session('success'))
-<div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
-    <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+<div class="mb-4 p-3.5 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2.5">
+    <svg class="w-4 h-4 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
     <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
 </div>
 @endif
 
-<div class="mb-12 flex items-center justify-between">
-    <div>
-        <h2 class="text-3xl font-black text-brand tracking-tight">Infrastructure Hub</h2>
-        <p class="text-brand-muted font-medium mt-1">Direct oversight of platform modules, core architecture, and system health.</p>
-    </div>
-    <div class="flex items-center gap-4">
-        <div class="px-6 py-3 bg-white text-brand border border-gray-100 font-bold rounded-xl flex items-center gap-3 shadow-sm">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
-            <span class="text-xs uppercase tracking-widest">Global Node Pulse: 99.8%</span>
+<div class="max-w-6xl mx-auto">
+    {{-- Header --}}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+            <h2 class="text-2xl font-black text-brand tracking-tight">Infrastructure Hub</h2>
+            <p class="text-sm text-brand-muted font-medium mt-0.5">Oversight of platform modules, core architecture, and system health.</p>
         </div>
-    </div>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-    
-    <!-- Left: Module Matrix -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden flex flex-col">
-        <div class="p-8 border-b border-gray-50 flex items-center justify-between bg-surface/30">
-            <div>
-                <h3 class="text-xl font-black text-brand tracking-tight">Module Matrix</h3>
-                <p class="text-xs text-brand-muted font-bold uppercase mt-1">Enable/Disable Platform Features</p>
-            </div>
-            <span class="px-3 py-1 bg-brand text-white text-[10px] font-black rounded-lg uppercase">Hot Toggles Active</span>
-        </div>
-
-        <div class="p-8 space-y-6 flex-1 overflow-y-auto">
-            <!-- Logistic Module -->
-            <div class="p-6 bg-surface rounded-2xl flex items-center justify-between group hover:border-accent transition-all border border-transparent hover:shadow-md">
-                <div class="flex items-center gap-5">
-                    <div class="w-12 h-12 bg-brand text-accent rounded-2xl flex items-center justify-center shadow-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-black text-brand">Logistics Management</p>
-                        <p class="text-xs text-brand-muted font-medium mt-0.5">Fleet, Orders, and Dispatch logic.</p>
-                    </div>
-                </div>
-                <button class="w-14 h-8 bg-brand rounded-full relative transition-colors">
-                    <div class="absolute top-1 right-1 w-6 h-6 bg-accent rounded-full"></div>
-                </button>
-            </div>
-
-            <!-- Financial Module -->
-            <div class="p-6 bg-surface rounded-lg flex items-center justify-between">
-                <div class="flex items-center gap-5">
-                    <div class="w-12 h-12 bg-brand text-accent rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-black text-brand">Treasury & Accounting</p>
-                        <p class="text-xs text-brand-muted font-medium mt-0.5">Invoices, Payouts, and Ledgers.</p>
-                    </div>
-                </div>
-                <button class="w-14 h-8 bg-brand rounded-full relative">
-                    <div class="absolute top-1 right-1 w-6 h-6 bg-accent rounded-full"></div>
-                </button>
-            </div>
-
-            <!-- SOS Module -->
-            <div class="p-6 bg-surface rounded-lg flex items-center justify-between italic">
-                <div class="flex items-center gap-5">
-                    <div class="w-12 h-12 bg-red-50 text-red-600 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-black text-red-600">Emergency Systems</p>
-                        <p class="text-xs text-brand-muted font-medium mt-0.5">SOS Signals and First Response.</p>
-                    </div>
-                </div>
-                <button class="w-14 h-8 bg-brand rounded-full relative">
-                    <div class="absolute top-1 right-1 w-6 h-6 bg-accent rounded-full"></div>
-                </button>
-            </div>
-        </div>
-
-        <div class="p-8 border-t border-gray-50 bg-surface/10">
-            <p class="text-[10px] font-black text-brand-muted uppercase tracking-[0.2em] text-center italic">Advanced Module Hardening Controlled via System Node PRO-X</p>
-        </div>
+        <span class="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-100 rounded-lg text-[10px] font-bold text-green-600">
+            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+            System Online
+        </span>
     </div>
 
-    <!-- Right: Health & Cache Center -->
-    <div class="space-y-10">
-        
-        <!-- System Health Telemetry -->
-        <div class="bg-brand rounded-lg p-10 text-white relative overflow-hidden group">
-            <div class="absolute top-0 right-0 p-10 opacity-10 group-hover:rotate-12 transition-transform duration-700">
-                <svg class="w-48 h-48" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2"/></svg>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- Module Matrix --}}
+        <div class="bg-white border border-gray-100 rounded-xl overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100 bg-surface/20">
+                <h3 class="text-sm font-bold text-brand">Module Matrix</h3>
+                <p class="text-[10px] text-brand-muted">Enable or disable platform features</p>
             </div>
-            <div class="relative z-10">
-                <h3 class="text-xl font-black mb-8 border-b border-white/10 pb-4">Core Health Monitor</h3>
-                <div class="grid grid-cols-2 gap-8 mb-10">
-                    <div>
-                        <p class="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Database Cluster</p>
-                        <div class="flex items-center gap-2">
-                            <span class="text-lg font-black text-accent uppercase">Healthy</span>
-                            <span class="text-[10px] font-bold text-white/30">(2ms LAT)</span>
+            <div class="p-5 space-y-3">
+                @forelse($modules as $module)
+                <div class="flex items-center justify-between p-4 bg-surface/50 rounded-lg border border-gray-100">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 {{ $module->is_enabled ? 'bg-brand text-accent' : 'bg-gray-100 text-gray-400' }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a2 2 0 01-2 2H3a2 2 0 01-2-2V4a2 2 0 114 0v1a2 2 0 012 2h4a2 2 0 012-2V4z"/></svg>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-brand truncate">{{ $module->name }}</p>
+                            <p class="text-[10px] text-brand-muted truncate">{{ $module->description ?? $module->slug }}</p>
                         </div>
                     </div>
-                    <div>
-                        <p class="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">In-Memory Cache</p>
+                    <form action="{{ route('orchestrator.infrastructure.modules.toggle', $module->id) }}" method="POST" class="shrink-0 ml-2">
+                        @csrf @method('PATCH')
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" onchange="this.form.submit()" class="sr-only peer" {{ $module->is_enabled ? 'checked' : '' }}>
+                            <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[0.5px] after:left-[0.5px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                    </form>
+                </div>
+                @empty
+                <div class="flex flex-col items-center justify-center py-10 text-brand-muted">
+                    <p class="text-sm font-bold">No modules configured</p>
+                </div>
+                @endforelse
+            </div>
+            <div class="px-5 py-3 border-t border-gray-100 bg-surface/20 text-center">
+                <a href="{{ route('orchestrator.modules') }}" class="text-[10px] font-bold text-accent hover:underline">Advanced Module Hardening →</a>
+            </div>
+        </div>
+
+        {{-- Right Column --}}
+        <div class="space-y-6">
+            {{-- System Health --}}
+            <div class="bg-brand rounded-xl p-6 text-white">
+                <h3 class="text-sm font-bold mb-5">System Health</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/10 rounded-lg p-4">
+                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-wider mb-1">Database</p>
                         <div class="flex items-center gap-2">
-                            <span class="text-lg font-black text-accent uppercase">Active</span>
-                            <span class="text-[10px] font-bold text-white/30">PULSE: OK</span>
+                            <span class="text-sm font-bold text-accent">Healthy</span>
+                            <span class="text-[10px] text-white/30">2ms</span>
                         </div>
                     </div>
-                    <div>
-                        <p class="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Storage Array</p>
+                    <div class="bg-white/10 rounded-lg p-4">
+                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-wider mb-1">Cache</p>
                         <div class="flex items-center gap-2">
-                            <span class="text-lg font-black text-white uppercase">14.2 GB</span>
-                            <span class="text-[10px] font-bold text-white/30">(Used)</span>
+                            <span class="text-sm font-bold text-accent">Active</span>
+                            <span class="text-[10px] text-white/30">Redis</span>
                         </div>
                     </div>
-                    <div>
-                        <p class="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Server Load</p>
+                    <div class="bg-white/10 rounded-lg p-4">
+                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-wider mb-1">Storage</p>
                         <div class="flex items-center gap-2">
-                            <span class="text-lg font-black text-white uppercase">12.4%</span>
-                            <span class="text-[10px] font-bold text-white/30">CPU PULSE</span>
+                            <span class="text-sm font-bold text-white">{{ round(disk_free_space('/') / 1073741824, 1) }} GB free</span>
+                        </div>
+                    </div>
+                    <div class="bg-white/10 rounded-lg p-4">
+                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-wider mb-1">PHP</p>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold text-white">{{ PHP_VERSION }}</span>
                         </div>
                     </div>
                 </div>
-                <button class="w-full py-4 bg-white/10 hover:bg-white text-white hover:text-brand font-black text-[10px] uppercase rounded-lg transition tracking-widest">Generate Infrastructure Report</button>
+            </div>
+
+            {{-- Cache Commands --}}
+            <div class="bg-white border border-gray-100 rounded-xl p-6">
+                <h3 class="text-sm font-bold text-brand mb-5">Cache Commands</h3>
+                <form action="{{ route('orchestrator.infrastructure.command') }}" method="POST" class="grid grid-cols-2 gap-3">
+                    @csrf
+                    <button type="submit" name="command" value="optimize" class="p-4 bg-surface rounded-lg border border-gray-100 text-left hover:border-accent/40 transition-colors">
+                        <span class="text-[9px] font-bold text-brand-muted uppercase tracking-wider">Optimize</span>
+                        <p class="text-xs font-bold text-brand mt-1">Clear all cache</p>
+                    </button>
+                    <button type="submit" name="command" value="config" class="p-4 bg-surface rounded-lg border border-gray-100 text-left hover:border-accent/40 transition-colors">
+                        <span class="text-[9px] font-bold text-brand-muted uppercase tracking-wider">Config</span>
+                        <p class="text-xs font-bold text-brand mt-1">Rebuild config cache</p>
+                    </button>
+                    <button type="submit" name="command" value="route" class="p-4 bg-surface rounded-lg border border-gray-100 text-left hover:border-accent/40 transition-colors">
+                        <span class="text-[9px] font-bold text-brand-muted uppercase tracking-wider">Routes</span>
+                        <p class="text-xs font-bold text-brand mt-1">Flush route cache</p>
+                    </button>
+                    <button type="submit" name="command" value="nuclear" class="p-4 bg-red-50 rounded-lg border border-red-100 text-left hover:bg-red-100 transition-colors">
+                        <span class="text-[9px] font-bold text-red-600 uppercase tracking-wider">Nuclear</span>
+                        <p class="text-xs font-bold text-red-600 mt-1">Clear all sessions</p>
+                    </button>
+                </form>
             </div>
         </div>
-
-        <!-- Tactical Cache Control center -->
-        <div class="bg-white rounded-lg border border-gray-100 shadow-xl p-10">
-            <h3 class="text-xl font-black text-brand tracking-tight mb-8">System Cache Commands</h3>
-            
-            <form action="{{ route('orchestrator.infrastructure.command') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @csrf
-                <button type="submit" name="command" value="optimize" class="p-6 bg-surface rounded-lg border border-gray-50 flex flex-col gap-2 hover:border-accent transition group text-left">
-                    <span class="text-[9px] font-black text-brand-muted uppercase tracking-widest">Artisan optimize</span>
-                    <span class="text-sm font-black text-brand">Aggressive Cache Clear</span>
-                    <p class="text-[10px] text-brand-muted mt-2">Flushes app, routes & views.</p>
-                </button>
-                <button type="submit" name="command" value="config" class="p-6 bg-surface rounded-lg border border-gray-50 flex flex-col gap-2 hover:border-accent transition group text-left">
-                    <span class="text-[9px] font-black text-brand-muted uppercase tracking-widest">Config:cache</span>
-                    <span class="text-sm font-black text-brand">Rebuild Config Map</span>
-                    <p class="text-[10px] text-brand-muted mt-2">Atomically refreshes .env.</p>
-                </button>
-                <button type="submit" name="command" value="route" class="p-6 bg-surface rounded-lg border border-gray-50 flex flex-col gap-2 hover:border-accent transition group text-left">
-                    <span class="text-[9px] font-black text-brand-muted uppercase tracking-widest">Route:clear</span>
-                    <span class="text-sm font-black text-brand">Flush Pathing Cache</span>
-                    <p class="text-[10px] text-brand-muted mt-2">Zero-downtime path reset.</p>
-                </button>
-                <button type="submit" name="command" value="nuclear" class="p-6 bg-red-50 rounded-lg border border-red-100 flex flex-col gap-2 hover:bg-red-100 transition group items-center justify-center">
-                    <span class="text-[10px] font-black text-red-600 uppercase tracking-widest italic">Nuclear Flash</span>
-                    <span class="text-sm font-black text-red-600">Wipe All Node Sessions</span>
-                </button>
-            </form>
-        </div>
-
     </div>
 </div>
 
+<style>
+#operations-map { background: #0A0A1A; }
+</style>
 @endsection

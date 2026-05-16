@@ -139,6 +139,7 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::middleware('admin_department:IT|Engineering')->group(function() {
             Route::get('/infrastructure', [\App\Modules\Admin\Controllers\InfrastructureController::class, 'infrastructure'])->name('orchestrator.infrastructure');
             Route::post('/infrastructure/command', [\App\Modules\Admin\Controllers\InfrastructureController::class, 'cacheCommand'])->name('orchestrator.infrastructure.command');
+            Route::patch('/infrastructure/modules/{id}/toggle', [\App\Modules\Admin\Controllers\InfrastructureController::class, 'toggleModule'])->name('orchestrator.infrastructure.modules.toggle');
             Route::get('/modules', [\App\Modules\Admin\Controllers\InfrastructureController::class, 'modules'])->name('orchestrator.modules');
         });
 

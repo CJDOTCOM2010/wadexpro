@@ -3,9 +3,10 @@
 namespace App\Modules\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
+use App\Modules\Admin\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use App\Models\AuditLog;
 
 class InfrastructureController extends Controller
 {
@@ -14,7 +15,9 @@ class InfrastructureController extends Controller
      */
     public function infrastructure()
     {
-        return view('admin.infrastructure');
+        $modules = Module::orderBy('name')->get();
+
+        return view('admin.infrastructure', compact('modules'));
     }
 
     /**
@@ -45,11 +48,19 @@ class InfrastructureController extends Controller
                 default:
                     return back()->with('error', 'Unknown command.');
             }
-            
+
             return back()->with('success', $msg);
         } catch (\Exception $e) {
-            return back()->with('error', 'Command execution failed: ' . $e->getMessage());
+            return back()->with('error', 'Command execution failed: '.$e->getMessage());
         }
+    }
+
+    public function toggleModule($id)
+    {
+        $module = Module::findOrFail($id);
+        $module->update(['is_enabled' => ! $module->is_enabled]);
+
+        return back()->with('success', "Module '{$module->name}' ".($module->is_enabled ? 'enabled' : 'disabled').'.');
     }
 
     /**
@@ -58,10 +69,10 @@ class InfrastructureController extends Controller
     public function modules()
     {
         // Load some recent audit logs to populate the dynamic log ticker
-        $auditLogs = class_exists(AuditLog::class) 
-            ? AuditLog::orderBy('created_at', 'desc')->take(5)->get() 
+        $auditLogs = class_exists(AuditLog::class)
+            ? AuditLog::orderBy('created_at', 'desc')->take(5)->get()
             : [];
-            
+
         return view('admin.module_hardening', compact('auditLogs'));
     }
 }

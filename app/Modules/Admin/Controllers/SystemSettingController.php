@@ -204,8 +204,7 @@ class SystemSettingController extends Controller
                     continue;
                 }
                 $value = Crypt::encryptString($value);
-                $group = $groupMap[$key] ?? 'payments';
-                SystemSetting::updateOrCreate(['key' => $key], ['value' => $value, 'is_encrypted' => true, 'group' => $group]);
+                SystemSetting::updateOrCreate(['key' => $key], ['value' => $value, 'is_encrypted' => true, 'group' => 'payments']);
 
                 continue;
             }
@@ -215,12 +214,7 @@ class SystemSettingController extends Controller
                 $value = ($value === 'true' || $value === true || $value === '1') ? 'true' : 'false';
             }
 
-            $group = $groupMap[$key] ?? null;
-            $data = ['value' => $value];
-            if ($group) {
-                $data['group'] = $group;
-            }
-            SystemSetting::updateOrCreate(['key' => $key], $data);
+            SystemSetting::set($key, $value);
         }
 
         // Handle brand logo file upload (Mobile Apps)

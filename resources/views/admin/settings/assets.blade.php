@@ -416,58 +416,68 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div> <!-- End of Assets Area -->
         
         {{-- Right Sidebar Preview Pane --}}
-        <div x-show="sidebarOpen" class="w-72 border-l border-gray-200 bg-white flex flex-col shrink-0 overflow-y-auto z-10 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)]" x-transition>
+        <div x-show="sidebarOpen" class="w-80 border-l border-gray-200 bg-white flex flex-col shrink-0 overflow-y-auto shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)]" x-transition>
             <template x-if="selectedFile.path">
-                <div class="rv-media-details">
-                    <div class="rv-media-thumbnail">
+                <div class="flex flex-col divide-y divide-gray-100">
+                    {{-- Thumbnail --}}
+                    <div class="bg-[#F8F9FA] flex items-center justify-center p-4 min-h-[180px]">
                         <template x-if="selectedFile.isImage">
-                            <img :src="selectedFile.url" :alt="selectedFile.name" class="max-w-full">
+                            <img :src="selectedFile.url" :alt="selectedFile.name" class="max-w-full max-h-44 object-contain rounded-lg shadow-sm bg-white">
                         </template>
                         <template x-if="!selectedFile.isImage">
-                            <div class="flex items-center justify-center h-48 bg-gray-100">
-                                <svg class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <div class="flex items-center justify-center w-full h-44 bg-white rounded-lg">
+                                <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </div>
                         </template>
                     </div>
-                    <div class="rv-media-description p-4 space-y-3">
-                        <div class="mb-3 rv-media-name">
-                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Name</label>
-                            <span class="block text-sm font-medium text-gray-800" x-text="selectedFile.name"></span>
+                    {{-- Details --}}
+                    <div class="px-4 py-3 space-y-3">
+                        {{-- Name --}}
+                        <div>
+                            <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Name</label>
+                            <p class="mt-0.5 text-sm font-medium text-gray-900 truncate" x-text="selectedFile.name" :title="selectedFile.name"></p>
                         </div>
-                        <div class="mb-3 rv-media-name">
-                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Full URL</label>
-                            <div class="input-group pe-1">
-                                <input type="text" id="file_details_url" class="form-control text-xs" x-model="selectedFile.url" readonly>
-                                <button class="input-group-text bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 px-2" type="button" @click="copyUrlToClipboard(selectedFile.url)">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        {{-- Full URL --}}
+                        <div>
+                            <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Full URL</label>
+                            <div class="mt-0.5 flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-300 transition-all">
+                                <input type="text" id="file_details_url" class="flex-1 min-w-0 px-2.5 py-1.5 text-xs text-gray-600 border-0 outline-none bg-transparent" x-model="selectedFile.url" readonly>
+                                <button @click="copyUrlToClipboard(selectedFile.url)" class="shrink-0 px-2.5 py-1.5 border-l border-gray-200 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors" type="button" title="Copy URL">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                                 </button>
                             </div>
                         </div>
-                        <div class="mb-3 rv-media-name">
-                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Size</label>
-                            <span class="block text-sm text-gray-700" x-text="selectedFile.size"></span>
+                        {{-- Size --}}
+                        <div>
+                            <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Size</label>
+                            <p class="mt-0.5 text-sm text-gray-700" x-text="selectedFile.size"></p>
                         </div>
-                        <div class="mb-3 rv-media-name">
-                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Uploaded at</label>
-                            <span class="block text-sm text-gray-700" x-text="selectedFile.lastModified || 'N/A'"></span>
+                        {{-- Uploaded at / Modified at --}}
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Uploaded at</label>
+                                <p class="mt-0.5 text-sm text-gray-700 truncate" x-text="selectedFile.lastModified || 'N/A'"></p>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Modified at</label>
+                                <p class="mt-0.5 text-sm text-gray-700 truncate" x-text="selectedFile.lastModified || 'N/A'"></p>
+                            </div>
                         </div>
-                        <div class="mb-3 rv-media-name">
-                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Modified at</label>
-                            <span class="block text-sm text-gray-700" x-text="selectedFile.lastModified || 'N/A'"></span>
+                        {{-- Alt text --}}
+                        <div>
+                            <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Alt text</label>
+                            <p class="mt-0.5 text-sm text-gray-700 truncate" x-text="selectedFile.name" :title="selectedFile.name"></p>
                         </div>
-                        <div class="mb-3 rv-media-name">
-                            <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Alt text</label>
-                            <span class="block text-sm text-gray-700" x-text="selectedFile.name"></span>
-                        </div>
+                        {{-- Width / Height --}}
                         <template x-if="selectedFile.isImage && selectedFile.width > 0">
                             <div class="grid grid-cols-2 gap-3">
-                                <div class="mb-3 rv-media-name">
-                                    <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Width</label>
-                                    <span class="block text-sm text-gray-700" x-text="selectedFile.width + 'px'"></span>
+                                <div>
+                                    <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Width</label>
+                                    <p class="mt-0.5 text-sm text-gray-700"><span x-text="selectedFile.width"></span>px</p>
                                 </div>
-                                <div class="mb-3 rv-media-name">
-                                    <label class="form-label text-xs font-bold text-gray-500 uppercase tracking-wide">Height</label>
-                                    <span class="block text-sm text-gray-700" x-text="selectedFile.height + 'px'"></span>
+                                <div>
+                                    <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Height</label>
+                                    <p class="mt-0.5 text-sm text-gray-700"><span x-text="selectedFile.height"></span>px</p>
                                 </div>
                             </div>
                         </template>

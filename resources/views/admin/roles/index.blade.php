@@ -86,39 +86,61 @@ $systemRoles = $roles->where('is_system', true)->count();
         </button>
     </div>
 
-    {{-- ═══ ROLES TAB ═══ --}}
-    <div x-show="tab==='roles'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-        <div class="space-y-4">
-            @foreach($roles as $role)
-            <div class="bg-white border border-gray-100 rounded-xl overflow-hidden" x-data="{ open: false }">
-                {{-- Role Header --}}
-                <div class="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-surface/20 transition-colors" @click="open = !open">
-                    <div class="flex items-center gap-3.5 min-w-0">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 {{ $role->is_system ? 'bg-amber-50 text-amber-600' : 'bg-accent/10 text-accent' }}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                        </div>
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <h3 class="text-sm font-bold text-brand truncate">{{ $role->label ?? $role->name }}</h3>
+    {{-- ═══ ROLES TAB — Split Panel Layout ═══ --}}
+    <div x-show="tab==='roles'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+        <div class="flex gap-6">
+            {{-- Left: Role List --}}
+            <div class="w-72 shrink-0">
+                <div class="bg-white border border-gray-100 rounded-xl overflow-hidden">
+                    <div class="px-4 py-3.5 border-b border-gray-100 bg-surface/30">
+                        <p class="text-xs font-bold text-brand">Select a Role</p>
+                    </div>
+                    <div class="overflow-y-auto" style="max-height: 600px;">
+                        @foreach($roles as $role)
+                        <div @click="selectedRole = '{{ $role->id }}'"
+                             :class="selectedRole === '{{ $role->id }}' ? 'bg-accent/10 border-l-2 border-accent' : 'border-l-2 border-transparent hover:bg-surface/30'"
+                             class="px-4 py-3.5 cursor-pointer transition-colors border-b border-gray-50 last:border-b-0">
+                            <div class="flex items-center justify-between mb-0.5">
+                                <h4 class="text-sm font-bold text-brand truncate">{{ $role->label ?? $role->name }}</h4>
                                 @if($role->is_system)
-                                <span class="px-2 py-0.5 bg-amber-50 text-amber-600 text-[9px] font-bold rounded uppercase tracking-wider shrink-0">System</span>
+                                <span class="px-1.5 py-0.5 bg-amber-50 text-amber-600 text-[8px] font-bold rounded uppercase shrink-0 ml-1">SYS</span>
                                 @endif
                             </div>
-                            <p class="text-[11px] text-brand-muted truncate">{{ $role->description ?? 'No description' }}</p>
+                            <p class="text-[10px] text-brand-muted truncate">{{ $role->description ?? 'No description' }}</p>
+                            <div class="flex items-center gap-2 mt-1.5">
+                                <span class="text-[9px] font-bold text-brand-muted bg-surface px-1.5 py-0.5 rounded">{{ $role->users_count }} staff</span>
+                                <span class="text-[9px] font-bold text-accent bg-accent/5 px-1.5 py-0.5 rounded">{{ $role->permissions->count() }} perms</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-center gap-2.5 shrink-0">
-                        <span class="text-[10px] font-bold text-brand-muted bg-surface px-2.5 py-1 rounded-lg">{{ $role->users_count }} staff</span>
-                        <span class="text-[10px] font-bold text-accent bg-accent/10 px-2.5 py-1 rounded-lg">{{ $role->permissions->count() }} perms</span>
-                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        @endforeach
                     </div>
                 </div>
+            </div>
 
-                {{-- Permission Matrix --}}
-                <div x-show="open" x-collapse>
+            {{-- Right: Permission Matrix --}}
+            <div class="flex-1 min-w-0">
+                @foreach($roles as $role)
+                <div x-show="selectedRole === '{{ $role->id }}'" x-cloak class="bg-white border border-gray-100 rounded-xl overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-surface/30">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center {{ $role->is_system ? 'bg-amber-50 text-amber-600' : 'bg-accent/10 text-accent' }}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-sm font-bold text-brand">{{ $role->label ?? $role->name }}</h3>
+                                    @if($role->is_system)
+                                    <span class="px-2 py-0.5 bg-amber-50 text-amber-600 text-[9px] font-bold rounded uppercase tracking-wider">System</span>
+                                    @endif
+                                </div>
+                                <p class="text-[11px] text-brand-muted">{{ $role->description ?? 'No description' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <form action="{{ route('orchestrator.roles.update', $role->id) }}" method="POST">
                         @csrf @method('PUT')
-                        <div class="border-t border-gray-100 p-5 space-y-6">
+                        <div class="overflow-y-auto p-5 space-y-6" style="max-height: 500px;">
                             @foreach($permissions as $module => $perms)
                             <div>
                                 <div class="flex items-center gap-2.5 mb-3">
@@ -130,15 +152,15 @@ $systemRoles = $roles->where('is_system', true)->count();
                                     </div>
                                     <label class="flex items-center gap-1.5 cursor-pointer text-[9px] font-bold text-brand-muted hover:text-brand transition-colors">
                                         <input type="checkbox" class="w-3 h-3 rounded border-gray-300 text-accent focus:ring-accent/30"
-                                            onchange="document.querySelectorAll('.perm-{{ Str::slug($module) }}').forEach(cb => cb.checked = this.checked)">
+                                            onchange="document.querySelectorAll('.perm-{{ $role->id }}-{{ Str::slug($module) }}').forEach(cb => cb.checked = this.checked)">
                                         Select All
                                     </label>
                                 </div>
-                                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1.5">
+                                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-1.5">
                                     @foreach($perms as $perm)
                                     <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer group hover:bg-accent/5 transition-colors {{ $role->permissions->contains('id', $perm->id) ? 'bg-accent/[0.04]' : '' }}">
                                         <input type="checkbox" name="permissions[]" value="{{ $perm->id }}"
-                                            class="perm-{{ Str::slug($module) }} w-3.5 h-3.5 rounded border-gray-300 text-accent focus:ring-accent/30"
+                                            class="perm-{{ $role->id }}-{{ Str::slug($module) }} w-3.5 h-3.5 rounded border-gray-300 text-accent focus:ring-accent/30"
                                             {{ $role->permissions->contains('id', $perm->id) ? 'checked' : '' }}>
                                         <div class="min-w-0">
                                             <span class="text-xs font-bold text-brand group-hover:text-accent transition-colors block truncate">{{ $perm->label ?? $perm->name }}</span>
@@ -160,8 +182,15 @@ $systemRoles = $roles->where('is_system', true)->count();
                         </div>
                     </form>
                 </div>
+                @endforeach
+
+                {{-- Empty state when no role selected --}}
+                <div x-show="!selectedRole" class="bg-white border border-gray-100 rounded-xl flex flex-col items-center justify-center py-20 text-brand-muted">
+                    <svg class="w-16 h-16 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <p class="text-sm font-bold">Select a Role</p>
+                    <p class="text-xs mt-1">Choose a role from the left panel to manage its permissions.</p>
+                </div>
             </div>
-            @endforeach
         </div>
     </div>
 
@@ -370,6 +399,7 @@ $systemRoles = $roles->where('is_system', true)->count();
 function accessControl() {
     return {
         tab: 'roles',
+        selectedRole: '{{ $roles->first()?->id ?? '' }}',
         showNewRole: false,
         showNewPerm: false,
         deleteModal: {

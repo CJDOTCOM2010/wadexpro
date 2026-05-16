@@ -8,7 +8,7 @@
 @section('content')
 <div class="space-y-8">
     <!-- Header Section -->
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
         <div>
             <div class="flex items-center gap-3 mb-2 flex-wrap">
                 <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center gap-1">
@@ -23,19 +23,86 @@
             <h1 class="text-3xl font-black text-brand tracking-tight">Super Admin Dashboard</h1>
             <p class="text-brand-muted font-medium mt-1">Welcome back, {{ $admin->name ?? 'Administrator' }} • {{ ucfirst($admin->level ?? 'Super Admin') }}</p>
         </div>
-        <div class="flex items-center gap-3 flex-wrap">
-            <a href="{{ route('orchestrator.drivers') }}" class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-brand hover:border-accent hover:bg-accent/5 transition-all flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                Drivers
-            </a>
-            <a href="{{ route('orchestrator.orders') }}" class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-brand hover:border-accent hover:bg-accent/5 transition-all flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                Rides
-            </a>
-            <a href="{{ route('orchestrator.analytics') }}" class="px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-light transition-all flex items-center gap-2 shadow-lg shadow-brand/20">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                Analytics
-            </a>
+        
+        <div class="flex flex-col xl:items-end gap-3">
+            <!-- Small Quick Actions Row -->
+            <div class="flex items-center gap-2 flex-wrap xl:justify-end">
+                <a href="{{ route('orchestrator.driver.documents') }}" class="group flex items-center gap-2 px-2 py-1.5 bg-white border border-gray-100 rounded-lg hover:border-amber-200 hover:bg-amber-50/50 shadow-sm transition-all">
+                    <div class="w-6 h-6 bg-amber-50 text-amber-600 rounded shrink-0 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <div class="text-left hidden sm:block pr-1">
+                        <p class="text-[10px] font-black text-brand leading-none mb-0.5">Driver KYC</p>
+                        <p class="text-[9px] font-bold text-brand-muted leading-none">{{ $pendingActions['pending_drivers'] ?? 0 }} pending</p>
+                    </div>
+                </a>
+                
+                <a href="{{ route('orchestrator.support.tickets') }}" class="group flex items-center gap-2 px-2 py-1.5 bg-white border border-gray-100 rounded-lg hover:border-blue-200 hover:bg-blue-50/50 shadow-sm transition-all">
+                    <div class="w-6 h-6 bg-blue-50 text-blue-600 rounded shrink-0 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </div>
+                    <div class="text-left hidden sm:block pr-1">
+                        <p class="text-[10px] font-black text-brand leading-none mb-0.5">Support</p>
+                        <p class="text-[9px] font-bold text-brand-muted leading-none">View tickets</p>
+                    </div>
+                </a>
+
+                <a href="{{ route('orchestrator.financials') }}" class="group flex items-center gap-2 px-2 py-1.5 bg-white border border-gray-100 rounded-lg hover:border-green-200 hover:bg-green-50/50 shadow-sm transition-all">
+                    <div class="w-6 h-6 bg-green-50 text-green-600 rounded shrink-0 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div class="text-left hidden sm:block pr-1">
+                        <p class="text-[10px] font-black text-brand leading-none mb-0.5">Payouts</p>
+                        <p class="text-[9px] font-bold text-brand-muted leading-none">Manage</p>
+                    </div>
+                </a>
+
+                <a href="{{ route('orchestrator.users') }}" class="group flex items-center gap-2 px-2 py-1.5 bg-white border border-gray-100 rounded-lg hover:border-purple-200 hover:bg-purple-50/50 shadow-sm transition-all">
+                    <div class="w-6 h-6 bg-purple-50 text-purple-600 rounded shrink-0 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </div>
+                    <div class="text-left hidden sm:block pr-1">
+                        <p class="text-[10px] font-black text-brand leading-none mb-0.5">Users</p>
+                        <p class="text-[9px] font-bold text-brand-muted leading-none">{{ $customerStats['total'] ?? 0 }} total</p>
+                    </div>
+                </a>
+
+                <a href="{{ route('orchestrator.settings.assets') }}" class="group flex items-center gap-2 px-2 py-1.5 bg-white border border-gray-100 rounded-lg hover:border-gray-300 hover:bg-gray-50/50 shadow-sm transition-all">
+                    <div class="w-6 h-6 bg-surface text-brand rounded shrink-0 flex items-center justify-center group-hover:bg-brand group-hover:text-white transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div class="text-left hidden sm:block pr-1">
+                        <p class="text-[10px] font-black text-brand leading-none mb-0.5">Assets</p>
+                        <p class="text-[9px] font-bold text-brand-muted leading-none">Gallery</p>
+                    </div>
+                </a>
+
+                <a href="{{ route('orchestrator.settings') }}" class="group flex items-center gap-2 px-2 py-1.5 bg-white border border-gray-100 rounded-lg hover:border-gray-300 hover:bg-gray-50/50 shadow-sm transition-all">
+                    <div class="w-6 h-6 bg-surface text-brand rounded shrink-0 flex items-center justify-center group-hover:bg-brand group-hover:text-white transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </div>
+                    <div class="text-left hidden sm:block pr-1">
+                        <p class="text-[10px] font-black text-brand leading-none mb-0.5">Settings</p>
+                        <p class="text-[9px] font-bold text-brand-muted leading-none">Configure</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Main Actions -->
+            <div class="flex items-center gap-3 flex-wrap xl:justify-end">
+                <a href="{{ route('orchestrator.drivers') }}" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-brand hover:border-accent hover:bg-accent/5 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Drivers
+                </a>
+                <a href="{{ route('orchestrator.orders') }}" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-brand hover:border-accent hover:bg-accent/5 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                    Rides
+                </a>
+                <a href="{{ route('orchestrator.analytics') }}" class="px-4 py-2 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-light transition-all flex items-center gap-2 shadow-lg shadow-brand/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    Analytics
+                </a>
+            </div>
         </div>
     </div>
 
@@ -474,51 +541,7 @@
         <div id="tacticalMap" class="h-80 rounded-xl overflow-hidden bg-surface border border-gray-100"></div>
     </div>
 
-    <!-- Quick Actions Footer -->
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <a href="{{ route('orchestrator.driver.documents') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-amber-100 group-hover:bg-amber-500 group-hover:text-white transition-all">
-                <svg class="w-6 h-6 text-amber-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            </div>
-            <p class="text-xs font-black text-brand tracking-wide">Driver KYC</p>
-            <p class="text-[10px] font-bold text-brand-muted mt-1">{{ $pendingActions['pending_drivers'] ?? 0 }} pending</p>
-        </a>
-        <a href="{{ route('orchestrator.support.tickets') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                <svg class="w-6 h-6 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            </div>
-            <p class="text-xs font-black text-brand tracking-wide">Support</p>
-            <p class="text-[10px] font-bold text-brand-muted mt-1">View tickets</p>
-        </a>
-        <a href="{{ route('orchestrator.financials') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-green-100 group-hover:bg-green-500 group-hover:text-white transition-all">
-                <svg class="w-6 h-6 text-green-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <p class="text-xs font-black text-brand tracking-wide">Payouts</p>
-            <p class="text-[10px] font-bold text-brand-muted mt-1">Manage</p>
-        </a>
-        <a href="{{ route('orchestrator.users') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-            <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-purple-100 group-hover:bg-purple-500 group-hover:text-white transition-all">
-                <svg class="w-6 h-6 text-purple-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            </div>
-            <p class="text-xs font-black text-brand tracking-wide">Users</p>
-            <p class="text-[10px] font-bold text-brand-muted mt-1">{{ $customerStats['total'] ?? 0 }} total</p>
-        </a>
-        <a href="{{ route('orchestrator.settings.assets') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-            <div class="w-12 h-12 bg-surface rounded-xl flex items-center justify-center mx-auto mb-3 border border-gray-200 group-hover:bg-brand group-hover:border-brand group-hover:text-white transition-all">
-                <svg class="w-6 h-6 text-brand group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            </div>
-            <p class="text-xs font-black text-brand tracking-wide">Assets</p>
-            <p class="text-[10px] font-bold text-brand-muted mt-1">Gallery</p>
-        </a>
-        <a href="{{ route('orchestrator.settings') }}" class="bg-white rounded-2xl border-2 border-gray-100 p-4 text-center hover:border-accent hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-            <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-gray-200 group-hover:bg-brand group-hover:border-brand group-hover:text-white transition-all">
-                <svg class="w-6 h-6 text-brand group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            </div>
-            <p class="text-xs font-black text-brand tracking-wide">Settings</p>
-            <p class="text-[10px] font-bold text-brand-muted mt-1">Configure</p>
-        </a>
-    </div>
+
 </div>
 
 <script>

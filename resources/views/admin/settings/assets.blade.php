@@ -9,6 +9,8 @@ $currentDisk = $disk ?? 'public';
 $currentPath = $directory ?? '';
 $pathParts = $currentPath ? explode('/', $currentPath) : [];
 $imageExts = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'];
+$videoExts = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'ogg'];
+$docExts = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'zip', 'rar', 'json', 'xml'];
 $totalSize = 0;
 foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'); $totalSize += (float)$s * 1024; }
 @endphp
@@ -28,124 +30,134 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
 
 <div x-data="mediaManager()" x-init="init()" class="bg-[#f0f2f5] border border-gray-200 rounded-lg shadow-sm flex flex-col h-[calc(100vh-100px)] overflow-hidden text-sm text-[#1c2c44]">
     
-    {{-- Top Toolbar --}}
-    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white shrink-0 gap-4 overflow-x-auto">
-        <div class="flex items-center gap-2 shrink-0">
-            <!-- Upload Dropdown -->
-            <div class="relative" x-data="{ uploadOpen: false }">
-                <button @click="uploadOpen = !uploadOpen" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                    Upload
-                    <svg class="w-3 h-3 ml-1" :class="uploadOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+    {{-- Main Header Toolbar --}}
+    <div class="flex flex-col border-b border-gray-200 bg-white shrink-0">
+        {{-- Top Row: Actions & Search --}}
+        <div class="flex flex-wrap items-center justify-between px-4 py-3 gap-3">
+            <div class="flex items-center gap-2 shrink-0">
+                <!-- Mobile Sidebar Toggle -->
+                <button @click="sidebarOpen = !sidebarOpen" class="p-1.5 text-gray-500 hover:bg-gray-100 rounded md:hidden" title="Toggle Sidebar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
-                <div x-show="uploadOpen" @click.outside="uploadOpen = false" x-cloak class="absolute right-0 mt-1 w-52 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
-                    <button @click="uploadOpen = false; showUpload = true" class="flex items-center gap-3 w-full px-3 py-2.5 text-xs font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors">
-                        <svg class="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 9l5-5 5 5M12 4v12"/></svg>
-                        Upload from local
-                    </button>
-                    <button @click="uploadOpen = false; showUrlUpload = true" class="flex items-center gap-3 w-full px-3 py-2.5 text-xs font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors">
-                        <svg class="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15l6-6M11 6l.463-.536a5 5 0 017.071 7.072l-.534.464M13 18l-.397.534a5.068 5.068 0 01-7.127 0 4.972 4.972 0 010-7.071l.524-.463"/></svg>
-                        Upload from URL
-                    </button>
-                </div>
-            </div>
-            
-            <!-- New Folder -->
-            <button @click="showFolder = true" class="p-1.5 bg-brand text-white rounded hover:bg-brand-light transition-colors shadow-sm" title="New Folder">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-5 5h10a2 2 0 002-2V9a2 2 0 00-2-2h-4l-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z"/></svg>
-            </button>
-            
-            <!-- Refresh -->
-            <a href="{{ route('orchestrator.settings.assets', ['disk' => $currentDisk, 'path' => $currentPath]) }}" class="p-1.5 bg-brand text-white rounded hover:bg-brand-light transition-colors shadow-sm" title="Refresh">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            </a>
-            
-            <!-- Filters -->
-            <button class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
-                Everything
-                <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <button class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                All media
-                <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-        </div>
-        
-        <div class="relative max-w-xs w-full shrink-0">
-            <input type="text" x-model="search" placeholder="Search in current folder" class="w-full pl-3 pr-10 py-1.5 border border-gray-300 text-gray-700 rounded outline-none focus:border-blue-500 transition-colors text-sm">
-            <svg class="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </div>
-    </div>
 
-    {{-- Secondary Toolbar --}}
-    <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-white shrink-0">
-        <div class="flex items-center gap-2 text-[#2563EB] font-medium text-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <a href="{{ route('orchestrator.settings.assets') }}" class="hover:underline">All media</a>
-            @foreach($pathParts as $i => $part)
-            <span class="text-gray-400">/</span>
-            <a href="{{ route('orchestrator.settings.assets', ['disk' => $currentDisk, 'path' => implode('/', array_slice($pathParts, 0, $i + 1))]) }}" class="hover:underline">{{ $part }}</a>
-            @endforeach
+                <!-- Upload Dropdown -->
+                <div class="relative" x-data="{ uploadOpen: false }">
+                    <button @click="uploadOpen = !uploadOpen" class="flex items-center gap-2 px-3 py-1.5 bg-brand text-white font-medium rounded hover:bg-brand-light transition-colors shadow-sm text-xs">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        Upload
+                        <svg class="w-3 h-3 ml-1" :class="uploadOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="uploadOpen" @click.outside="uploadOpen = false" x-cloak class="absolute left-0 mt-1 w-52 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                        <button @click="uploadOpen = false; showUpload = true" class="flex items-center gap-3 w-full px-3 py-2.5 text-xs font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors">
+                            <svg class="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 9l5-5 5 5M12 4v12"/></svg>
+                            Upload from local
+                        </button>
+                        <button @click="uploadOpen = false; showUrlUpload = true" class="flex items-center gap-3 w-full px-3 py-2.5 text-xs font-medium text-gray-700 hover:bg-brand/5 hover:text-brand transition-colors">
+                            <svg class="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15l6-6M11 6l.463-.536a5 5 0 017.071 7.072l-.534.464M13 18l-.397.534a5.068 5.068 0 01-7.127 0 4.972 4.972 0 010-7.071l.524-.463"/></svg>
+                            Upload from URL
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- New Folder -->
+                <button @click="showFolder = true" class="p-1.5 bg-brand text-white rounded hover:bg-brand-light transition-colors shadow-sm" title="New Folder">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-5 5h10a2 2 0 002-2V9a2 2 0 00-2-2h-4l-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z"/></svg>
+                </button>
+                
+                <!-- Refresh -->
+                <a href="{{ route('orchestrator.settings.assets', ['disk' => $currentDisk, 'path' => $currentPath]) }}" class="p-1.5 bg-brand text-white rounded hover:bg-brand-light transition-colors shadow-sm" title="Refresh">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                </a>
+
+                <div class="h-6 w-px bg-gray-200 mx-1 hidden sm:block"></div>
+
+                <!-- Filters & Views Group -->
+                <div class="hidden sm:flex items-center gap-2">
+                    <div class="relative" x-data="{ viewOpen: false }">
+                        <button @click="viewOpen = !viewOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded text-[10px] font-bold text-brand-muted hover:text-brand hover:border-brand-light transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 12a2 2 0 104 0a2 2 0 00-4 0M21 12c-2.4 4-5.4 6-9 6s-6.6-2-9-6c2.4-4 5.4-6 9-6s6.6 2 9 6z"/></svg>
+                            <span x-text="viewFilterLabel"></span>
+                        </button>
+                        <div x-show="viewOpen" @click.outside="viewOpen = false" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                            <button @click="viewFilter = 'all'; viewFilterLabel = 'All media'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-brand/5 transition-colors" :class="viewFilter === 'all' ? 'text-brand font-bold' : 'text-gray-600'">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
+                                All media
+                            </button>
+                            <button @click="viewFilter = 'trash'; viewFilterLabel = 'Trash'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-brand/5 transition-colors" :class="viewFilter === 'trash' ? 'text-brand font-bold' : 'text-gray-600'">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7l16 0M10 11l0 6M14 11l0 6M5 7l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M9 7v-3a1 1 0 011-1h4a1 1 0 011 1v3"/></svg>
+                                Trash
+                            </button>
+                            <button @click="viewFilter = 'recent'; viewFilterLabel = 'Recent'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-brand/5 transition-colors" :class="viewFilter === 'recent' ? 'text-brand font-bold' : 'text-gray-600'">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M12 7v5l3 3"/></svg>
+                                Recent
+                            </button>
+                            <button @click="viewFilter = 'favorites'; viewFilterLabel = 'Favorites'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-brand/5 transition-colors" :class="viewFilter === 'favorites' ? 'text-brand font-bold' : 'text-gray-600'">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17.75l-6.172 3.245 1.179-6.873-5-4.867 6.9-1 3.086-6.253 3.086 6.253 6.9 1-5 4.867 1.179 6.873z"/></svg>
+                                Favorites
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative" x-data="{ filterOpen: false }">
+                        <button @click="filterOpen = !filterOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded text-[10px] font-bold text-brand-muted hover:text-brand hover:border-brand-light transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
+                            <span x-text="filterLabel"></span>
+                        </button>
+                        <div x-show="filterOpen" @click.outside="filterOpen = false" x-cloak class="absolute left-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                            <button @click="fileFilter = 'all'; filterLabel = 'Everything'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-brand/5 transition-colors" :class="fileFilter === 'all' ? 'text-brand font-bold' : 'text-gray-600'">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
+                                Everything
+                            </button>
+                            <button @click="fileFilter = 'image'; filterLabel = 'Image'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-brand/5 transition-colors" :class="fileFilter === 'image' ? 'text-brand font-bold' : 'text-gray-600'">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8h.01M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zM3 16l5-5c.928-.893 2.072-.893 3 0l5 5M14 14l1-1c.928-.893 2.072-.893 3 0l3 3"/></svg>
+                                Image
+                            </button>
+                            <button @click="fileFilter = 'video'; filterLabel = 'Video'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-brand/5 transition-colors" :class="fileFilter === 'video' ? 'text-brand font-bold' : 'text-gray-600'">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276a1 1 0 011.447.894v6.764a1 1 0 01-1.447.894L15 14v-4zM3 6m0 2a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                                Video
+                            </button>
+                            <button @click="fileFilter = 'document'; filterLabel = 'Document'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-brand/5 transition-colors" :class="fileFilter === 'document' ? 'text-brand font-bold' : 'text-gray-600'">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg>
+                                Document
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty Trash Button -->
+                <button x-show="viewFilter === 'trash'" @click="showToast('Emptying trash is not implemented yet.')" class="flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white font-medium rounded hover:bg-red-700 transition-colors shadow-sm text-xs" x-cloak>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    Empty Trash
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0 ml-auto">
+                <div class="relative max-w-[200px] sm:max-w-xs w-full">
+                    <input type="text" x-model="search" placeholder="Search in current folder" class="w-full pl-3 pr-10 py-1.5 border border-gray-200 text-gray-700 rounded-lg outline-none focus:border-brand/40 focus:ring-4 focus:ring-brand/5 transition-all text-xs bg-gray-50/50">
+                    <svg class="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+            </div>
         </div>
-        
-        <div class="flex items-center gap-3">
-            <div class="relative" x-data="{ viewOpen: false }">
-                <button @click="viewOpen = !viewOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
-                    <span x-text="viewFilterLabel"></span>
-                </button>
-                <div x-show="viewOpen" @click.outside="viewOpen = false" x-cloak class="absolute right-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
-                    <button @click="viewFilter = 'all'; viewFilterLabel = 'All media'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>
-                        All media
-                    </button>
-                    <button @click="viewFilter = 'trash'; viewFilterLabel = 'Trash'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'trash' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7l16 0M10 11l0 6M14 11l0 6M5 7l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M9 7v-3a1 1 0 011-1h4a1 1 0 011 1v3"/></svg>
-                        Trash
-                    </button>
-                    <button @click="viewFilter = 'recent'; viewFilterLabel = 'Recent'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'recent' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M12 7v5l3 3"/></svg>
-                        Recent
-                    </button>
-                    <button @click="viewFilter = 'favorites'; viewFilterLabel = 'Favorites'; viewOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="viewFilter === 'favorites' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17.75l-6.172 3.245 1.179-6.873-5-4.867 6.9-1 3.086-6.253 3.086 6.253 6.9 1-5 4.867 1.179 6.873z"/></svg>
-                        Favorites
-                    </button>
-                </div>
+
+        {{-- Bottom Row: Breadcrumbs & Sort/View Options --}}
+        <div class="flex items-center justify-between px-4 py-2 bg-gray-50/30 border-t border-gray-100 shrink-0 overflow-x-auto">
+            <div class="flex items-center gap-2 text-brand font-medium text-[11px] whitespace-nowrap">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <a href="{{ route('orchestrator.settings.assets') }}" class="hover:underline">All media</a>
+                @foreach($pathParts as $i => $part)
+                <span class="text-gray-300">/</span>
+                <a href="{{ route('orchestrator.settings.assets', ['disk' => $currentDisk, 'path' => implode('/', array_slice($pathParts, 0, $i + 1))]) }}" class="hover:underline opacity-80">{{ $part }}</a>
+                @endforeach
             </div>
-            <div class="relative" x-data="{ filterOpen: false }">
-                <button @click="filterOpen = !filterOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
-                    <span x-text="filterLabel"></span>
-                </button>
-                <div x-show="filterOpen" @click.outside="filterOpen = false" x-cloak class="absolute right-0 mt-1 w-44 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
-                    <button @click="fileFilter = 'all'; filterLabel = 'Everything'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'all' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17l-2 2 2 2M10 19h9a2 2 0 001.75-2.75l-.55-1M8.536 11l-.732-2.732-2.732.732M7.804 8.268l-4.5 7.794a2 2 0 001.506 2.89l1.141.024M15.464 11l2.732.732.732-2.732M18.196 11.732l-4.5-7.794a2 2 0 00-3.256-.14l-.591.976"/></svg>
-                        Everything
+            
+            <div class="flex items-center gap-3 shrink-0 ml-4">
+                <div class="relative" x-data="{ sortOpen: false }">
+                    <button @click="sortOpen = !sortOpen" class="flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-200 rounded text-[10px] font-bold text-brand-muted hover:text-brand transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h14M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
+                        Sort
                     </button>
-                    <button @click="fileFilter = 'image'; filterLabel = 'Image'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'image' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8h.01M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zM3 16l5-5c.928-.893 2.072-.893 3 0l5 5M14 14l1-1c.928-.893 2.072-.893 3 0l3 3"/></svg>
-                        Image
-                    </button>
-                    <button @click="fileFilter = 'video'; filterLabel = 'Video'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'video' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276a1 1 0 011.447.894v6.764a1 1 0 01-1.447.894L15 14v-4zM3 6m0 2a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-                        Video
-                    </button>
-                    <button @click="fileFilter = 'document'; filterLabel = 'Document'; filterOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="fileFilter === 'document' ? 'text-brand font-bold' : 'text-brand-muted'">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg>
-                        Document
-                    </button>
-                </div>
-            </div>
-            <div class="relative" x-data="{ sortOpen: false }">
-                <button @click="sortOpen = !sortOpen" class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-brand-muted hover:text-brand hover:border-gray-300 transition-colors">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h14M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
-                    Sort
-                </button>
-                <div x-show="sortOpen" @click.outside="sortOpen = false" x-cloak class="absolute right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
-                    <button @click="sortBy = 'name-asc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-surface/50 transition-colors" :class="sortBy === 'name-asc' ? 'text-brand font-bold' : 'text-brand-muted'">
+                    <div x-show="sortOpen" @click.outside="sortOpen = false" x-cloak class="absolute right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1">
+                        <button @click="sortBy = 'name-asc'; sortOpen = false" class="flex items-center gap-2.5 w-full px-3 py-2 text-xs hover:bg-brand/5 transition-colors" :class="sortBy === 'name-asc' ? 'text-brand font-bold' : 'text-gray-600'">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10v-5c0-1.38.62-2 2-2s2 .62 2 2v5m0-3h-4M19 21h-4l4-7h-4M4 15l3 3 3-3M7 6v12"/></svg>
                         Name A-Z
                     </button>
@@ -348,11 +360,33 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
 
                 {{-- Files --}}
                 @foreach($allFiles as $file)
-                @php $ext = strtolower($file['extension'] ?? ''); $isImg = in_array($ext, $imageExts); @endphp
-                <div x-show="search === '' || '{{ strtolower($file['name']) }}'.includes(search.toLowerCase())" class="flex flex-col bg-[#F8F9FA] hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer overflow-hidden h-32 relative border border-gray-100 rounded group" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'ring-2 ring-blue-500 ring-offset-1'">
+                @php
+                    $ext = strtolower($file['extension'] ?? '');
+                    $isImg = in_array($ext, $imageExts);
+                    $isVid = in_array($ext, $videoExts);
+                    $isDoc = in_array($ext, $docExts);
+                    $fileType = $isImg ? 'image' : ($isVid ? 'video' : ($isDoc ? 'document' : 'other'));
+                    
+                    $sizeStr = $file['size'] ?? '0 B';
+                    $sizeBytes = (float)preg_replace('/[^0-9.]/', '', $sizeStr);
+                    if (strpos($sizeStr, 'KB') !== false) $sizeBytes *= 1024;
+                    elseif (strpos($sizeStr, 'MB') !== false) $sizeBytes *= 1024 * 1024;
+                    elseif (strpos($sizeStr, 'GB') !== false) $sizeBytes *= 1024 * 1024 * 1024;
+                    
+                    $lastModified = $file['last_modified'] ?? 'Unknown';
+                @endphp
+                <div x-show="isFileVisible('{{ str_replace("'", "\\'", $file['name']) }}', '{{ $fileType }}', '{{ $lastModified }}')" 
+                     class="flex flex-col bg-[#F8F9FA] hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer overflow-hidden h-32 relative border border-gray-100 rounded group" 
+                     data-name="{{ $file['name'] }}" 
+                     data-size_bytes="{{ $sizeBytes }}" 
+                     data-date="{{ $lastModified }}"
+                     @click="previewFile('{{ $file['path'] }}', '{{ str_replace("'", "\\'", $file['name']) }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $fileType }}', '{{ $lastModified }}')" 
+                     :class="selectedFile.path === '{{ $file['path'] }}' && 'ring-2 ring-blue-500 ring-offset-1'">
                     <div class="flex-1 flex items-center justify-center p-0 w-full h-full overflow-hidden">
                         @if($isImg)
                         <img src="{{ $file['url'] }}" class="w-full h-full object-cover">
+                        @elseif($isVid)
+                        <svg class="w-10 h-10 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M3 6m0 2a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
                         @else
                         <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                         @endif
@@ -393,18 +427,40 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     </tr>
                     @endforeach
                     @foreach($allFiles as $file)
-                    @php $ext = strtolower($file['extension'] ?? ''); $isImg = in_array($ext, $imageExts); @endphp
-                    <tr x-show="search === '' || '{{ strtolower($file['name']) }}'.includes(search.toLowerCase())" class="hover:bg-blue-50 cursor-pointer transition-colors" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'bg-blue-50'">
+                    @php
+                        $ext = strtolower($file['extension'] ?? '');
+                        $isImg = in_array($ext, $imageExts);
+                        $isVid = in_array($ext, $videoExts);
+                        $isDoc = in_array($ext, $docExts);
+                        $fileType = $isImg ? 'image' : ($isVid ? 'video' : ($isDoc ? 'document' : 'other'));
+                        
+                        $sizeStr = $file['size'] ?? '0 B';
+                        $sizeBytes = (float)preg_replace('/[^0-9.]/', '', $sizeStr);
+                        if (strpos($sizeStr, 'KB') !== false) $sizeBytes *= 1024;
+                        elseif (strpos($sizeStr, 'MB') !== false) $sizeBytes *= 1024 * 1024;
+                        elseif (strpos($sizeStr, 'GB') !== false) $sizeBytes *= 1024 * 1024 * 1024;
+                        
+                        $lastModified = $file['last_modified'] ?? 'Unknown';
+                    @endphp
+                    <tr x-show="isFileVisible('{{ str_replace("'", "\\'", $file['name']) }}', '{{ $fileType }}', '{{ $lastModified }}')" 
+                        class="hover:bg-blue-50 cursor-pointer transition-colors" 
+                        data-name="{{ $file['name'] }}" 
+                        data-size_bytes="{{ $sizeBytes }}" 
+                        data-date="{{ $lastModified }}"
+                        @click="previewFile('{{ $file['path'] }}', '{{ str_replace("'", "\\'", $file['name']) }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $fileType }}', '{{ $lastModified }}')" 
+                        :class="selectedFile.path === '{{ $file['path'] }}' && 'bg-blue-50'">
                         <td class="px-4 py-2 flex items-center gap-2 min-w-[200px]">
                             @if($isImg)
                             <img src="{{ $file['url'] }}" class="w-6 h-6 rounded object-cover" onerror="this.style.display='none'">
+                            @elseif($isVid)
+                            <svg class="w-5 h-5 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M3 6m0 2a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
                             @else
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                            <svg class="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                             @endif
                             <span class="truncate">{{ $file['name'] }}</span>
                         </td>
-                        <td class="px-4 py-2 text-gray-500 whitespace-nowrap">{{ $file['size'] }}</td>
-                        <td class="px-4 py-2 text-gray-500 whitespace-nowrap">{{ $file['last_modified'] }}</td>
+                        <td class="px-4 py-2 text-gray-500 whitespace-nowrap text-xs">{{ $file['size'] }}</td>
+                        <td class="px-4 py-2 text-gray-500 whitespace-nowrap text-xs">{{ $file['last_modified'] }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -674,11 +730,11 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                             <div class="space-y-4 pt-2">
                                 <div>
                                     <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block" for="dataHeight">Height</label>
-                                    <input class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow" type="text" name="dataHeight" id="dataHeight">
+                                    <input class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow" type="text" name="dataHeight" id="dataHeight" x-model="dataHeight">
                                 </div>
                                 <div>
                                     <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block" for="dataWidth">Width</label>
-                                    <input class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow" type="text" name="dataWidth" id="dataWidth">
+                                    <input class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow" type="text" name="dataWidth" id="dataWidth" x-model="dataWidth">
                                 </div>
                                 <label class="flex items-center gap-2 cursor-pointer mt-2">
                                     <input type="checkbox" id="aspectRatio" name="aspectRatio" class="w-4 h-4 text-brand rounded border-gray-300 focus:ring-brand">
@@ -792,10 +848,10 @@ function mediaManager() {
     return {
         viewMode: 'grid', viewFilter: 'all', viewFilterLabel: 'All media', fileFilter: 'all', filterLabel: 'Everything',
         showUpload: false, showUrlUpload: false, showFolder: false, sidebarOpen: true,
-        search: '', sortBy: 'name',
-        selectedFile: { name: '', path: '', url: '', size: '', type: '', isImage: false },
+        search: '', sortBy: 'name-asc',
+        selectedFile: { name: '', path: '', url: '', size: '', type: '', lastModified: '', isImage: false },
         showRename: false, renameOldPath: '', renameNewName: '',
-        
+        dataHeight: '', dataWidth: '',
         showPreviewPopup: false,
         showCropModal: false,
         showAltTextModal: false, altTextValue: '',
@@ -804,25 +860,99 @@ function mediaManager() {
         toastMessage: '', toastTimeout: null,
 
         deleteStep: 0, deletePath: '', deleteLabel: '', deleteConfirm: '',
-        init() {},
+        init() {
+            this.$watch('sortBy', () => this.sortItems());
+        },
         get shareResult() {
             if (!this.selectedFile || !this.selectedFile.url) return '';
             const url = this.selectedFile.url;
             switch(this.shareType) {
                 case 'url': return url;
-                case 'indirect_url': return url + '?indirect=1'; // Mock indirect URL logic
+                case 'indirect_url': return url + '?indirect=1'; 
                 case 'html': return `<img src="${url}" alt="${this.selectedFile.name}">`;
                 case 'markdown': return `![${this.selectedFile.name}](${url})`;
                 default: return url;
             }
         },
-        filteredCount() {
-            return 0; // handled by Alpine x-show
-        },
-        previewFile(path, name, url, size, type) {
-            this.selectedFile = { path, name, url, size, type, isImage: type === 'image' };
+        
+        previewFile(path, name, url, size, type, lastModified) {
+            this.selectedFile = { 
+                path, name, url, size, type, lastModified,
+                isImage: ['image', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(type) 
+            };
             this.sidebarOpen = true;
         },
+
+        isFileVisible(name, type, lastModified) {
+            const searchMatch = !this.search || name.toLowerCase().includes(this.search.toLowerCase());
+            const typeMatch = this.fileFilter === 'all' || type === this.fileFilter;
+            
+            let viewMatch = true;
+            if (this.viewFilter === 'recent') {
+                if (!lastModified || lastModified === 'Unknown') return false;
+                const date = new Date(lastModified);
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                viewMatch = date > sevenDaysAgo;
+            } else if (this.viewFilter === 'trash' || this.viewFilter === 'favorites') {
+                viewMatch = false; // Placeholder
+            }
+
+            return searchMatch && typeMatch && viewMatch;
+        },
+
+        sortItems() {
+            const container = document.querySelector('[x-show="viewMode === \'grid\'"]');
+            if (!container) return;
+            const items = Array.from(container.querySelectorAll('.group[data-name]'));
+            
+            items.sort((a, b) => {
+                let valA, valB;
+                const [sortField, sortDir] = this.sortBy.split('-');
+                
+                if (sortField === 'name') {
+                    valA = a.dataset.name.toLowerCase();
+                    valB = b.dataset.name.toLowerCase();
+                } else if (sortField === 'size') {
+                    valA = parseFloat(a.dataset.size_bytes) || 0;
+                    valB = parseFloat(b.dataset.size_bytes) || 0;
+                } else if (sortField === 'date') {
+                    valA = new Date(a.dataset.date).getTime() || 0;
+                    valB = new Date(b.dataset.date).getTime() || 0;
+                }
+
+                if (valA < valB) return sortDir === 'asc' ? -1 : 1;
+                if (valA > valB) return sortDir === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            items.forEach(item => container.appendChild(item));
+            
+            // Also sort list view table
+            const tbody = document.querySelector('tbody.divide-y');
+            if (tbody) {
+                const rows = Array.from(tbody.querySelectorAll('tr[data-name]'));
+                rows.sort((a, b) => {
+                    let valA, valB;
+                    const [sortField, sortDir] = this.sortBy.split('-');
+                    if (sortField === 'name') {
+                        valA = a.dataset.name.toLowerCase();
+                        valB = b.dataset.name.toLowerCase();
+                    } else if (sortField === 'size') {
+                        valA = parseFloat(a.dataset.size_bytes) || 0;
+                        valB = parseFloat(b.dataset.size_bytes) || 0;
+                    } else if (sortField === 'date') {
+                        valA = new Date(a.dataset.date).getTime() || 0;
+                        valB = new Date(b.dataset.date).getTime() || 0;
+                    }
+                    if (valA < valB) return sortDir === 'asc' ? -1 : 1;
+                    if (valA > valB) return sortDir === 'asc' ? 1 : -1;
+                    return 0;
+                });
+                rows.forEach(row => tbody.appendChild(row));
+            }
+        },
+
         showToast(msg) {
             this.toastMessage = msg;
             if(this.toastTimeout) clearTimeout(this.toastTimeout);

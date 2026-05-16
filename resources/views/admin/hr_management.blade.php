@@ -5,9 +5,10 @@
 @if(session('error'))
 <div class="mb-4 p-3.5 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2.5">
     <svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-    <p class="text-sm font-medium text-red-700">{{ session('success') }}</p>
+    <p class="text-sm font-medium text-red-700">{{ session('error') }}</p>
 </div>
 @endif
+
 @if(session('success'))
 <div class="mb-4 p-3.5 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2.5">
     <svg class="w-4 h-4 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -82,8 +83,7 @@
 
         <div class="divide-y divide-gray-50">
             @forelse($staff as $member)
-            @php $isSuper = $member->email === config('orchestrator.super_admin_email'); @endphp
-            <div class="px-5 py-4 hover:bg-surface/20 transition-colors {{ $member->status === 'inactive' || !$member->is_active ? 'opacity-50' : '' }}">
+            <div class="px-5 py-4 hover:bg-surface/20 transition-colors {{ !$member->is_active ? 'opacity-50' : '' }}">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 {{ $member->user_type === 'admin' ? 'bg-brand text-accent' : 'bg-surface text-brand border border-gray-100' }}">
                         {{ strtoupper(substr($member->name, 0, 2)) }}
@@ -112,7 +112,6 @@
                             @else
                             <span class="text-[10px] font-bold text-red-500 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span> Inactive</span>
                             @endif
-                            @if(!$isSuper)
                             <div class="flex items-center gap-1">
                                 <button @click="openRoleModal('{{ $member->id }}', '{{ $member->name }}', '{{ $member->user_type }}')" class="px-2 py-1 text-[10px] font-bold text-accent hover:bg-accent/5 rounded-lg transition-colors">Role</button>
                                 @if($member->is_active)
@@ -131,9 +130,6 @@
                                     <button type="submit" class="px-2 py-1 text-[10px] font-bold text-brand-muted hover:text-brand hover:bg-surface rounded-lg transition-colors">Reset Pwd</button>
                                 </form>
                             </div>
-                            @else
-                            <span class="text-[10px] text-gray-400 italic">Protected</span>
-                            @endif
                         </div>
                     </div>
                 </div>

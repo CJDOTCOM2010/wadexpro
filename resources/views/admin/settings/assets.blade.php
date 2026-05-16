@@ -441,7 +441,9 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     
                     <div class="w-full space-y-2 border-t border-gray-200 pt-6">
                         <a :href="selectedFile.url" target="_blank" class="w-full px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-200 rounded hover:bg-blue-50 transition-colors block">Open in New Tab</a>
-                        <button @click="copyUrl(selectedFile.url)" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors block">Copy Link Address</button>
+                        <button @click="copyUrlToClipboard(selectedFile.url)" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors block">Copy Link Address</button>
+                        <button @click="openRename()" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors block">Rename</button>
+                        <button @click="downloadFile()" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors block">Download</button>
                         <button @click="confirmDelete(selectedFile.path, selectedFile.name)" class="w-full px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded hover:bg-red-50 transition-colors block mt-4">Delete Permanently</button>
                     </div>
                 </div>
@@ -560,6 +562,40 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         </div>
     </div>
 
+
+    {{-- Rename Modal --}}
+    <div x-show="showRename" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/50 backdrop-blur-sm" @click="showRename = false"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm relative z-10" @click.outside="showRename = false">
+            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-accent/10 rounded-lg flex items-center justify-center text-accent">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-brand">Rename File</h3>
+                        <p class="text-xs text-brand-muted">Enter a new name for this file.</p>
+                    </div>
+                </div>
+                <button type="button" @click="showRename = false" class="w-7 h-7 bg-surface rounded-lg flex items-center justify-center text-brand-muted hover:text-brand transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form action="{{ route('orchestrator.settings.assets.rename') }}" method="POST" class="p-6 space-y-4">
+                @csrf
+                <input type="hidden" name="disk" value="{{ $currentDisk }}">
+                <input type="hidden" name="old_path" :value="renameOldPath">
+                <div>
+                    <label class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1.5 block">New Name</label>
+                    <input type="text" name="new_name" x-model="renameNewName" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 transition-shadow">
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
+                    <button type="button" @click="showRename = false" class="px-4 py-2 text-xs font-bold text-brand-muted hover:text-brand transition-colors">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-brand text-white rounded-lg text-xs font-bold hover:bg-brand-light transition-colors">Rename</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     {{-- Delete Confirmation --}}
     <div x-show="deleteStep > 0" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -818,9 +854,6 @@ function mediaManager() {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-        },
-        copyUrl(url) {
-            navigator.clipboard.writeText(url);
         },
         confirmDelete(path, label) {
             this.deletePath = path; this.deleteLabel = label; this.deleteStep = 1;

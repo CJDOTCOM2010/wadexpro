@@ -72,10 +72,20 @@
       @keydown.window.ctrl.k.prevent="searchOpen = true" 
       @keydown.window.cmd.k.prevent="searchOpen = true">
     
+    <!-- Mobile Backdrop -->
+    <div x-show="sidebarOpen && window.innerWidth < 1024" 
+         x-transition:enter="transition-opacity duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition-opacity duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="sidebarOpen = false"
+         class="fixed inset-0 bg-brand/60 backdrop-blur-sm z-40 lg:hidden"></div>
+
     <!-- Sidebar -->
-    <aside class="bg-brand text-white flex flex-col shrink-0 h-screen border-r border-white/10 transition-all duration-500 ease-in-out relative z-50 overflow-hidden absolute lg:static"
-           :class="sidebarOpen ? 'w-64' : 'w-0 lg:w-20'"
-           @click.away="if(window.innerWidth < 1024) { sidebarOpen = false }">
+    <aside class="bg-brand text-white flex flex-col shrink-0 h-screen border-r border-white/10 transition-all duration-300 ease-in-out z-50 overflow-hidden fixed lg:relative left-0 top-0"
+           :class="sidebarOpen ? 'w-64' : 'w-0 lg:w-20'">
         
         <!-- Sticky Logo Area -->
         <div class="h-20 flex items-center px-6 border-b border-white/10 shrink-0 bg-brand sticky top-0 z-20">

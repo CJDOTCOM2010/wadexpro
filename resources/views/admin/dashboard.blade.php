@@ -10,50 +10,83 @@
     <!-- Header Section -->
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-            <div class="flex items-center gap-3 mb-2">
+            <div class="flex items-center gap-3 mb-2 flex-wrap">
                 <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center gap-1">
                     <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> LIVE
                 </span>
                 <span class="text-xs text-brand-muted font-medium">{{ now()->format('l, F j, Y • g:i A') }}</span>
+                <span class="text-xs text-brand-muted hidden sm:inline">•</span>
+                <span class="text-xs font-bold text-accent hidden sm:inline">
+                    Drivers: {{ $driverStats['total'] ?? 0 }} | Rides Today: {{ $rideStats['today'] ?? 0 }} | Map: {{ $mapData['drivers']->count() ?? 0 }} drivers
+                </span>
             </div>
             <h1 class="text-3xl font-black text-brand tracking-tight">Super Admin Dashboard</h1>
-            <p class="text-brand-muted font-medium mt-1">Welcome back, {{ $admin->name ?? 'Administrator' }}</p>
+            <p class="text-brand-muted font-medium mt-1">Welcome back, {{ $admin->name ?? 'Administrator' }} • {{ ucfirst($admin->level ?? 'Super Admin') }}</p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
             <a href="{{ route('orchestrator.drivers') }}" class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-brand hover:border-accent hover:bg-accent/5 transition-all flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 Drivers
             </a>
-            <a href="{{ route('orchestrator.orders') }}" class="px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-light transition-all flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <a href="{{ route('orchestrator.orders') }}" class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-brand hover:border-accent hover:bg-accent/5 transition-all flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 Rides
+            </a>
+            <a href="{{ route('orchestrator.analytics') }}" class="px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-light transition-all flex items-center gap-2 shadow-lg shadow-brand/20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                Analytics
             </a>
         </div>
     </div>
 
+    <!-- Alerts Section -->
+    @if(!empty($alerts))
+    <div class="space-y-3">
+        @foreach($alerts as $alert)
+        <div class="p-4 rounded-2xl border flex items-center gap-4 @if($alert['type'] === 'danger') bg-red-50 border-red-200 @elseif($alert['type'] === 'warning') bg-amber-50 border-amber-200 @else bg-blue-50 border-blue-200 @endif">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center @if($alert['type'] === 'danger') bg-red-100 text-red-600 @elseif($alert['type'] === 'warning') bg-amber-100 text-amber-600 @else bg-blue-100 text-blue-600 @endif">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $alert['icon'] }}"/></svg>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm font-bold text-brand">{{ $alert['title'] }}</p>
+                <p class="text-xs text-brand-muted">{{ $alert['message'] }}</p>
+            </div>
+            <button class="text-brand-muted hover:text-brand">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        @endforeach
+    </div>
+    @endif
+
     <!-- System Health Bar -->
     <div class="bg-white rounded-2xl border border-gray-100 p-4 flex items-center justify-between shadow-sm">
-        <div class="flex items-center gap-6 flex-wrap">
+        <div class="flex items-center gap-4 sm:gap-6 flex-wrap">
             <div class="flex items-center gap-2">
-                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                <span class="w-3 h-3 {{ $systemHealth['api_status'] === 'healthy' ? 'bg-green-500' : 'bg-red-500' }} rounded-full"></span>
                 <span class="text-sm font-bold text-brand">API</span>
             </div>
             <div class="flex items-center gap-2">
-                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                <span class="w-3 h-3 {{ $systemHealth['database_status'] === 'healthy' ? 'bg-green-500' : 'bg-red-500' }} rounded-full"></span>
                 <span class="text-sm font-bold text-brand">Database</span>
             </div>
             <div class="flex items-center gap-2">
-                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                <span class="w-3 h-3 {{ $systemHealth['cache_status'] === 'healthy' ? 'bg-green-500' : 'bg-red-500' }} rounded-full"></span>
                 <span class="text-sm font-bold text-brand">Cache</span>
             </div>
             <div class="flex items-center gap-2">
-                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                <span class="w-3 h-3 {{ $systemHealth['queue_status'] === 'healthy' ? 'bg-green-500' : 'bg-red-500' }} rounded-full"></span>
                 <span class="text-sm font-bold text-brand">Queue</span>
             </div>
         </div>
-        <div class="flex items-center gap-4 text-sm">
+        <div class="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm flex-wrap">
             <span class="text-brand-muted">Connections: <strong class="text-brand">{{ $systemHealth['active_connections'] ?? 0 }}</strong></span>
-            <span class="text-brand-muted">Server Load: <strong class="text-brand">{{ $systemHealth['server_load'] ?? '0%' }}</strong></span>
+            <span class="text-brand-muted hidden sm:inline">|</span>
+            <span class="text-brand-muted">Load: <strong class="text-brand">{{ $systemHealth['server_load'] ?? '0%' }}</strong></span>
+            <span class="text-brand-muted hidden sm:inline">|</span>
+            <span class="text-brand-muted">RAM: <strong class="text-brand">{{ $systemHealth['memory_usage'] ?? '0%' }}</strong></span>
+            <span class="text-brand-muted hidden sm:inline">|</span>
+            <span class="text-brand-muted">Uptime: <strong class="text-brand">{{ $systemHealth['uptime'] ?? 'N/A' }}</strong></span>
         </div>
     </div>
 
@@ -75,6 +108,7 @@
             </div>
             <div class="mt-4 pt-4 border-t border-white/20 flex items-center justify-between text-xs">
                 <span class="text-white/60">This Month: <strong class="text-white">₵{{ number_format($revenueStats['this_month'] ?? 0) }}</strong></span>
+                <span class="text-white/60">Avg/Ride: <strong class="text-white">₵{{ number_format($revenueStats['avg_per_ride'] ?? 0, 2) }}</strong></span>
             </div>
         </div>
 
@@ -129,6 +163,10 @@
                     <p class="text-xs text-brand-muted">Cancelled</p>
                     <p class="text-lg font-black text-red-500">{{ $rideStats['cancelled_today'] ?? 0 }}</p>
                 </div>
+                <div class="text-center">
+                    <p class="text-xs text-brand-muted">Rate</p>
+                    <p class="text-lg font-black text-brand">{{ $rideStats['completion_rate'] ?? 0 }}%</p>
+                </div>
             </div>
         </div>
 
@@ -154,18 +192,96 @@
                     <p class="text-xs text-brand-muted">Verified</p>
                     <p class="text-lg font-black text-brand">{{ $customerStats['verified'] ?? 0 }}</p>
                 </div>
+                <div class="text-center">
+                    <p class="text-xs text-brand-muted">New Month</p>
+                    <p class="text-lg font-black text-brand">{{ $customerStats['new_this_month'] ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secondary Metrics Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Year Revenue -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                </div>
+                <p class="text-xs font-bold text-brand-muted uppercase">Year Revenue</p>
+            </div>
+            <p class="text-2xl font-black text-brand">₵{{ number_format($revenueStats['this_year'] ?? 0) }}</p>
+            <p class="text-xs text-brand-muted mt-1">Year {{ now()->year }}</p>
+        </div>
+
+        <!-- Pending Actions -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <p class="text-xs font-bold text-brand-muted uppercase">Pending Actions</p>
+            </div>
+            <p class="text-2xl font-black text-brand">{{ array_sum($pendingActions) }}</p>
+            <div class="flex gap-2 mt-2 flex-wrap">
+                <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded">Drivers: {{ $pendingActions['pending_drivers'] ?? 0 }}</span>
+                <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded">Docs: {{ $pendingActions['pending_documents'] ?? 0 }}</span>
+            </div>
+        </div>
+
+        <!-- Staff Stats -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                </div>
+                <p class="text-xs font-bold text-brand-muted uppercase">Admin Staff</p>
+            </div>
+            <p class="text-2xl font-black text-brand">{{ $staffStats['total_admins'] ?? 0 }}</p>
+            <p class="text-xs text-brand-muted mt-1">{{ $staffStats['active_today'] ?? 0 }} active today</p>
+        </div>
+
+        <!-- Vehicle Types -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center text-brand">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                </div>
+                <p class="text-xs font-bold text-brand-muted uppercase">Vehicle Types</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+                <div class="bg-surface rounded-lg p-2 text-center">
+                    <p class="text-lg font-black text-brand">{{ $vehicleStats['economy'] ?? 0 }}</p>
+                    <p class="text-[10px] text-brand-muted">Economy</p>
+                </div>
+                <div class="bg-surface rounded-lg p-2 text-center">
+                    <p class="text-lg font-black text-brand">{{ $vehicleStats['premium'] ?? 0 }}</p>
+                    <p class="text-[10px] text-brand-muted">Premium</p>
+                </div>
+                <div class="bg-surface rounded-lg p-2 text-center">
+                    <p class="text-lg font-black text-brand">{{ $vehicleStats['bike'] ?? 0 }}</p>
+                    <p class="text-[10px] text-brand-muted">Bike</p>
+                </div>
+                <div class="bg-surface rounded-lg p-2 text-center">
+                    <p class="text-lg font-black text-brand">{{ $vehicleStats['van'] ?? 0 }}</p>
+                    <p class="text-[10px] text-brand-muted">Van</p>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Weekly Trend Chart -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h3 class="text-lg font-black text-brand">Weekly Performance</h3>
-                    <p class="text-xs text-brand-muted">Last 7 days</p>
+                    <p class="text-xs text-brand-muted">Rides and revenue trend (7 days)</p>
+                </div>
+                <div class="flex items-center gap-4 text-xs">
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 bg-brand rounded-full"></span> Rides</span>
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 bg-accent rounded-full"></span> Revenue</span>
                 </div>
             </div>
             <div id="weeklyChart" class="h-64"></div>
@@ -202,31 +318,32 @@
     </div>
 
     <!-- Bottom Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Top Drivers -->
         <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h3 class="text-lg font-black text-brand">Top Drivers Today</h3>
-                    <p class="text-xs text-brand-muted">Best performers</p>
+                    <p class="text-xs text-brand-muted">Best performers by earnings</p>
                 </div>
+                <a href="{{ route('orchestrator.driver.management') }}" class="text-xs font-bold text-accent hover:underline">View All</a>
             </div>
             <div class="space-y-4">
                 @forelse($topDrivers as $index => $driver)
                 <div class="flex items-center gap-4 p-3 bg-surface rounded-xl">
                     <span class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black {{ $index === 0 ? 'bg-accent text-white' : ($index === 1 ? 'bg-amber-400 text-white' : 'bg-gray-200 text-brand') }}">{{ $index + 1 }}</span>
                     <div class="flex-1">
-                        <p class="text-sm font-bold text-brand">{{ $driver->driver_name ?? 'Unknown' }}</p>
+                        <p class="text-sm font-bold text-brand">{{ $driver->driver_name }}</p>
                         <div class="flex items-center gap-2 text-xs text-brand-muted">
-                            <span>{{ $driver->rides ?? 0 }} rides</span>
+                            <span>{{ $driver->rides }} rides</span>
                             <span>•</span>
-                            <span class="text-amber-500">★ {{ number_format($driver->rating ?? 0, 1) }}</span>
+                            <span class="text-amber-500">★ {{ number_format($driver->rating, 1) }}</span>
                         </div>
                     </div>
-                    <span class="text-sm font-black text-green-600">₵{{ number_format($driver->earnings ?? 0) }}</span>
+                    <span class="text-sm font-black text-green-600">₵{{ number_format($driver->earnings) }}</span>
                 </div>
                 @empty
-                <p class="text-sm text-brand-muted text-center py-4">No rides completed today</p>
+                <p class="text-sm text-brand-muted text-center py-4">No rides today</p>
                 @endforelse
             </div>
         </div>
@@ -236,8 +353,9 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h3 class="text-lg font-black text-brand">Recent Rides</h3>
-                    <p class="text-xs text-brand-muted">Latest activity</p>
+                    <p class="text-xs text-brand-muted">Latest ride activity</p>
                 </div>
+                <a href="{{ route('orchestrator.orders') }}" class="text-xs font-bold text-accent hover:underline">View All</a>
             </div>
             <div class="space-y-3">
                 @forelse($recentRides as $ride)
@@ -246,11 +364,11 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-brand truncate">{{ $ride->pickup_address ?? 'Unknown Location' }}</p>
-                        <p class="text-xs text-brand-muted">{{ !empty($ride->created_at) ? \Carbon\Carbon::parse($ride->created_at)->diffForHumans() : 'Unknown time' }}</p>
+                        <p class="text-sm font-bold text-brand truncate">{{ $ride->pickup_address ?? 'Unknown' }}</p>
+                        <p class="text-xs text-brand-muted">{{ $ride->created_at->diffForHumans() }}</p>
                     </div>
                     <span class="text-xs font-bold {{ $ride->status === 'completed' ? 'text-green-600' : ($ride->status === 'cancelled' ? 'text-red-600' : 'text-amber-600') }}">
-                        {{ ucfirst($ride->status ?? 'pending') }}
+                        {{ ucfirst($ride->status) }}
                     </span>
                 </div>
                 @empty
@@ -258,73 +376,115 @@
                 @endforelse
             </div>
         </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-lg font-black text-brand">System Activity</h3>
+                    <p class="text-xs text-brand-muted">Latest events log</p>
+                </div>
+                <button class="text-xs font-bold text-brand-muted hover:text-brand">Mark all read</button>
+            </div>
+            <div class="space-y-4">
+                @forelse($recentActivity as $activity)
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 @if($activity['type'] === 'ride') bg-blue-50 text-blue-600 @elseif($activity['type'] === 'driver') bg-green-50 text-green-600 @elseif($activity['type'] === 'payment') bg-amber-50 text-amber-600 @elseif($activity['type'] === 'alert') bg-red-50 text-red-600 @else bg-gray-50 text-gray-600 @endif">
+                        @if($activity['type'] === 'ride')
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        @elseif($activity['type'] === 'driver')
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        @elseif($activity['type'] === 'payment')
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        @else
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        @endif
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-bold text-brand truncate">{{ $activity['message'] }}</p>
+                        <p class="text-[10px] text-brand-muted">{{ $activity['time'] }}</p>
+                    </div>
+                </div>
+                @empty
+                <p class="text-sm text-brand-muted text-center py-4">No recent activity</p>
+                @endforelse
+            </div>
+        </div>
     </div>
 
-    <!-- Pending Actions -->
+    <!-- Monthly Trend Chart -->
     <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h3 class="text-lg font-black text-brand">Pending Actions</h3>
-                <p class="text-xs text-brand-muted">Items requiring attention</p>
+                <h3 class="text-lg font-black text-brand">Monthly Revenue Trend</h3>
+                <p class="text-xs text-brand-muted">Last 12 months performance</p>
+            </div>
+            <div class="flex items-center gap-4 text-xs">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 bg-brand rounded-full"></span> Revenue</span>
+                <span class="flex items-center gap-2"><span class="w-3 h-3 bg-accent rounded-full"></span> Rides</span>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <a href="{{ route('orchestrator.driver.documents') }}" class="p-4 bg-amber-50 rounded-xl hover:bg-amber-100 transition-colors">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-amber-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-lg font-black text-brand">{{ $pendingActions['pending_drivers'] ?? 0 }}</p>
-                        <p class="text-xs text-brand-muted">Driver Verifications</p>
-                    </div>
-                </div>
-            </a>
-            <a href="{{ route('orchestrator.support.tickets') }}" class="p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-lg font-black text-brand">0</p>
-                        <p class="text-xs text-brand-muted">Support Tickets</p>
-                    </div>
-                </div>
-            </a>
-            <a href="{{ route('orchestrator.financials') }}" class="p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-lg font-black text-brand">0</p>
-                        <p class="text-xs text-brand-muted">Pending Payouts</p>
-                    </div>
-                </div>
-            </a>
-            <a href="{{ route('orchestrator.users') }}" class="p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-lg font-black text-brand">{{ $customerStats['total'] ?? 0 }}</p>
-                        <p class="text-xs text-brand-muted">Total Customers</p>
-                    </div>
-                </div>
-            </a>
-        </div>
+        <div id="monthlyChart" class="h-64"></div>
+    </div>
+
+    <!-- Quick Actions Footer -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <a href="{{ route('orchestrator.driver.documents') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
+            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-amber-500 group-hover:text-white transition-all">
+                <svg class="w-6 h-6 text-amber-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <p class="text-xs font-bold text-brand">Driver KYC</p>
+            <p class="text-[10px] text-brand-muted mt-1">{{ $pendingActions['pending_drivers'] ?? 0 }} pending</p>
+        </a>
+        <a href="{{ route('orchestrator.support.tickets') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
+            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                <svg class="w-6 h-6 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+            <p class="text-xs font-bold text-brand">Support</p>
+            <p class="text-[10px] text-brand-muted mt-1">View tickets</p>
+        </a>
+        <a href="{{ route('orchestrator.financials') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
+            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-green-500 group-hover:text-white transition-all">
+                <svg class="w-6 h-6 text-green-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <p class="text-xs font-bold text-brand">Payouts</p>
+            <p class="text-[10px] text-brand-muted mt-1">Manage</p>
+        </a>
+        <a href="{{ route('orchestrator.users') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
+            <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                <svg class="w-6 h-6 text-purple-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+            <p class="text-xs font-bold text-brand">Users</p>
+            <p class="text-[10px] text-brand-muted mt-1">{{ $customerStats['total'] ?? 0 }} total</p>
+        </a>
+        <a href="{{ route('orchestrator.settings.assets') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
+            <div class="w-12 h-12 bg-brand/10 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-brand group-hover:text-white transition-all">
+                <svg class="w-6 h-6 text-brand group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <p class="text-xs font-bold text-brand">Assets</p>
+            <p class="text-[10px] text-brand-muted mt-1">Gallery</p>
+        </a>
+        <a href="{{ route('orchestrator.settings') }}" class="bg-white rounded-2xl border border-gray-100 p-4 text-center hover:border-accent hover:shadow-md transition-all group">
+            <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-gray-500 group-hover:text-white transition-all">
+                <svg class="w-6 h-6 text-gray-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <p class="text-xs font-bold text-brand">Settings</p>
+            <p class="text-[10px] text-brand-muted mt-1">Configure</p>
+        </a>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Weekly Chart
-    const weeklyData = @json($weeklyTrend ?? []);
+    const weeklyData = @json($weeklyTrend);
     const weeklyOptions = {
         series: [{
             name: 'Rides',
             data: weeklyData.map(d => d.rides)
+        }, {
+            name: 'Revenue',
+            data: weeklyData.map(d => Math.round(d.revenue / 100))
         }],
         chart: {
             type: 'area',
@@ -332,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function() {
             toolbar: { show: false },
             fontFamily: 'inherit'
         },
-        colors: ['#0A0A1A'],
+        colors: ['#0A0A1A', '#F8B803'],
         fill: {
             type: 'gradient',
             gradient: {
@@ -345,7 +505,9 @@ document.addEventListener('DOMContentLoaded', function() {
         stroke: { curve: 'smooth', width: 2 },
         xaxis: {
             categories: weeklyData.map(d => d.date),
-            labels: { style: { colors: '#6B7280', fontSize: '11px' } }
+            labels: { style: { colors: '#6B7280', fontSize: '11px' } },
+            axisBorder: { show: false },
+            axisTicks: { show: false }
         },
         yaxis: {
             labels: { style: { colors: '#6B7280', fontSize: '11px' } }
@@ -354,6 +516,42 @@ document.addEventListener('DOMContentLoaded', function() {
         legend: { show: false }
     };
     new ApexCharts(document.querySelector('#weeklyChart'), weeklyOptions).render();
+
+    // Monthly Chart
+    const monthlyData = @json($monthlyTrend);
+    const monthlyOptions = {
+        series: [{
+            name: 'Revenue',
+            data: monthlyData.map(d => Math.round(d.revenue))
+        }, {
+            name: 'Rides',
+            data: monthlyData.map(d => d.rides * 10)
+        }],
+        chart: {
+            type: 'bar',
+            height: 250,
+            toolbar: { show: false },
+            fontFamily: 'inherit'
+        },
+        colors: ['#0A0A1A', '#F8B803'],
+        plotOptions: {
+            bar: { borderRadius: 4, columnWidth: '50%' }
+        },
+        stroke: { show: true, width: 0 },
+        xaxis: {
+            categories: monthlyData.map(d => d.month),
+            labels: { style: { colors: '#6B7280', fontSize: '11px' } },
+            axisBorder: { show: false },
+            axisTicks: { show: false }
+        },
+        yaxis: {
+            labels: { style: { colors: '#6B7280', fontSize: '11px' } }
+        },
+        grid: { borderColor: '#F3F4F6' },
+        legend: { show: false },
+        dataLabels: { enabled: false }
+    };
+    new ApexCharts(document.querySelector('#monthlyChart'), monthlyOptions).render();
 });
 </script>
 

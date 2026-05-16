@@ -93,6 +93,8 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::post('/settings/assets/upload', [AssetManagementController::class, 'upload'])->name('orchestrator.settings.assets.upload');
         Route::post('/settings/assets/delete', [AssetManagementController::class, 'delete'])->name('orchestrator.settings.assets.delete');
         Route::post('/settings/assets/config', [AssetManagementController::class, 'updateConfig'])->name('orchestrator.settings.assets.config');
+        Route::post('/settings/assets/create-folder', [AssetManagementController::class, 'createFolder'])->name('orchestrator.settings.assets.create-folder');
+        Route::post('/settings/assets/rename', [AssetManagementController::class, 'rename'])->name('orchestrator.settings.assets.rename');
         
         // System Backups
         Route::get('/settings/backups', [BackupController::class, 'index'])->name('orchestrator.settings.backups');

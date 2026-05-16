@@ -15,10 +15,8 @@ $systemRoles = $roles->where('is_system', true)->count();
      @delete-permission.window="confirmDeletePermission($event.detail)">
 
     {{-- Header --}}
-    <div class="bg-gradient-to-br from-brand via-[#0f0f1a] to-[#141410] rounded-xl overflow-hidden mb-8 relative border border-white/5 shadow-xl">
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(248,184,3,0.25),transparent_60%)]"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_rgba(248,184,3,0.08),transparent_50%)]"></div>
-        <div class="relative z-10 px-6 py-7 sm:px-8 sm:py-8">
+    <div class="bg-brand rounded-xl overflow-hidden mb-8 relative">
+        <div class="px-6 py-7 sm:px-8 sm:py-8">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div class="flex items-center gap-2.5 mb-2">

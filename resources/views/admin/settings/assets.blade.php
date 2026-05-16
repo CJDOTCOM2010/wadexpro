@@ -343,7 +343,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                 {{-- Files --}}
                 @foreach($allFiles as $file)
                 @php $ext = strtolower($file['extension'] ?? ''); $isImg = in_array($ext, $imageExts); @endphp
-                <div x-show="matchesFilter('{{ $file['name'] }}', '{{ $ext }}')" class="flex flex-col bg-[#F8F9FA] hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer overflow-hidden h-32 relative border border-gray-100 rounded group" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'ring-2 ring-blue-500 ring-offset-1'">
+                <div x-show="matchesFilter('{{ $file['name'] }}', '{{ $ext }}')" class="flex flex-col bg-[#F8F9FA] hover:ring-2 hover:ring-blue-500 hover:ring-offset-1 transition-all cursor-pointer overflow-hidden h-32 relative border border-gray-100 rounded group" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}', '{{ $file['last_modified'] ?? '' }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'ring-2 ring-blue-500 ring-offset-1'">
                     <div class="flex-1 flex items-center justify-center p-0 w-full h-full overflow-hidden">
                         @if($isImg)
                         <img src="{{ $file['url'] }}" class="w-full h-full object-cover">
@@ -388,7 +388,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                     @endforeach
                     @foreach($allFiles as $file)
                     @php $ext = strtolower($file['extension'] ?? ''); $isImg = in_array($ext, $imageExts); @endphp
-                    <tr x-show="matchesFilter('{{ $file['name'] }}', '{{ $ext }}')" class="hover:bg-blue-50 cursor-pointer transition-colors" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'bg-blue-50'">
+                    <tr x-show="matchesFilter('{{ $file['name'] }}', '{{ $ext }}')" class="hover:bg-blue-50 cursor-pointer transition-colors" @click="previewFile('{{ $file['path'] }}', '{{ $file['name'] }}', '{{ $file['url'] }}', '{{ $file['size'] }}', '{{ $isImg ? 'image' : $ext }}', '{{ $file['last_modified'] ?? '' }}')" :class="selectedFile.path === '{{ $file['path'] }}' && 'bg-blue-50'">
                         <td class="px-4 py-2 flex items-center gap-2 min-w-[200px]">
                             @if($isImg)
                             <img src="{{ $file['url'] }}" class="w-6 h-6 rounded object-cover" onerror="this.style.display='none'">
@@ -418,7 +418,7 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
         {{-- Right Sidebar Preview Pane --}}
         <div x-show="sidebarOpen" class="w-72 border-l border-gray-200 bg-[#F8F9FA] flex flex-col shrink-0 overflow-y-auto z-10 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)]" x-transition>
             <template x-if="selectedFile.path">
-                <div class="p-6 flex flex-col items-center text-center">
+                <div class="p-4 flex flex-col">
                     <template x-if="selectedFile.isImage">
                         <div class="w-full bg-white border border-gray-200 rounded p-2 mb-4 shadow-sm flex items-center justify-center">
                             <img :src="selectedFile.url" class="max-w-full max-h-48 object-contain">
@@ -430,10 +430,52 @@ foreach ($allFiles as $f) { $s = preg_replace('/[^0-9.]/', '', $f['size'] ?? '0'
                         </div>
                     </template>
                     
-                    <p class="font-bold text-gray-800 break-all w-full mb-1" x-text="selectedFile.name"></p>
-                    <p class="text-xs text-gray-500 mb-6" x-text="selectedFile.size + ' • ' + selectedFile.type"></p>
+                    <div class="space-y-3 border-t border-gray-200 pt-4">
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Name</p>
+                            <p class="text-sm font-medium text-gray-800 break-all" x-text="selectedFile.name"></p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Full URL</p>
+                            <p class="text-xs text-gray-600 break-all" x-text="selectedFile.url"></p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Size</p>
+                            <p class="text-sm text-gray-700" x-text="selectedFile.size"></p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Uploaded at</p>
+                            <p class="text-sm text-gray-700" x-text="selectedFile.lastModified || 'N/A'"></p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Modified at</p>
+                            <p class="text-sm text-gray-700" x-text="selectedFile.lastModified || 'N/A'"></p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Alt text</p>
+                            <p class="text-sm text-gray-700" x-text="selectedFile.name"></p>
+                        </div>
+                        
+                        <template x-if="selectedFile.isImage && selectedFile.width > 0">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Width</p>
+                                    <p class="text-sm text-gray-700"><span x-text="selectedFile.width"></span>px</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Height</p>
+                                    <p class="text-sm text-gray-700"><span x-text="selectedFile.height"></span>px</p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
                     
-                    <div class="w-full space-y-2 border-t border-gray-200 pt-6">
+                    <div class="w-full space-y-2 border-t border-gray-200 pt-4 mt-4">
                         <a :href="selectedFile.url" target="_blank" class="w-full px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-200 rounded hover:bg-blue-50 transition-colors block">Open in New Tab</a>
                         <button @click="copyUrlToClipboard(selectedFile.url)" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors block">Copy Link Address</button>
                         <button @click="openRename()" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors block">Rename</button>
@@ -789,7 +831,7 @@ function mediaManager() {
         search: '', sortBy: 'name',
         uploadOpen: false, topFileFilterOpen: false, topViewFilterOpen: false,
         sortOpen: false, showActions: false,
-        selectedFile: { name: '', path: '', url: '', size: '', type: '', isImage: false },
+        selectedFile: { name: '', path: '', url: '', size: '', type: '', isImage: false, lastModified: '', width: 0, height: 0 },
         showRename: false, renameOldPath: '', renameNewName: '',
         
         showPreviewPopup: false,
@@ -828,9 +870,20 @@ function mediaManager() {
         filteredCount() {
             return 0; // handled by Alpine x-show
         },
-        previewFile(path, name, url, size, type) {
-            this.selectedFile = { path, name, url, size, type, isImage: type === 'image' };
+        previewFile(path, name, url, size, type, lastModified = '') {
+            this.selectedFile = { path, name, url, size, type, isImage: type === 'image', lastModified, width: 0, height: 0 };
+            if (type === 'image') {
+                this.loadImageDimensions(url);
+            }
             this.sidebarOpen = true;
+        },
+        loadImageDimensions(url) {
+            const img = new Image();
+            img.onload = () => {
+                this.selectedFile.width = img.naturalWidth;
+                this.selectedFile.height = img.naturalHeight;
+            };
+            img.src = url;
         },
         showToast(msg) {
             this.toastMessage = msg;

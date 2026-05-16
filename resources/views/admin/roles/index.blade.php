@@ -9,7 +9,10 @@ foreach ($permissions as $p) $totalPerms += $p->count();
 $systemRoles = $roles->where('is_system', true)->count();
 @endphp
 
-<div x-data="{ tab: 'roles', showNewRole: false, showNewPerm: false, editRoleId: null }" class="max-w-6xl mx-auto">
+<div x-data="accessControl()" class="max-w-6xl mx-auto"
+
+     @delete-role.window="confirmDeleteRole($event.detail)"
+     @delete-permission.window="confirmDeletePermission($event.detail)">
 
     {{-- Header --}}
     <div class="bg-gradient-to-r from-brand via-brand-light to-brand rounded-xl overflow-hidden mb-8 relative">
@@ -151,10 +154,7 @@ $systemRoles = $roles->where('is_system', true)->count();
                         <div class="px-5 py-3.5 bg-surface/30 border-t border-gray-100 flex items-center justify-between">
                             <div>
                                 @unless($role->is_system)
-                                <form action="{{ route('orchestrator.roles.destroy', $role->id) }}" method="POST" class="inline" onsubmit="return confirm('Permanently delete this role and revoke it from all assigned staff?');">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="px-3.5 py-2 text-[10px] font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">Delete Role</button>
-                                </form>
+                                <button type="button" @click="confirmDeleteRole({id:'{{ $role->id }}', label:'{{ $role->label ?? $role->name }}', type:'role'})" class="px-3.5 py-2 text-[10px] font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">Delete Role</button>
                                 @endunless
                             </div>
                             <button type="submit" class="px-5 py-2 bg-brand text-white text-xs font-bold rounded-lg hover:bg-brand-light transition-colors">Save Permissions</button>
@@ -199,12 +199,9 @@ $systemRoles = $roles->where('is_system', true)->count();
                                     <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-accent/10 text-accent text-[11px] font-black">{{ $perm->roles->count() }}</span>
                                 </td>
                                 <td class="px-5 py-3 text-right">
-                                    <form action="{{ route('orchestrator.permissions.destroy', $perm->id) }}" method="POST" class="inline" onsubmit="return confirm('Remove this permission from all roles?');">
-                                        @csrf @method('DELETE')
-                                        <button class="w-7 h-7 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all flex items-center justify-center" title="Delete">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                        </button>
-                                    </form>
+                                    <button @click="confirmDeletePermission({id:'{{ $perm->id }}', label:'{{ $perm->label ?? $perm->name }}', type:'permission'})" class="w-7 h-7 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all flex items-center justify-center" title="Delete">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
                                 </td>
                             </tr>
                             @endforeach
@@ -303,5 +300,131 @@ $systemRoles = $roles->where('is_system', true)->count();
             </form>
         </div>
     </div>
+
+    {{-- ═══ MULTI-STEP DELETE CONFIRMATION MODAL ═══ --}}
+    <div x-show="deleteModal.step > 0" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand/60 backdrop-blur-sm" @click="closeDeleteModal()"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden" @click.outside="closeDeleteModal()">
+
+            {{-- Step 1: Initial Warning --}}
+            <template x-if="deleteModal.step === 1">
+                <div class="p-6">
+                    <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-brand text-center mb-2">
+                        Delete <span x-text="deleteModal.type === 'role' ? 'Role' : 'Permission'"></span>?
+                    </h3>
+                    <p class="text-sm text-brand-muted text-center mb-6">
+                        You are about to delete <strong class="text-brand" x-text="deleteModal.label"></strong>.
+                        <template x-if="deleteModal.type === 'role'">
+                            <span>This role will be removed from all assigned staff.</span>
+                        </template>
+                        <template x-if="deleteModal.type === 'permission'">
+                            <span>This permission will be removed from all roles using it.</span>
+                        </template>
+                    </p>
+
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-start gap-2.5">
+                            <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <div>
+                                <p class="text-xs font-bold text-amber-800">This action <span class="underline">cannot</span> be undone.</p>
+                                <p class="text-[11px] text-amber-700 mt-1">Please confirm you understand the consequences before proceeding.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="button" @click="closeDeleteModal()" class="flex-1 px-4 py-2.5 bg-surface text-brand-muted rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors">Cancel</button>
+                        <button type="button" @click="deleteModal.step = 2" class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700 transition-colors">I Understand, Continue</button>
+                    </div>
+                </div>
+            </template>
+
+            {{-- Step 2: Type confirmation --}}
+            <template x-if="deleteModal.step === 2">
+                <div class="p-6">
+                    <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-brand text-center mb-2">Final Confirmation Required</h3>
+                    <p class="text-sm text-brand-muted text-center mb-6">
+                        Type <strong class="text-red-600 select-all font-mono bg-red-50 px-2 py-0.5 rounded">DELETE</strong> below to confirm permanent removal of <strong class="text-brand" x-text="deleteModal.label"></strong>.
+                    </p>
+
+                    <input type="text" x-model="deleteModal.confirmText" @input="deleteModal.confirmText = deleteModal.confirmText.toUpperCase()" placeholder="Type DELETE to confirm" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-bold text-center outline-none focus:ring-2 focus:ring-red-300 transition-shadow mb-6 uppercase tracking-widest">
+
+                    <div class="flex gap-2">
+                        <button type="button" @click="deleteModal.step = 1" class="flex-1 px-4 py-2.5 bg-surface text-brand-muted rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors">Back</button>
+                        <button type="button" @click="executeDelete()" :disabled="deleteModal.confirmText !== 'DELETE'" class="flex-1 px-4 py-2.5 rounded-lg text-xs font-bold transition-colors" :class="deleteModal.confirmText === 'DELETE' ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-gray-100 text-gray-400 cursor-not-allowed'">
+                            Confirm Delete
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
 </div>
+
+<script>
+function accessControl() {
+    return {
+        tab: 'roles',
+        showNewRole: false,
+        showNewPerm: false,
+        deleteModal: {
+            step: 0,
+            type: '',
+            id: '',
+            label: '',
+            confirmText: '',
+            actionUrl: '',
+        },
+        confirmDeleteRole(data) {
+            this.deleteModal = {
+                step: 1,
+                type: 'role',
+                id: data.id,
+                label: data.label,
+                confirmText: '',
+                actionUrl: '{{ route('orchestrator.roles.destroy', '__ID__') }}'.replace('__ID__', data.id),
+            };
+        },
+        confirmDeletePermission(data) {
+            this.deleteModal = {
+                step: 1,
+                type: 'permission',
+                id: data.id,
+                label: data.label,
+                confirmText: '',
+                actionUrl: '{{ route('orchestrator.permissions.destroy', '__ID__') }}'.replace('__ID__', data.id),
+            };
+        },
+        closeDeleteModal() {
+            this.deleteModal.step = 0;
+            this.deleteModal.confirmText = '';
+        },
+        executeDelete() {
+            if (this.deleteModal.confirmText !== 'DELETE') return;
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = this.deleteModal.actionUrl;
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+            form.appendChild(csrf);
+            const method = document.createElement('input');
+            method.type = 'hidden';
+            method.name = '_method';
+            method.value = 'DELETE';
+            form.appendChild(method);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    };
+}
+</script>
+<style>[x-cloak] { display: none !important; }</style>
 @endsection

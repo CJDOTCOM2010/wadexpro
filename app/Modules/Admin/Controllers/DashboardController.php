@@ -46,18 +46,63 @@ class DashboardController extends Controller
             $recentActivity = $this->getRecentActivity();
             $staffStats = $this->getStaffStats($today);
             $mapData = $this->getMapData();
+            $widgets = $this->getWidgetPermissions($admin);
 
             return view('admin.dashboard', compact(
                 'admin', 'driverStats', 'customerStats', 'rideStats', 'revenueStats',
                 'systemHealth', 'topDrivers', 'topCustomers', 'recentRides',
                 'pendingActions', 'alerts', 'regionStats', 'weeklyTrend', 'monthlyTrend',
-                'vehicleStats', 'recentActivity', 'staffStats', 'mapData'
+                'vehicleStats', 'recentActivity', 'staffStats', 'mapData', 'widgets'
             ));
         } catch (\Exception $e) {
             Log::warning('Dashboard error: '.$e->getMessage());
 
-            return view('admin.dashboard', $this->getFallbackData());
+            return view('admin.dashboard', array_merge($this->getFallbackData(), ['widgets' => array_fill_keys([
+                'revenue', 'revenue_year', 'revenue_trend', 'drivers', 'drivers_top',
+                'rides', 'rides_recent', 'customers', 'weekly_chart', 'regional',
+                'activity', 'map', 'health', 'alerts', 'pending', 'vehicle_types',
+                'staff', 'quick_actions',
+            ], true)]));
         }
+    }
+
+    private function can($admin, string $permission): bool
+    {
+        if (! $admin) {
+            return true;
+        }
+        if ($admin->is_super_admin || $admin->level === 'super_admin') {
+            return true;
+        }
+        try {
+            return $admin->hasPermission($permission);
+        } catch (\Exception $e) {
+            return true;
+        }
+    }
+
+    private function getWidgetPermissions($admin): array
+    {
+        return [
+            'alerts' => $this->can($admin, 'dashboard.alerts.view'),
+            'health' => $this->can($admin, 'dashboard.health.view'),
+            'revenue' => $this->can($admin, 'dashboard.revenue.view'),
+            'drivers' => $this->can($admin, 'dashboard.drivers.view'),
+            'rides' => $this->can($admin, 'dashboard.rides.view'),
+            'customers' => $this->can($admin, 'dashboard.customers.view'),
+            'revenue_year' => $this->can($admin, 'dashboard.revenue_year.view'),
+            'pending' => $this->can($admin, 'dashboard.pending.view'),
+            'staff' => $this->can($admin, 'dashboard.staff.view'),
+            'vehicle_types' => $this->can($admin, 'dashboard.vehicle_types.view'),
+            'weekly_chart' => $this->can($admin, 'dashboard.weekly_chart.view'),
+            'regional' => $this->can($admin, 'dashboard.regional.view'),
+            'drivers_top' => $this->can($admin, 'dashboard.drivers_top.view'),
+            'rides_recent' => $this->can($admin, 'dashboard.rides_recent.view'),
+            'activity' => $this->can($admin, 'dashboard.activity.view'),
+            'revenue_trend' => $this->can($admin, 'dashboard.revenue_trend.view'),
+            'map' => $this->can($admin, 'dashboard.map.view'),
+            'quick_actions' => $this->can($admin, 'dashboard.quick_actions.view'),
+        ];
     }
 
     private function getDriverAndCustomerStats(string $today, string $thisMonth): array

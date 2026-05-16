@@ -106,6 +106,7 @@
         </div>
     </div>
 
+    @if($widgets['alerts'])
     <!-- Alerts Section -->
     @if(!empty($alerts))
     <div class="space-y-3">
@@ -125,7 +126,9 @@
         @endforeach
     </div>
     @endif
+    @endif
 
+    @if($widgets['health'])
     <!-- System Health Bar -->
     <div class="bg-white rounded-2xl border border-gray-100 p-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-4 sm:gap-6 flex-wrap">
@@ -156,9 +159,11 @@
             <span class="text-brand-muted">Uptime: <strong class="text-brand">{{ $systemHealth['uptime'] ?? 'N/A' }}</strong></span>
         </div>
     </div>
+    @endif
 
     <!-- Main Metrics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @if($widgets['revenue'])
         <!-- Revenue Card -->
         <div class="bg-brand rounded-2xl p-6 text-white border-2 border-brand hover:border-accent shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
             <!-- Background Swoosh -->
@@ -181,7 +186,9 @@
                 <span class="text-white/60">Avg/Ride: <strong class="text-white">₵{{ number_format($revenueStats['avg_per_ride'] ?? 0, 2) }}</strong></span>
             </div>
         </div>
+        @endif
 
+        @if($widgets['drivers'])
         <!-- Drivers Card -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-accent hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group">
             <div class="flex items-center justify-between mb-4">
@@ -210,7 +217,9 @@
                 </div>
             </div>
         </div>
+        @endif
 
+        @if($widgets['rides'])
         <!-- Rides Card -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-accent hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group">
             <div class="flex items-center justify-between mb-4">
@@ -239,7 +248,9 @@
                 </div>
             </div>
         </div>
+        @endif
 
+        @if($widgets['customers'])
         <!-- Customers Card -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-accent hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group">
             <div class="flex items-center justify-between mb-4">
@@ -268,10 +279,12 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 
     <!-- Secondary Metrics Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @if($widgets['revenue_year'])
         <!-- Year Revenue -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:border-brand transition-all hover:-translate-y-1 group">
             <div class="flex items-center gap-3 mb-3">
@@ -283,7 +296,9 @@
             <p class="text-2xl font-black text-brand">₵{{ number_format($revenueStats['this_year'] ?? 0) }}</p>
             <p class="text-xs font-bold text-brand-muted mt-1">Year {{ now()->year }}</p>
         </div>
+        @endif
 
+        @if($widgets['pending'])
         <!-- Pending Actions -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:border-accent transition-all hover:-translate-y-1 group">
             <div class="flex items-center gap-3 mb-3">
@@ -298,7 +313,9 @@
                 <span class="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-100">Docs: {{ $pendingActions['pending_documents'] ?? 0 }}</span>
             </div>
         </div>
+        @endif
 
+        @if($widgets['staff'])
         <!-- Staff Stats -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:border-brand transition-all hover:-translate-y-1 group">
             <div class="flex items-center gap-3 mb-3">
@@ -310,7 +327,9 @@
             <p class="text-2xl font-black text-brand">{{ $staffStats['total_admins'] ?? 0 }}</p>
             <p class="text-xs font-bold text-brand-muted mt-1">{{ $staffStats['active_today'] ?? 0 }} active today</p>
         </div>
+        @endif
 
+        @if($widgets['vehicle_types'])
         <!-- Vehicle Types -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:border-brand transition-all hover:-translate-y-1 group">
             <div class="flex items-center gap-3 mb-3">
@@ -338,10 +357,12 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        @if($widgets['weekly_chart'])
         <!-- Weekly Trend Chart -->
         <div class="lg:col-span-2 bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
@@ -356,7 +377,9 @@
             </div>
             <div id="weeklyChart" class="h-64"></div>
         </div>
+        @endif
 
+        @if($widgets['regional'])
         <!-- Regional Stats -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
@@ -398,10 +421,12 @@
                 @endforeach
             </div>
         </div>
+        @endif
     </div>
 
     <!-- Bottom Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        @if($widgets['drivers_top'])
         <!-- Top Drivers -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
@@ -430,7 +455,9 @@
                 @endforelse
             </div>
         </div>
+        @endif
 
+        @if($widgets['rides_recent'])
         <!-- Recent Rides -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
@@ -459,7 +486,9 @@
                 @endforelse
             </div>
         </div>
+        @endif
 
+        @if($widgets['activity'])
         <!-- Recent Activity -->
         <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
             <div class="flex items-center justify-between mb-6">
@@ -493,8 +522,10 @@
                 @endforelse
             </div>
         </div>
+        @endif
     </div>
 
+    @if($widgets['revenue_trend'])
     <!-- Monthly Trend Chart -->
     <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
         <div class="flex items-center justify-between mb-6">
@@ -509,7 +540,9 @@
         </div>
         <div id="monthlyChart" class="h-64"></div>
     </div>
+    @endif
 
+    @if($widgets['map'])
     <!-- Tactical Density Map -->
     <div class="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:border-brand/20 transition-all">
         <div class="flex items-center justify-between mb-6">
@@ -540,6 +573,7 @@
         </div>
         <div id="tacticalMap" class="h-80 rounded-xl overflow-hidden bg-surface border border-gray-100"></div>
     </div>
+    @endif
 
 
 </div>

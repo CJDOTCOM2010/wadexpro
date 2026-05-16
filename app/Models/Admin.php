@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Modules\Admin\Models\AdminAuditLog;
 use App\Modules\Admin\Models\Module;
+use App\Modules\Admin\Models\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,6 +50,25 @@ class Admin extends Authenticatable
     public function isSuperAdmin(): bool
     {
         return $this->is_super_admin === true || $this->level === 'super_admin';
+    }
+
+    public function hasPermission(string $permissionName): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        try {
+            $roleModel = Role::where('name', $this->role)->first();
+
+            if (! $roleModel) {
+                return true;
+            }
+
+            return $roleModel->permissions()->where('name', $permissionName)->exists();
+        } catch (\Exception $e) {
+            return true;
+        }
     }
 
     public function hasRole(string $roleName): bool

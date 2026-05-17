@@ -23,7 +23,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize dynamic environment configuration
-  await AppConfig.initialize(environment: Environment.dev);
+  await AppConfig.initialize(environment: Environment.prod);
   
   // Initialize Firebase Identity Services
   try {

@@ -39,32 +39,35 @@ class AppConfig {
   static int remoteRetryAttempts = 3;
 
   static Future<void> initialize({required Environment environment}) async {
-    // Initial static config
-    switch (environment) {
-      case Environment.prod:
-        instance = AppConfig(
-          environment: environment,
-          apiBaseUrl: 'https://api.wadexp.com/api/v1',
-          socketUrl: 'https://socket.wadexp.com',
-        );
-        break;
-      case Environment.dev:
-      default:
-        // WADEX-Guard: Select network gateway based on platform context
-        final String host = kIsWeb ? 'wadexpro.test' : '10.0.2.2';
-        final String protocol = kIsWeb ? 'https' : 'http';
-        final String port = kIsWeb ? '' : ':8000';
-        instance = AppConfig(
-          environment: environment,
-          apiBaseUrl: '$protocol://$host$port/api/v1',
-          socketUrl: 'http://$host:3002',
-        );
-        break;
+    // Determine initial API URL - use production for real devices, check for API config override
+    String initialBaseUrl;
+    String initialSocketUrl;
+    
+    if (environment == Environment.prod || !kIsWeb) {
+      // For production or real devices, use the configured live server URL
+      // The actual API endpoints will be fetched from Super Admin Dashboard config
+      initialBaseUrl = 'https://wadexpro-4rexnj1k.on-forge.com/api/v1';
+      initialSocketUrl = 'https://wadexpro-4rexnj1k.on-forge.com:3000';
+    } else {
+      // For emulator/web dev
+      final String host = kIsWeb ? 'wadexpro.test' : '10.0.2.2';
+      final String protocol = kIsWeb ? 'https' : 'http';
+      final String port = kIsWeb ? '' : ':8000';
+      initialBaseUrl = '$protocol://$host$port/api/v1';
+      initialSocketUrl = 'http://$host:3002';
     }
 
+    instance = AppConfig(
+      environment: environment,
+      apiBaseUrl: initialBaseUrl,
+      socketUrl: initialSocketUrl,
+    );
+
     try {
-      final dio = Dio();
-      dio.options.connectTimeout = const Duration(seconds: 5);
+      final dio = Dio(BaseOptions(
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+      ));
       
       final response = await dio.get('${instance.apiBaseUrl}/auth/config');
       

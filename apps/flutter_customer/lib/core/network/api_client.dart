@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../config/environment_config.dart';
+import '../config/app_config.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../utils/local_storage.dart';
 
@@ -11,9 +11,10 @@ class ApiClient {
   String _locale = 'en';
 
   ApiClient(this._dio) {
-    _dio.options.baseUrl = EnvironmentConfig.baseUrl; // Dynamic environment gateway
-    _dio.options.connectTimeout = const Duration(seconds: 10);
-    _dio.options.receiveTimeout = const Duration(seconds: 10);
+    // Use AppConfig for dynamic API URL from Super Admin Dashboard
+    _dio.options.baseUrl = AppConfig.instance.apiBaseUrl;
+    _dio.options.connectTimeout = Duration(seconds: AppConfig.remoteTimeout);
+    _dio.options.receiveTimeout = Duration(seconds: AppConfig.remoteTimeout);
     
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {

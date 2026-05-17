@@ -95,6 +95,16 @@ class SystemSettingController extends Controller
     }
 
     /**
+     * Display API Configuration settings page for Mobile Apps.
+     */
+    public function apiConfiguration()
+    {
+        $settings = SystemSetting::where('group', 'api_configuration')->get()->keyBy('key');
+
+        return view('admin.settings.api_configuration', compact('settings'));
+    }
+
+    /**
      * Display payment gateway management page.
      */
     public function payments()
@@ -208,6 +218,10 @@ class SystemSettingController extends Controller
             'api_rate_limit' => 'api_rate_limiting', 'api_rate_limit_burst' => 'api_rate_limiting',
             'api_debug_mode' => 'api_rate_limiting', 'max_concurrent_requests' => 'api_rate_limiting',
             'webhook_retry_attempts' => 'api_rate_limiting', 'webhook_retry_delay' => 'api_rate_limiting',
+            // api configuration (mobile apps)
+            'api_driver_base_url' => 'api_configuration', 'api_driver_socket_url' => 'api_configuration',
+            'api_customer_base_url' => 'api_configuration', 'api_customer_socket_url' => 'api_configuration',
+            'api_platform_timeout' => 'api_configuration', 'api_platform_retry_attempts' => 'api_configuration',
         ];
 
         foreach ($settings as $key => $value) {

@@ -85,6 +85,16 @@ class ConfigController extends Controller
                     'api_url' => SystemSetting::get('flutter_api_url'),
                     'rtc_url' => SystemSetting::get('flutter_rtc_url'),
                 ],
+
+                // API Configuration from Super Admin Dashboard
+                'api_configuration' => [
+                    'api_driver_base_url' => SystemSetting::get('api_driver_base_url'),
+                    'api_driver_socket_url' => SystemSetting::get('api_driver_socket_url'),
+                    'api_customer_base_url' => SystemSetting::get('api_customer_base_url'),
+                    'api_customer_socket_url' => SystemSetting::get('api_customer_socket_url'),
+                    'api_platform_timeout' => SystemSetting::get('api_platform_timeout', 30),
+                    'api_platform_retry_attempts' => SystemSetting::get('api_platform_retry_attempts', 3),
+                ],
             ],
         ]);
     }

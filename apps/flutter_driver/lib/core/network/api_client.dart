@@ -1,16 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../config/environment_config.dart';
+import '../config/app_config.dart';
 
 class ApiClient {
   final Dio _dio = Dio();
   final _storage = const FlutterSecureStorage();
   
   ApiClient() {
-    _dio.options.baseUrl = EnvironmentConfig.baseUrl;
-    _dio.options.connectTimeout = const Duration(seconds: 10);
-    _dio.options.receiveTimeout = const Duration(seconds: 10);
+    // Use AppConfig for dynamic API URL from Super Admin Dashboard
+    _dio.options.baseUrl = AppConfig.instance.apiBaseUrl;
+    _dio.options.connectTimeout = Duration(seconds: AppConfig.remoteTimeout);
+    _dio.options.receiveTimeout = Duration(seconds: AppConfig.remoteTimeout);
 
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {

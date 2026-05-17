@@ -32,6 +32,12 @@ class AppConfig {
   static String? currentAppVersion;
   static String? currentPlatform;
 
+  // API Configuration from Super Admin Dashboard
+  static String? remoteApiBaseUrl;
+  static String? remoteSocketUrl;
+  static int remoteTimeout = 30;
+  static int remoteRetryAttempts = 3;
+
   static Future<void> initialize({required Environment environment}) async {
     // Initial static config
     switch (environment) {
@@ -113,6 +119,25 @@ class AppConfig {
         // --- Dynamic Branding from Super Admin Dashboard ---
         final branding = data['branding'];
         BrandConfig.fromJson(branding);
+
+        // --- API Configuration from Super Admin Dashboard ---
+        final apiConfig = data['api_configuration'];
+        if (apiConfig != null) {
+          remoteApiBaseUrl = apiConfig['api_driver_base_url'];
+          remoteSocketUrl = apiConfig['api_driver_socket_url'];
+          remoteTimeout = int.tryParse(apiConfig['api_platform_timeout']?.toString() ?? '30') ?? 30;
+          remoteRetryAttempts = int.tryParse(apiConfig['api_platform_retry_attempts']?.toString() ?? '3') ?? 3;
+          
+          // Update instance with remote config if available
+          if (remoteApiBaseUrl != null && remoteSocketUrl != null) {
+            instance = AppConfig(
+              environment: environment,
+              apiBaseUrl: remoteApiBaseUrl!,
+              socketUrl: remoteSocketUrl!,
+            );
+            debugPrint('WADEXPRO: Using remote API configuration from Super Admin');
+          }
+        }
       }
 
       final packageInfo = await PackageInfo.fromPlatform();

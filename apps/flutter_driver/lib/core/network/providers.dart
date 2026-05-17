@@ -11,15 +11,13 @@ import '../../features/chat/data/chat_repository.dart';
 
 final dioProvider = Provider((ref) => Dio());
 
-// ... (existing providers)
+final apiClientProvider = Provider((ref) {
+  return ApiClient();
+});
 
 final chatRepositoryProvider = Provider((ref) {
   final apiClient = ref.watch(apiClientProvider);
   return ChatRepository(apiClient);
-});
-
-final apiClientProvider = Provider((ref) {
-  return ApiClient();
 });
 
 final authRepositoryProvider = Provider((ref) {

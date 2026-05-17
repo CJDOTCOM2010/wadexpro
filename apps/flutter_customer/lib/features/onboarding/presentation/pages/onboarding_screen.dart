@@ -358,14 +358,17 @@ class _FullBleedTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
-        _SlideBgImage(data: data),
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.transparent, data.backgroundColor.withValues(alpha: 0.8), data.backgroundColor],
+        Positioned.fill(child: _SlideBgImage(data: data)),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, data.backgroundColor.withValues(alpha: 0.8), data.backgroundColor],
+              ),
             ),
           ),
         ),
@@ -442,9 +445,10 @@ class _FloatingCardTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
-        _SlideBgImage(data: data),
-        Container(color: Colors.black.withValues(alpha: 0.3)),
+        Positioned.fill(child: _SlideBgImage(data: data)),
+        Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.3))),
         Center(
           child: Container(
             margin: const EdgeInsets.all(32),
@@ -537,8 +541,9 @@ class _GlassmorphicTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
-        _SlideBgImage(data: data),
+        Positioned.fill(child: _SlideBgImage(data: data)),
         Center(
           child: Container(
             margin: const EdgeInsets.all(24),
@@ -565,12 +570,15 @@ class _IndustrialTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
-        Transform.scale(
-          scale: 1.2,
-          child: Transform.rotate(angle: -0.1, child: _SlideBgImage(data: data)),
+        Positioned.fill(
+          child: Transform.scale(
+            scale: 1.2,
+            child: Transform.rotate(angle: -0.1, child: _SlideBgImage(data: data)),
+          ),
         ),
-        Container(color: data.backgroundColor.withValues(alpha: 0.7)),
+        Positioned.fill(child: Container(color: data.backgroundColor.withValues(alpha: 0.7))),
         _ContentBlock(data: data, align: Alignment.centerLeft, textColor: data.textColor, onAction: onAction),
       ],
     );

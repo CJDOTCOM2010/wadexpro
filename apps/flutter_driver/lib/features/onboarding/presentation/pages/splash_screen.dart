@@ -214,8 +214,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               ),
             ),
 
-          // 4. Gradient decoration when no media (replaces the flat overlay)
-          if (showBackground && config.backgroundUrl == null && showBgColor)
+          // 4. Gradient decoration when no media (part of Backdrop Color, not Media)
+          if (showBgColor && config.backgroundUrl == null)
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
@@ -233,8 +233,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               ),
             ),
 
-          // 5. Decorative accent circles (only when no media)
-          if (showAccentColor && showBackground && config.backgroundUrl == null) ...[
+          // 5. Decorative accent circles (only when no media — part of Accent Color, not Media)
+          if (showAccentColor && config.backgroundUrl == null) ...[
             Positioned(
               top: -100,
               right: -80,

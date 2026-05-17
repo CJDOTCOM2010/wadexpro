@@ -429,6 +429,15 @@ class _AppGate extends ConsumerWidget {
   }
 
   Widget _buildAuthScreen(BuildContext context, WidgetRef ref, AuthState authState) {
+    // Show loading while checking for existing session
+    if (authState.status == AuthStatus.initial) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     switch (authState.status) {
       case AuthStatus.authenticated:
         // Once authenticated, go straight to the home screen.
@@ -469,6 +478,15 @@ class _AuthGate extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
 
+    // Show loading while checking for existing session
+    if (authState.status == AuthStatus.initial) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     switch (authState.status) {
       case AuthStatus.authenticated:
         return const DriverHomeScreen();
@@ -484,7 +502,6 @@ class _AuthGate extends ConsumerWidget {
         if (authState.phone != null) return const OtpScreen();
         return const LoginScreen();
         
-      case AuthStatus.initial:
       case AuthStatus.unauthenticated:
       default:
         return const LoginScreen();

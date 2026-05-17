@@ -199,7 +199,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       children: [
                         PlatformMediaWidget(
                           url: config.backgroundUrl!,
-                          mediaType: config.backgroundMediaType,
+                          mediaType: config.backgroundMediaType ?? 'image',
                           fit: BoxFit.cover,
                         ),
                         // Darken overlay
@@ -315,7 +315,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             child: config.logoUrl != null 
                                 ? PlatformMediaWidget(
                                     url: config.logoUrl!,
-                                    mediaType: config.logoMediaType,
+                                    mediaType: config.logoMediaType ?? 'image',
                                     fit: BoxFit.contain,
                                     width: 80,
                                     height: 80,
@@ -358,7 +358,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   child: FadeTransition(
                     opacity: _taglineOpacity,
                     child: Text(
-                      tagline,
+                      tagline ?? '',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,

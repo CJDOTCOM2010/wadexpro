@@ -99,7 +99,7 @@ class _DashboardHomeTabState extends ConsumerState<DashboardHomeTab> {
         child: hasCompanyLogo
             ? PlatformMediaWidget(
                 url: appConfig.logoUrl!,
-                mediaType: appConfig.logoMediaType,
+                mediaType: appConfig.logoMediaType ?? 'image',
                 fit: BoxFit.cover,
                 errorWidget: _buildFallbackLogo(),
               )

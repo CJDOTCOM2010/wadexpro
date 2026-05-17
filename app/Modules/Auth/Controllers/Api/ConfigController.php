@@ -49,6 +49,8 @@ class ConfigController extends Controller
                     'driver_app_icon_url' => $buildUrl(SystemSetting::get('driver_app_icon_url')),
                     'customer_app_icon_url' => $buildUrl(SystemSetting::get('customer_app_icon_url')),
                     'splash_background_color' => SystemSetting::get('splash_background_color', '#156400'),
+                    'driver_splash_background' => SystemSetting::get('driver_splash_background', '#156400'),
+                    'customer_splash_background' => SystemSetting::get('customer_splash_background', '#156400'),
 
                     'brand_primary_color' => SystemSetting::get('brand_primary_color', '#156400'),
                     'brand_accent_color' => SystemSetting::get('brand_accent_color', '#FFCC00'),

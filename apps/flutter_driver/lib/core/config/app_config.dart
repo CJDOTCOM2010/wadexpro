@@ -150,6 +150,12 @@ class AppConfig {
       debugPrint('WADEXPRO: Dynamic configuration sync failed. Using fallback. $e');
     }
   }
+
+  /// Refresh configuration from server (can be called at runtime)
+  static Future<void> refreshConfig() async {
+    debugPrint('WADEXPRO: Refreshing configuration from server...');
+    await initialize(environment: instance.environment);
+  }
 }
 
 class UniversalPlatform {

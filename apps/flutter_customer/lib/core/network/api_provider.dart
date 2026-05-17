@@ -10,13 +10,6 @@ import '../providers/localization_provider.dart';
 
 final dioProvider = Provider((ref) => Dio());
 
-// ... (existing providers)
-
-final chatRepositoryProvider = Provider((ref) {
-  final apiClient = ref.watch(apiClientProvider);
-  return ChatRepository(apiClient);
-});
-
 final apiClientProvider = Provider((ref) {
   final dio = ref.watch(dioProvider);
   final client = ApiClient(dio);
@@ -26,6 +19,11 @@ final apiClientProvider = Provider((ref) {
   client.setLocale(locale);
   
   return client;
+});
+
+final chatRepositoryProvider = Provider((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return ChatRepository(apiClient);
 });
 
 final authRepositoryProvider = Provider((ref) {

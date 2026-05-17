@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../network/api_client.dart';
+import '../network/api_provider.dart';
 
 /// Top-level background message handler (must be top-level function)
 @pragma('vm:entry-point')

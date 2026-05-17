@@ -79,24 +79,36 @@ class _PlatformMediaWidgetState extends State<PlatformMediaWidget> {
   Widget build(BuildContext context) {
     if (widget.mediaType == 'video') {
       if (_isInitialized && _videoController != null) {
-        return SizedBox(
-          width: widget.width ?? double.infinity,
-          height: widget.height ?? double.infinity,
-          child: FittedBox(
-            fit: widget.fit,
-            clipBehavior: Clip.hardEdge,
-            child: SizedBox(
-              width: _videoController!.value.size.width,
-              height: _videoController!.value.size.height,
-              child: VideoPlayer(_videoController!),
-            ),
-          ),
+        final videoSize = _videoController!.value.size;
+        if (videoSize.width <= 0 || videoSize.height <= 0) {
+          return _buildPlaceholder();
+        }
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final scaleX = constraints.maxWidth / videoSize.width;
+            final scaleY = constraints.maxHeight / videoSize.height;
+            final scale = widget.fit == BoxFit.cover
+                ? scaleX > scaleY ? scaleX : scaleY
+                : scaleX < scaleY ? scaleX : scaleY;
+            return ClipRect(
+              child: OverflowBox(
+                alignment: Alignment.center,
+                maxWidth: videoSize.width * scale,
+                maxHeight: videoSize.height * scale,
+                child: SizedBox(
+                  width: videoSize.width * scale,
+                  height: videoSize.height * scale,
+                  child: VideoPlayer(_videoController!),
+                ),
+              ),
+            );
+          },
         );
       }
       return _buildPlaceholder();
     }
 
-    // Default to Image
+    // Default to Image (supports animated GIFs natively)
     return Image.network(
       widget.url,
       fit: widget.fit,

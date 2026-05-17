@@ -1,7 +1,7 @@
 <?php
 
+use App\Modules\Admin\Models\SystemSetting;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -77,7 +77,7 @@ return new class extends Migration
         ];
 
         foreach ($settings as $setting) {
-            DB::table('system_settings')->updateOrInsert(
+            SystemSetting::updateOrCreate(
                 ['key' => $setting['key']],
                 $setting
             );
@@ -89,6 +89,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        SystemSetting::whereIn('key', [
+            'api_driver_base_url',
+            'api_driver_socket_url',
+            'api_customer_base_url',
+            'api_customer_socket_url',
+            'api_platform_timeout',
+            'api_platform_retry_attempts',
+        ])->delete();
     }
 };

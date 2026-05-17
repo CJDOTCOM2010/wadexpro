@@ -116,7 +116,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         await SessionManager.saveSession(
           accessToken: accessToken,
           refreshToken: refreshToken,
-          driverId: userData?['id']?.toString(),
+          driverId: userData['id']?.toString(),
           driverPhone: currentPhone,
         );
       }

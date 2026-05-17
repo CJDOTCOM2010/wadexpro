@@ -412,7 +412,7 @@ class _AppGate extends ConsumerWidget {
     final hasSeenOnboarding = hasSeenOnboardingAsync.when(
       data: (value) => value,
       loading: () => false,
-      error: (_, __) => false,
+      error: (_, _) => false,
     );
 
     if (!hasSeenOnboarding) {

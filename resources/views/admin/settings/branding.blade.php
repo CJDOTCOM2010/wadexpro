@@ -3,11 +3,15 @@
 @php
 function getSetting($key, $default = null) {
     global $settings;
-    return $settings[$key]->value ?? $default;
+    if (!isset($settings[$key])) return $default;
+    $val = $settings[$key]->value ?? null;
+    return $val !== null && $val !== '' ? $val : $default;
 }
 function hasSetting($key) {
     global $settings;
-    return isset($settings[$key]) && !empty($settings[$key]->value);
+    if (!isset($settings[$key])) return false;
+    $val = $settings[$key]->value ?? null;
+    return $val !== null && $val !== '';
 }
 @endphp
 @section('content')

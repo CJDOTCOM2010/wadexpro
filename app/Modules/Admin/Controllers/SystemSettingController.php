@@ -247,14 +247,20 @@ class SystemSettingController extends Controller
         if ($request->hasFile('brand_logo')) {
             $request->validate(['brand_logo' => 'image|mimes:png,jpg,jpeg,svg,webp|max:2048']);
             $path = $request->file('brand_logo')->store('branding', 'public');
-            SystemSetting::set('brand_logo_url', '/storage/'.$path);
+            SystemSetting::updateOrCreate(
+                ['key' => 'brand_logo_url'],
+                ['value' => '/storage/'.$path, 'group' => 'branding']
+            );
         }
 
         // Handle app icon file upload
         if ($request->hasFile('app_icon')) {
             $request->validate(['app_icon' => 'image|mimes:png|max:2048']);
             $path = $request->file('app_icon')->store('branding/icons', 'public');
-            SystemSetting::set('app_icon_url', '/storage/'.$path);
+            SystemSetting::updateOrCreate(
+                ['key' => 'app_icon_url'],
+                ['value' => '/storage/'.$path, 'group' => 'branding']
+            );
         }
 
         // Handle dashboard logo file upload

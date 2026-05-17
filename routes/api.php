@@ -28,6 +28,23 @@ Route::prefix('v1')->group(function () {
     Route::get('/onboarding/{appType}', [\App\Modules\Admin\Controllers\OnboardingController::class, 'apiIndex']);
     Route::get('/platform/splash/{appType}', [\App\Modules\Admin\Controllers\OnboardingController::class, 'apiSplash']);
     
+    // Build Branding Endpoint for Scripts
+    Route::get('/platform/build-branding/{appType}', function ($appType) {
+        if (!in_array($appType, ['customer', 'driver'])) {
+            return response()->json(['error' => 'Invalid app type'], 400);
+        }
+        $settings = \App\Modules\Admin\Models\SystemSetting::whereIn('key', [
+            "{$appType}_app_display_name",
+            "{$appType}_app_icon_url",
+            'app_icon_url' // fallback
+        ])->pluck('value', 'key');
+        
+        return response()->json([
+            'appName' => $settings["{$appType}_app_display_name"] ?? 'WADEXPRO',
+            'appIconUrl' => $settings["{$appType}_app_icon_url"] ?? ($settings['app_icon_url'] ?? ''),
+        ]);
+    });
+    
     // WADEX-Guard: Ultra-Resilience Profile endpoints (Allows virtual tokens to bypass sanctum for testing)
     Route::get('/profile', [\App\Http\Controllers\Api\V1\ProfileController::class, 'getProfile']);
     Route::put('/profile/update', [\App\Http\Controllers\Api\V1\ProfileController::class, 'updateProfile']);

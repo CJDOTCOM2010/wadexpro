@@ -39,12 +39,15 @@ class HRManagementController extends Controller
             $stats = [
                 'total'    => User::whereIn('user_type', ['admin', 'support', 'staff', 'manager', 'employee'])->count(),
                 'admins'   => User::where('user_type', 'admin')->count(),
-            'support'  => User::where('user_type', 'support')->count(),
-        ];
+                'support'  => User::where('user_type', 'support')->count(),
+            ];
 
-        $roles = Role::orderBy('name')->get();
+            $roles = Role::orderBy('name')->get();
 
-        return view('admin.hr_management', compact('staff', 'stats', 'roles'));
+            return view('admin.hr_management', compact('staff', 'stats', 'roles'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error loading HR Management: ' . $e->getMessage());
+        }
     }
 
     /**

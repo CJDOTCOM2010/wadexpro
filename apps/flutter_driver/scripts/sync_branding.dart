@@ -4,50 +4,27 @@ import 'dart:io';
 Future<void> main() async {
   print('--- Starting WADEXPRO Driver Branding Sync ---');
 
-  // 1. Read API URL from .env
-  final envFile = File('.env');
-  if (!envFile.existsSync()) {
-    print('Error: .env file not found.');
-    return;
-  }
-  final envLines = await envFile.readAsLines();
-  String? baseUrl;
-  for (var line in envLines) {
-    if (line.startsWith('BASE_URL=')) {
-      baseUrl = line.split('=')[1].trim();
-      break;
-    }
-  }
-
-  if (baseUrl == null || baseUrl.isEmpty) {
-    print('Error: BASE_URL not found in .env');
-    return;
-  }
-
-  final apiUrl = '$baseUrl/platform/splash/driver'; // or the respective endpoint
-  print('Fetching branding config from: $apiUrl');
-
-  // 2. Fetch config from API
-  final httpClient = HttpClient();
+  print('Running local Laravel artisan command to fetch branding config...');
+  
   try {
-    final request = await httpClient.getUrl(Uri.parse(apiUrl));
-    final response = await request.close();
-    if (response.statusCode != 200) {
-      print('Error: API returned status ${response.statusCode}');
+    final rootDir = Directory.current.parent.parent.path;
+    final artisanResult = await Process.run('php', ['artisan', 'platform:build-branding', 'driver'], workingDirectory: rootDir);
+    
+    if (artisanResult.exitCode != 0) {
+      print('Error running artisan command: ${artisanResult.stderr}');
       return;
     }
 
-    final responseBody = await response.transform(utf8.decoder).join();
-    final data = jsonDecode(responseBody);
-    final configData = data['data'];
+    final responseBody = artisanResult.stdout.toString().trim();
+    final configData = jsonDecode(responseBody);
 
     if (configData == null) {
-      print('Error: Invalid API response format (missing "data" key)');
+      print('Error: Invalid API response format');
       return;
     }
 
     final appName = configData['appName'];
-    final appIconPath = configData['appIconUrl']; // Assuming backend returns relative path or full url
+    final appIconPath = configData['appIconUrl'];
 
     print('App Name received: $appName');
     print('App Icon URL received: $appIconPath');
@@ -65,19 +42,25 @@ Future<void> main() async {
 
     // 4. Download icon and configure flutter_launcher_icons
     if (appIconPath != null && appIconPath.toString().isNotEmpty) {
-      final fullIconUrl = appIconPath.startsWith('http') ? appIconPath : '$baseUrl/storage/$appIconPath';
-      print('Downloading App Icon from: $fullIconUrl');
+      // The icon path will be relative from artisan, e.g., /storage/branding/icons/xyz.png
+      // So we will copy it from the public/storage directory instead of downloading it over HTTP!
+      // This is much more reliable since we are building locally.
       
-      final iconRequest = await httpClient.getUrl(Uri.parse(fullIconUrl));
-      final iconResponse = await iconRequest.close();
-      if (iconResponse.statusCode == 200) {
+      final publicStoragePath = appIconPath.toString().replaceFirst('/storage/', '');
+      final localIconPath = '${Directory.current.parent.parent.path}/public/storage/$publicStoragePath';
+      
+      print('Copying App Icon from local storage: $localIconPath');
+      
+      final localIconFile = File(localIconPath);
+      
+      if (localIconFile.existsSync()) {
         final iconDirectory = Directory('assets/branding');
         if (!iconDirectory.existsSync()) {
           iconDirectory.createSync(recursive: true);
         }
         final iconFile = File('assets/branding/app_icon.png');
-        await iconResponse.pipe(iconFile.openWrite());
-        print('App Icon downloaded successfully.');
+        await localIconFile.copy(iconFile.path);
+        print('App Icon copied successfully.');
 
         // Create/Update flutter_launcher_icons.yaml
         final yamlContent = '''
@@ -97,14 +80,12 @@ flutter_launcher_icons:
           print('Failed to generate launcher icons: ${iconResult.stderr}');
         }
       } else {
-        print('Failed to download icon (status ${iconResponse.statusCode})');
+        print('Failed to find icon at $localIconPath');
       }
     }
 
     print('--- Branding Sync Complete! ---');
   } catch (e) {
     print('Error during sync: $e');
-  } finally {
-    httpClient.close();
   }
 }

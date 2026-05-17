@@ -176,6 +176,18 @@ class SystemSettingController extends Controller
             'gps_update_interval' => 'geolocation', 'location_history_days' => 'geolocation',
             'geofencing_enabled' => 'geolocation', 'default_search_radius' => 'geolocation',
             'distance_unit' => 'geolocation', 'default_travel_mode' => 'geolocation',
+            // branding
+            'brand_name' => 'branding', 'brand_short_name' => 'branding', 'brand_tagline' => 'branding',
+            'brand_logo_url' => 'branding', 'app_icon_url' => 'branding',
+            'brand_primary_color' => 'branding', 'brand_accent_color' => 'branding',
+            'brand_secondary_color' => 'branding', 'brand_dark_color' => 'branding',
+            'splash_background_color' => 'branding',
+            'customer_app_display_name' => 'branding', 'driver_app_display_name' => 'branding',
+            'support_email' => 'branding', 'brand_support_phone' => 'branding',
+            'enterprise_name' => 'branding',
+            'play_store_customer_link' => 'branding', 'app_store_customer_link' => 'branding',
+            'play_store_driver_link' => 'branding', 'app_store_driver_link' => 'branding',
+            'min_customer_app_version' => 'branding', 'min_driver_app_version' => 'branding',
             // security
             'password_min_length' => 'security', 'password_require_special' => 'security',
             'password_require_numbers' => 'security', 'password_expiry_days' => 'security',
@@ -226,6 +238,13 @@ class SystemSettingController extends Controller
             $request->validate(['brand_logo' => 'image|mimes:png,jpg,jpeg,svg,webp|max:2048']);
             $path = $request->file('brand_logo')->store('branding', 'public');
             SystemSetting::set('brand_logo_url', '/storage/'.$path);
+        }
+
+        // Handle app icon file upload
+        if ($request->hasFile('app_icon')) {
+            $request->validate(['app_icon' => 'image|mimes:png|max:2048']);
+            $path = $request->file('app_icon')->store('branding/icons', 'public');
+            SystemSetting::set('app_icon_url', '/storage/'.$path);
         }
 
         // Handle dashboard logo file upload

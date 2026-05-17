@@ -189,11 +189,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final appName = config.appName;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. Solid background color (always fills the canvas)
+          // 1. Base background — ONLY when backdrop color is enabled, else transparent
           Positioned.fill(
-            child: Container(color: backgroundColor),
+            child: Container(color: showBgColor ? backgroundColor : Colors.transparent),
           ),
 
           // 2. Backdrop Media (on top of solid color)

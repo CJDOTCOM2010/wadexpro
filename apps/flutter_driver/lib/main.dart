@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
@@ -51,7 +52,7 @@ class WadexproDriverApp extends ConsumerWidget {
       theme: AppTheme.light,
       debugShowCheckedModeBanner: false,
       home: SplashScreen(
-        destinationBuilder: () => const VersionGate(child: _AppGate()),
+        destinationBuilder: () => const VersionGate(child: LocationGate(child: _AppGate())),
       ),
     );
   }
@@ -117,6 +118,284 @@ class VersionGate extends ConsumerWidget {
       return false;
     }
     return false;
+  }
+}
+
+/// Gate: Check location services are enabled before app can proceed
+class LocationGate extends StatefulWidget {
+  final Widget child;
+  const LocationGate({super.key, required this.child});
+
+  @override
+  State<LocationGate> createState() => _LocationGateState();
+}
+
+class _LocationGateState extends State<LocationGate> {
+  bool _isChecking = true;
+  bool _locationEnabled = false;
+  bool _permissionDenied = false;
+  bool _permissionDeniedForever = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLocation();
+  }
+
+  Future<void> _checkLocation() async {
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() {
+          _isChecking = false;
+          _locationEnabled = false;
+        });
+        return;
+      }
+
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        final requestedPermission = await Geolocator.requestPermission();
+        if (requestedPermission == LocationPermission.denied) {
+          setState(() {
+            _isChecking = false;
+            _permissionDenied = true;
+          });
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          _isChecking = false;
+          _permissionDeniedForever = true;
+        });
+        return;
+      }
+
+      setState(() {
+        _isChecking = false;
+        _locationEnabled = true;
+      });
+    } catch (e) {
+      setState(() {
+        _isChecking = false;
+        _locationEnabled = false;
+      });
+    }
+  }
+
+  Future<void> _openLocationSettings() async {
+    await Geolocator.openLocationSettings();
+    _checkLocation();
+  }
+
+  Future<void> _openAppSettings() async {
+    await Geolocator.openAppSettings();
+    _checkLocation();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isChecking) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(color: AppColors.primary),
+              const SizedBox(height: 24),
+              Text(
+                'Checking location services...',
+                style: TextStyle(color: AppColors.textMuted, fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (!_locationEnabled) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: AppColors.warning.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.location_off, size: 50, color: AppColors.warning),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                'Location Required',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textBody,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'WADEXPRO Driver needs access to your location to find rides and navigate.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.textMuted,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 48),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _openLocationSettings,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('Enable Location', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: _checkLocation,
+                child: Text('I\'ve enabled it, try again', style: TextStyle(color: AppColors.primary)),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_permissionDenied) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.location_disabled, size: 50, color: AppColors.error),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                'Location Permission Required',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textBody,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'WADEXPRO Driver needs location permission to work. Please allow access.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.textMuted,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 48),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final permission = await Geolocator.requestPermission();
+                    if (permission == LocationPermission.denied) {
+                      return;
+                    }
+                    _checkLocation();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('Grant Permission', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_permissionDeniedForever) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.settings, size: 50, color: AppColors.error),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                'Location Blocked',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textBody,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Location permission was permanently denied. Please enable it in app settings.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.textMuted,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 48),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _openAppSettings,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('Open Settings', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return widget.child;
   }
 }
 

@@ -555,6 +555,60 @@
                                             </label>
                                         </div>
                                     </div>
+                                    <div class="glass-panel rounded-2xl p-5 gradient-border sm:col-span-2">
+                                        <div class="space-y-4">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-start gap-3">
+                                                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                                                        <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-xs font-black text-brand">Backdrop Color</p>
+                                                        <p class="text-[9px] text-brand-muted mt-0.5">Show the backdrop color overlay on top of media.</p>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="show_bg_color" :value="splash.show_bg_color ? 1 : 0">
+                                                <label class="premium-toggle">
+                                                    <input type="checkbox" x-model="splash.show_bg_color" value="1">
+                                                    <div class="track"></div>
+                                                </label>
+                                            </div>
+                                            <div x-show="splash.show_bg_color" class="pt-3 border-t border-gray-100/60">
+                                                <div class="flex items-center gap-3">
+                                                    <span class="text-[9px] font-black text-brand-muted uppercase tracking-widest">Opacity</span>
+                                                    <input type="range" name="bg_color_opacity" min="0" max="1" step="0.05" x-model="splash.bg_color_opacity" class="flex-1">
+                                                    <span class="text-xs font-black text-accent min-w-[3ch] text-right" x-text="Math.round(parseFloat(splash.bg_color_opacity || 0.7) * 100) + '%'"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="glass-panel rounded-2xl p-5 gradient-border sm:col-span-2">
+                                        <div class="space-y-4">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-start gap-3">
+                                                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                                                        <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-xs font-black text-brand">Accent / Ripple Color</p>
+                                                        <p class="text-[9px] text-brand-muted mt-0.5">Show accent color in ripple, decorative elements &amp; logo shield.</p>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="show_accent_color" :value="splash.show_accent_color ? 1 : 0">
+                                                <label class="premium-toggle">
+                                                    <input type="checkbox" x-model="splash.show_accent_color" value="1">
+                                                    <div class="track"></div>
+                                                </label>
+                                            </div>
+                                            <div x-show="splash.show_accent_color" class="pt-3 border-t border-gray-100/60">
+                                                <div class="flex items-center gap-3">
+                                                    <span class="text-[9px] font-black text-brand-muted uppercase tracking-widest">Opacity</span>
+                                                    <input type="range" name="accent_color_opacity" min="0" max="1" step="0.05" x-model="splash.accent_color_opacity" class="flex-1">
+                                                    <span class="text-xs font-black text-accent min-w-[3ch] text-right" x-text="Math.round(parseFloat(splash.accent_color_opacity || 0.3) * 100) + '%'"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

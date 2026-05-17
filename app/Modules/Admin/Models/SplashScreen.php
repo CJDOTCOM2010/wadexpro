@@ -25,6 +25,10 @@ class SplashScreen extends Model
         'show_background',
         'show_tagline',
         'show_app_name',
+        'show_bg_color',
+        'bg_color_opacity',
+        'show_accent_color',
+        'accent_color_opacity',
         'is_active',
     ];
 
@@ -36,6 +40,10 @@ class SplashScreen extends Model
             'show_background' => 'boolean',
             'show_tagline' => 'boolean',
             'show_app_name' => 'boolean',
+            'show_bg_color' => 'boolean',
+            'bg_color_opacity' => 'float',
+            'show_accent_color' => 'boolean',
+            'accent_color_opacity' => 'float',
             'is_active' => 'boolean',
             'duration_ms' => 'integer',
         ];

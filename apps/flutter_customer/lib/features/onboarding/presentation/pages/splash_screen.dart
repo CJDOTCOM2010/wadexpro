@@ -184,56 +184,60 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final showBackground = config.showBackground ?? true;
     final showTagline = config.showTagline ?? true;
     final showAppName = config.showAppName ?? true;
+    final showBgColor = config.showBgColor ?? true;
+    final bgColorOpacity = config.bgColorOpacity ?? 0.7;
+    final showAccentColor = config.showAccentColor ?? true;
+    final accentColorOpacity = config.accentColorOpacity ?? 0.3;
     final tagline = config.tagline;
     final appName = config.appName;
 
     return Scaffold(
       body: Stack(
         children: [
-          // 1. Background Layer
+          // 1. Solid background color (always fills the canvas)
           Positioned.fill(
-            child: Container(
-              color: backgroundColor,
-              child: showBackground
-                  ? (config.backgroundUrl != null
-                      ? Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Positioned.fill(
-                              child: PlatformMediaWidget(
-                                url: config.backgroundUrl!,
-                                mediaType: config.backgroundMediaType ?? 'image',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            // Darken overlay
-                            Positioned.fill(
-                              child: Container(
-                                color: backgroundColor.withValues(alpha: 0.7),
-                              ),
-                            ),
-                          ],
-                        )
-                      : Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                backgroundColor.withValues(alpha: 0.8),
-                                backgroundColor,
-                                backgroundColor.withValues(alpha: 0.9),
-                              ],
-                              stops: const [0.0, 0.5, 1.0],
-                            ),
-                          ),
-                        ))
-                  : null,
-            ),
+            child: Container(color: backgroundColor),
           ),
 
-          // 2. Decorative elements (Only if backdrop media is enabled but no media uploaded)
-          if (showBackground && config.backgroundUrl == null) ...[
+          // 2. Backdrop Media (on top of solid color)
+          if (showBackground && config.backgroundUrl != null)
+            Positioned.fill(
+              child: PlatformMediaWidget(
+                url: config.backgroundUrl!,
+                mediaType: config.backgroundMediaType ?? 'image',
+                fit: BoxFit.cover,
+              ),
+            ),
+
+          // 3. Backdrop Color overlay (on TOP of media with configurable opacity)
+          if (showBgColor)
+            Positioned.fill(
+              child: Container(
+                color: backgroundColor.withValues(alpha: bgColorOpacity),
+              ),
+            ),
+
+          // 4. Gradient decoration when no media (replaces the flat overlay)
+          if (showBackground && config.backgroundUrl == null && showBgColor)
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      backgroundColor.withValues(alpha: 0.8),
+                      backgroundColor,
+                      backgroundColor.withValues(alpha: 0.9),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                ),
+              ),
+            ),
+
+          // 5. Decorative accent circles (only when no media)
+          if (showAccentColor && showBackground && config.backgroundUrl == null) ...[
             Positioned(
               top: -100,
               right: -80,
@@ -242,7 +246,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: accentColor.withValues(alpha: 0.05),
+                  color: accentColor.withValues(alpha: 0.05 * accentColorOpacity * 3.33),
                 ),
               ),
             ),
@@ -254,14 +258,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 height: 400,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: accentColor.withValues(alpha: 0.03),
+                  color: accentColor.withValues(alpha: 0.03 * accentColorOpacity * 3.33),
                 ),
               ),
             ),
           ],
 
-          // 3. Ripple effect behind logo
-          if (showRipple)
+          // 6. Ripple effect behind logo
+          if (showAccentColor && showRipple)
             Center(
               child: AnimatedBuilder(
                 animation: _rippleController,
@@ -273,7 +277,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: accentColor.withValues(alpha: _rippleOpacity.value),
+                        color: accentColor.withValues(alpha: _rippleOpacity.value * accentColorOpacity),
                         width: 2,
                       ),
                     ),
@@ -305,13 +309,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                accentColor,
-                                accentColor.withValues(alpha: 0.8),
+                                accentColor.withValues(alpha: accentColorOpacity),
+                                accentColor.withValues(alpha: 0.8 * accentColorOpacity),
                               ],
                             ) : null,
                             boxShadow: [
                               BoxShadow(
-                                color: accentColor.withValues(alpha: 0.4),
+                                color: accentColor.withValues(alpha: 0.4 * accentColorOpacity),
                                 blurRadius: 40,
                                 spreadRadius: 4,
                               ),

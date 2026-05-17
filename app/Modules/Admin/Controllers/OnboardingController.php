@@ -31,6 +31,10 @@ class OnboardingController extends Controller
                 'show_ripple' => true,
                 'show_tagline' => true,
                 'show_app_name' => true,
+                'show_bg_color' => true,
+                'bg_color_opacity' => 0.70,
+                'show_accent_color' => true,
+                'accent_color_opacity' => 0.30,
                 'bg_color' => '#000B1E',
                 'secondary_color' => '#FFB800',
             ]
@@ -68,6 +72,10 @@ class OnboardingController extends Controller
         $splash->show_background = $request->boolean('show_background');
         $splash->show_tagline = $request->boolean('show_tagline');
         $splash->show_app_name = $request->boolean('show_app_name');
+        $splash->show_bg_color = $request->boolean('show_bg_color');
+        $splash->bg_color_opacity = $request->input('bg_color_opacity', 0.70);
+        $splash->show_accent_color = $request->boolean('show_accent_color');
+        $splash->accent_color_opacity = $request->input('accent_color_opacity', 0.30);
 
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');

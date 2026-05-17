@@ -11,6 +11,10 @@ class SplashConfig {
   final bool? showBackground;
   final bool? showTagline;
   final bool? showAppName;
+  final bool? showBgColor;
+  final double? bgColorOpacity;
+  final bool? showAccentColor;
+  final double? accentColorOpacity;
   final String? logoUrl;
   final String? logoMediaType;
   final String? backgroundUrl;
@@ -27,6 +31,10 @@ class SplashConfig {
     this.showBackground,
     this.showTagline,
     this.showAppName,
+    this.showBgColor,
+    this.bgColorOpacity,
+    this.showAccentColor,
+    this.accentColorOpacity,
     this.logoUrl,
     this.logoMediaType,
     this.backgroundUrl,
@@ -58,6 +66,10 @@ class SplashConfig {
       showBackground: json['show_background'] == true || json['show_background'] == 1,
       showTagline: json['show_tagline'] == true || json['show_tagline'] == 1,
       showAppName: json['show_app_name'] == true || json['show_app_name'] == 1,
+      showBgColor: json['show_bg_color'] == true || json['show_bg_color'] == 1,
+      bgColorOpacity: (json['bg_color_opacity'] as num?)?.toDouble(),
+      showAccentColor: json['show_accent_color'] == true || json['show_accent_color'] == 1,
+      accentColorOpacity: (json['accent_color_opacity'] as num?)?.toDouble(),
       logoUrl: logo,
       logoMediaType: json['logo_media_type'] as String?,
       backgroundUrl: background,

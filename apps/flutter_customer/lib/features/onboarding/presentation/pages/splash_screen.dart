@@ -331,11 +331,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                     width: 80,
                                     height: 80,
                                   )
-                                : const Icon(
-                                    Icons.local_shipping_rounded,
-                                    color: Colors.white,
-                                    size: 50,
-                                  ),
+                                : BrandConfig.logoUrl != null
+                                    ? Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: PlatformMediaWidget(
+                                          url: BrandConfig.logoUrl!,
+                                          mediaType: 'image',
+                                          fit: BoxFit.contain,
+                                        ),
+                                      )
+                                    : BrandConfig.appIconUrl != null
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(8),
+                                            child: PlatformMediaWidget(
+                                              url: BrandConfig.appIconUrl!,
+                                              mediaType: 'image',
+                                              fit: BoxFit.contain,
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.local_shipping_rounded,
+                                            color: Colors.white,
+                                            size: 50,
+                                          ),
                           ),
                         ),
                       ),

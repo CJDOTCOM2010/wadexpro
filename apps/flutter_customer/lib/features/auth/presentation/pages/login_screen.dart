@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../../../../core/config/brand_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../providers/auth_state.dart';
@@ -82,8 +83,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 40),
                     
                     // Brand Header
+                    if (BrandConfig.logoUrl != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            BrandConfig.logoUrl!,
+                            height: 60,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                          ),
+                        ),
+                      ),
                     Text(
-                      'WADEXPRO',
+                      BrandConfig.appName,
                       style: GoogleFonts.outfit(
                         fontSize: 42,
                         fontWeight: FontWeight.w900,
@@ -92,7 +106,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                     Text(
-                      'RIDE THE FUTURE.',
+                      BrandConfig.tagline.toUpperCase(),
                       style: GoogleFonts.outfit(
                         fontSize: 16,
                         fontWeight: FontWeight.w300,

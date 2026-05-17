@@ -59,9 +59,9 @@ class OnboardingController extends Controller
         $splash->duration_ms     = $request->duration_ms;
         $splash->bg_color        = $request->bg_color;
         $splash->secondary_color = $request->secondary_color;
-        $splash->show_ripple     = $request->has('show_ripple');
-        $splash->show_logo       = $request->has('show_logo');
-        $splash->show_background = $request->has('show_background');
+        $splash->show_ripple     = $request->boolean('show_ripple');
+        $splash->show_logo       = $request->boolean('show_logo');
+        $splash->show_background = $request->boolean('show_background');
 
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');

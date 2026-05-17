@@ -405,8 +405,15 @@ class _AppGate extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
+    final hasSeenOnboardingAsync = ref.watch(hasSeenOnboardingProvider);
     final authState = ref.watch(authProvider);
+
+    // Show loading while checking onboarding status
+    final hasSeenOnboarding = hasSeenOnboardingAsync.when(
+      data: (value) => value,
+      loading: () => false,
+      error: (_, __) => false,
+    );
 
     if (!hasSeenOnboarding) {
       return OnboardingScreen(

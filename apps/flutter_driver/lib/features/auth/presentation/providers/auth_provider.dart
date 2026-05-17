@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/config/app_config.dart';
 import '../../data/auth_repository.dart';
 import '../../../../core/network/providers.dart';
+import '../../../../core/services/session_manager.dart';
 
 enum AuthStatus {
   initial,
@@ -46,7 +47,28 @@ class AuthState {
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _repository;
 
-  AuthNotifier(this._repository) : super(AuthState());
+  AuthNotifier(this._repository) : super(AuthState()) {
+    _restoreSession();
+  }
+
+  Future<void> _restoreSession() async {
+    try {
+      final hasSession = await SessionManager.hasActiveSession();
+      if (hasSession) {
+        final driverId = await SessionManager.getDriverId();
+        final driverPhone = await SessionManager.getDriverPhone();
+        
+        state = AuthState(
+          status: AuthStatus.authenticated,
+          phone: driverPhone,
+          driver: driverId != null ? {'id': driverId} : null,
+        );
+        debugPrint('WADEXPRO: Session restored - user is logged in');
+      }
+    } catch (e) {
+      debugPrint('WADEXPRO: Session restore failed: $e');
+    }
+  }
 
   Future<void> login(String phone) async {
     state = AuthState(status: AuthStatus.loading, phone: phone);
@@ -73,6 +95,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final data = await _repository.verifyOtp(currentPhone, code);
       
+      // Extract tokens and user data
+      final tokens = data['tokens'] as Map<String, dynamic>?;
+      final accessToken = tokens?['access_token']?.toString();
+      final refreshToken = tokens?['refresh_token']?.toString();
+      
       // Extract user data — handle both nested and flat response shapes
       Map<String, dynamic>? userData;
       if (data['user'] is Map) {
@@ -82,6 +109,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
       
       print('WADEXPRO-DEBUG: OTP verified. User data: $userData');
+      
+      // Save session
+      if (accessToken != null) {
+        await SessionManager.saveSession(
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          driverId: userData?['id']?.toString(),
+          driverPhone: currentPhone,
+        );
+      }
       
       state = AuthState(
         status: AuthStatus.authenticated, 
@@ -180,6 +217,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       print('WADEXPRO: Fetch profile error: $e');
     }
+  }
+
+  Future<void> logout() async {
+    await SessionManager.clearSession();
+    state = AuthState(status: AuthStatus.unauthenticated);
   }
 }
 

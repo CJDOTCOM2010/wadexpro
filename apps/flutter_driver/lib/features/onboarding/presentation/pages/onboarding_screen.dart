@@ -5,10 +5,13 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/models/onboarding_config.dart';
 import '../../../../core/widgets/platform_media_widget.dart';
 import '../../../../core/config/brand_config.dart';
+import '../../../../core/services/session_manager.dart';
 import '../providers/onboarding_provider.dart';
 
-/// Stores whether first launch has occurred.
-final hasSeenOnboardingProvider = StateProvider<bool>((ref) => false);
+/// Stores whether first launch has occurred - loads from persistent storage
+final hasSeenOnboardingProvider = FutureProvider<bool>((ref) async {
+  return await SessionManager.hasSeenOnboarding();
+});
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   final VoidCallback onComplete;
@@ -43,8 +46,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
   }
 
-  void _completeOnboarding() {
-    ref.read(hasSeenOnboardingProvider.notifier).state = true;
+  void _completeOnboarding() async {
+    await SessionManager.setOnboardingSeen(true);
     widget.onComplete();
   }
 

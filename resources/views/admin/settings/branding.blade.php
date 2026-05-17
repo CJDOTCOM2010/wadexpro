@@ -1,6 +1,7 @@
 @extends('admin.layout')
 @section('title', 'Branding Configuration')
 @php
+$settings = $settings ?? collect();
 $brandLogoUrl = isset($settings['brand_logo_url']) ? ($settings['brand_logo_url']->value ?? '') : '';
 $appIconUrl = isset($settings['app_icon_url']) ? ($settings['app_icon_url']->value ?? '') : '';
 @endphp

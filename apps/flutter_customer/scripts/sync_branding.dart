@@ -11,7 +11,11 @@ Future<void> main() async {
     final artisanResult = await Process.run('php', ['artisan', 'platform:build-branding', 'customer'], workingDirectory: rootDir);
     
     if (artisanResult.exitCode != 0) {
-      print('Error running artisan command: ${artisanResult.stderr}');
+      print('Error running artisan command (exit code ${artisanResult.exitCode}):');
+      print('--- STDERR ---');
+      print(artisanResult.stderr);
+      print('--- STDOUT ---');
+      print(artisanResult.stdout);
       return;
     }
 

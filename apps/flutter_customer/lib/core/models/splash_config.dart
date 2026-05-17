@@ -1,66 +1,72 @@
 import 'package:flutter/material.dart';
 
 class SplashConfig {
-  final String tagline;
-  final int durationMs;
-  final String bgColor;
-  final String secondaryColor;
-  final bool showRipple;
-  final bool showLogo;
-  final bool showBackground;
+  final String? tagline;
+  final int? durationMs;
+  final String? bgColor;
+  final String? secondaryColor;
+  final bool? showRipple;
+  final bool? showLogo;
+  final bool? showBackground;
   final String? logoUrl;
-  final String logoMediaType;
+  final String? logoMediaType;
   final String? backgroundUrl;
-  final String backgroundMediaType;
+  final String? backgroundMediaType;
 
   SplashConfig({
-    required this.tagline,
-    required this.durationMs,
-    required this.bgColor,
-    required this.secondaryColor,
-    required this.showRipple,
-    required this.showLogo,
-    required this.showBackground,
+    this.tagline,
+    this.durationMs,
+    this.bgColor,
+    this.secondaryColor,
+    this.showRipple,
+    this.showLogo,
+    this.showBackground,
     this.logoUrl,
-    this.logoMediaType = 'image',
+    this.logoMediaType,
     this.backgroundUrl,
-    this.backgroundMediaType = 'image',
+    this.backgroundMediaType,
   });
 
-  factory SplashConfig.fromJson(Map<String, dynamic> json, String baseUrl) {
+  static SplashConfig? fromJson(Map<String, dynamic>? json, String baseUrl) {
+    if (json == null || json.isEmpty) return null;
+
     // Prepend server address if image paths start with /storage
-    String? logo = json['logo_url'];
+    String? logo = json['logo_url'] as String?;
     if (logo != null && logo.startsWith('/storage')) {
       logo = '${baseUrl.replaceAll('/api/v1', '')}$logo?v=${DateTime.now().millisecondsSinceEpoch}';
     }
 
-    String? background = json['background_url'];
+    String? background = json['background_url'] as String?;
     if (background != null && background.startsWith('/storage')) {
       background = '${baseUrl.replaceAll('/api/v1', '')}$background?v=${DateTime.now().millisecondsSinceEpoch}';
     }
 
     return SplashConfig(
-      tagline: json['tagline'] ?? 'Move. Deliver. Thrive.',
-      durationMs: json['duration_ms'] ?? 3000,
-      bgColor: json['bg_color'] ?? '#000B1E',
-      secondaryColor: json['secondary_color'] ?? '#FFC107',
+      tagline: json['tagline'] as String?,
+      durationMs: json['duration_ms'] as int?,
+      bgColor: json['bg_color'] as String?,
+      secondaryColor: json['secondary_color'] as String?,
       showRipple: json['show_ripple'] == true || json['show_ripple'] == 1,
       showLogo: json['show_logo'] == true || json['show_logo'] == 1,
       showBackground: json['show_background'] == true || json['show_background'] == 1,
       logoUrl: logo,
-      logoMediaType: json['logo_media_type'] ?? 'image',
+      logoMediaType: json['logo_media_type'] as String?,
       backgroundUrl: background,
-      backgroundMediaType: json['background_media_type'] ?? 'image',
+      backgroundMediaType: json['background_media_type'] as String?,
     );
   }
 
-  Color get backgroundColor => _colorFromHex(bgColor);
-  Color get accentColor => _colorFromHex(secondaryColor);
+  Color get backgroundColor => bgColor != null ? _colorFromHex(bgColor!) : const Color(0xFF000B1E);
+  Color get accentColor => secondaryColor != null ? _colorFromHex(secondaryColor!) : const Color(0xFFFFC107);
 
   static Color _colorFromHex(String hexString) {
     final buffer = StringBuffer();
     if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
     buffer.write(hexString.replaceFirst('#', ''));
-    return Color(int.parse(buffer.toString(), radix: 16));
+    try {
+      return Color(int.parse(buffer.toString(), radix: 16));
+    } catch (_) {
+      return const Color(0xFF000B1E);
+    }
   }
 }

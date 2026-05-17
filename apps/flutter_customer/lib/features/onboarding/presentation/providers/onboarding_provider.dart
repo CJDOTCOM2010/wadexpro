@@ -1,17 +1,18 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/models/onboarding_config.dart';
 import '../../../../core/network/api_provider.dart';
 import '../../../../core/config/environment_config.dart';
-import '../../../../core/config/brand_config.dart';
 
-/// Fetches onboarding slides from the API, falling back to hardcoded defaults.
+/// Fetches onboarding slides from the API.
+/// Returns empty pages when no slides are configured — the screen handles
+/// this by auto-completing to the next gate.
 final onboardingConfigProvider = FutureProvider<OnboardingConfig>((ref) async {
   try {
     final apiClient = ref.read(apiClientProvider);
     final response = await apiClient.instance.get('/onboarding/customer');
 
-    if (response.statusCode == 200 && response.data['data'] != null && (response.data['data'] as List).isNotEmpty) {
+    if (response.statusCode == 200 && response.data['data'] != null) {
       final List slides = response.data['data'];
       return OnboardingConfig(
         pages: slides
@@ -19,30 +20,10 @@ final onboardingConfigProvider = FutureProvider<OnboardingConfig>((ref) async {
             .toList(),
       );
     }
-    
-    // WADEX-Guard: Return local fallback if server is empty or unreachable
-    return _getFallbackConfig();
+
+    return const OnboardingConfig(pages: []);
   } catch (e) {
-    debugPrint('WADEXPRO: Remote onboarding fetch failed, using local fallback. $e');
-    return _getFallbackConfig();
+    debugPrint('WADEXPRO: Remote onboarding fetch failed. $e');
+    return const OnboardingConfig(pages: []);
   }
 });
-
-OnboardingConfig _getFallbackConfig() {
-  return OnboardingConfig(
-    pages: [
-      OnboardingPageConfig(
-        title: 'Welcome to ${BrandConfig.appName}',
-        description: 'Premium logistics and transport solutions tailored for Ghana.',
-        imagePath: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=80&w=2075&auto=format&fit=crop',
-        isNetworkImage: true,
-      ),
-      const OnboardingPageConfig(
-        title: 'Safe & Secure',
-        description: 'Real-time tracking and verified drivers for your peace of mind.',
-        imagePath: 'https://images.unsplash.com/photo-1501700493788-fa1a4fc9fe62?q=80&w=2040&auto=format&fit=crop',
-        isNetworkImage: true,
-      ),
-    ],
-  );
-}

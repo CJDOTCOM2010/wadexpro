@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/network/api_provider.dart';
 import '../../../../core/models/splash_config.dart';
 import '../../../../core/config/app_config.dart';
@@ -105,10 +104,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       final apiClient = ref.read(apiClientProvider);
       final baseUrl = EnvironmentConfig.baseUrl;
       final response = await apiClient.instance.get('/platform/splash/customer').timeout(const Duration(seconds: 3));
-      
+
       if (mounted) {
         setState(() {
-          _config = SplashConfig.fromJson(response.data, baseUrl);
+          _config = SplashConfig.fromJson(response.data?['data'], baseUrl);
           _isLoadingConfig = false;
         });
       }
@@ -125,6 +124,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   void _startSequence() async {
+    // No config configured — skip splash immediately
+    if (_config == null) {
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (_, _, _) => widget.destinationBuilder(),
+            transitionsBuilder: (_, animation, _, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            transitionDuration: const Duration(milliseconds: 400),
+          ),
+        );
+      }
+      return;
+    }
+
     await Future.delayed(const Duration(milliseconds: 300));
     _logoController.forward();
 
@@ -134,10 +149,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     await Future.delayed(const Duration(milliseconds: 400));
     _taglineController.forward();
 
-    // Use dynamic duration if available, else default to 3s
-    final duration = _config?.durationMs ?? 3000;
-    await Future.delayed(Duration(milliseconds: duration - 1500)); // Subtract some of the start delay
-    
+    final duration = _config!.durationMs ?? 3000;
+    await Future.delayed(Duration(milliseconds: duration - 1500));
+
     if (mounted) {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
@@ -162,13 +176,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Dynamic styles from config
-    final backgroundColor = _config?.backgroundColor ?? const Color(0xFF000B1E);
-    final accentColor = _config?.accentColor ?? AppColors.secondaryGold;
-    final showRipple = _config?.showRipple ?? true;
-    final showLogo = _config?.showLogo ?? true;
-    final showBackground = _config?.showBackground ?? true;
-    final tagline = _config?.tagline ?? BrandConfig.tagline;
+    // No config — show nothing (will navigate away in _startSequence)
+    if (_config == null) return const Scaffold(body: SizedBox.shrink());
+
+    final config = _config!;
+    final backgroundColor = config.backgroundColor;
+    final accentColor = config.accentColor;
+    final showRipple = config.showRipple ?? true;
+    final showLogo = config.showLogo ?? true;
+    final showBackground = config.showBackground ?? true;
+    final tagline = config.tagline;
 
     return Scaffold(
       body: Stack(
@@ -177,12 +194,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           Positioned.fill(
             child: Container(
               color: backgroundColor,
-              child: (showBackground && _config?.backgroundUrl != null)
+              child: (showBackground && config.backgroundUrl != null)
                   ? Stack(
                       children: [
                         PlatformMediaWidget(
-                          url: _config!.backgroundUrl!,
-                          mediaType: _config!.backgroundMediaType,
+                          url: config.backgroundUrl!,
+                          mediaType: config.backgroundMediaType,
                           fit: BoxFit.cover,
                         ),
                         // Darken overlay
@@ -209,7 +226,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           ),
 
           // 2. Decorative elements (Only if no background media)
-          if (showBackground && _config?.backgroundUrl == null) ...[
+          if (showBackground && config.backgroundUrl == null) ...[
             Positioned(
               top: -100,
               right: -80,
@@ -276,8 +293,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           height: 120,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: _config?.logoUrl != null ? Colors.white : null,
-                            gradient: _config?.logoUrl == null ? LinearGradient(
+                            color: config.logoUrl != null ? Colors.white : null,
+                            gradient: config.logoUrl == null ? LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
@@ -295,10 +312,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           ),
                           clipBehavior: Clip.antiAlias,
                           child: Center(
-                            child: _config?.logoUrl != null 
+                            child: config.logoUrl != null 
                                 ? PlatformMediaWidget(
-                                    url: _config!.logoUrl!,
-                                    mediaType: _config!.logoMediaType,
+                                    url: config.logoUrl!,
+                                    mediaType: config.logoMediaType,
                                     fit: BoxFit.contain,
                                     width: 80,
                                     height: 80,

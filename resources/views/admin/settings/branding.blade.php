@@ -1,9 +1,13 @@
 @extends('admin.layout')
 @section('title', 'Branding Configuration')
 @php
-$settings = $settings ?? [];
-$brandLogoUrl = isset($settings['brand_logo_url']) ? ($settings['brand_logo_url']->value ?? '') : '';
-$appIconUrl = isset($settings['app_icon_url']) ? ($settings['app_icon_url']->value ?? '') : '';
+try {
+    $brandLogoUrl = (is_object($settings) && method_exists($settings, 'get') && $settings->get('brand_logo_url')) ? $settings->get('brand_logo_url')->value : '';
+    $appIconUrl = (is_object($settings) && method_exists($settings, 'get') && $settings->get('app_icon_url')) ? $settings->get('app_icon_url')->value : '';
+} catch (\Exception $e) {
+    $brandLogoUrl = '';
+    $appIconUrl = '';
+}
 @endphp
 @section('content')
 

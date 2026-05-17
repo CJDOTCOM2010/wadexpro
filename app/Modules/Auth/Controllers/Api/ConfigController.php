@@ -99,6 +99,18 @@ class ConfigController extends Controller
                     'api_platform_timeout' => SystemSetting::get('api_platform_timeout', 30),
                     'api_platform_retry_attempts' => SystemSetting::get('api_platform_retry_attempts', 3),
                 ],
+
+                // Onboarding URLs for apps
+                'onboarding' => [
+                    'customer' => url('/api/v1/onboarding/customer'),
+                    'driver' => url('/api/v1/onboarding/driver'),
+                ],
+
+                // Splash screen URLs for apps
+                'splash' => [
+                    'customer' => url('/api/v1/platform/splash/customer'),
+                    'driver' => url('/api/v1/platform/splash/driver'),
+                ],
             ],
         ]);
     }

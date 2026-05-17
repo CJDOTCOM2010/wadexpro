@@ -23,14 +23,4 @@ return new class extends Migration
             $table->dropColumn(['app_name', 'show_app_name']);
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('splash_screens', function (Blueprint $table) {
-            //
-        });
-    }
 };

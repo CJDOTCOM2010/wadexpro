@@ -10,6 +10,8 @@ class AppColors {
   static const Color background = Color(0xFFF8F9FA); // Clean off-white
   static const Color surface = Colors.white;
   static const Color error = Color(0xFFDC3545);
+  static const Color success = Color(0xFF28A745);
+  static const Color warning = Color(0xFFFFC107);
   static const Color textBody = Color(0xFF1E1E1E);
   static const Color textMuted = Color(0xFF6C757D);
 

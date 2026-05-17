@@ -292,7 +292,7 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
     LatLng start = LatLng(statusState.currentPosition!.latitude, statusState.currentPosition!.longitude);
     LatLng end;
 
-    if (status == ActiveTripStatus.accepted || status == ActiveTripStatus.arriving) {
+    if (status == ActiveTripStatus.enRouteToPickup || status == ActiveTripStatus.arrived) {
       end = LatLng(tripState.rideData!['pickupLat'] as double, tripState.rideData!['pickupLng'] as double);
     } else {
       end = LatLng(tripState.rideData!['dropoffLat'] as double, tripState.rideData!['dropoffLng'] as double);
@@ -308,7 +308,7 @@ class _DriverHomeScreenState extends ConsumerState<DriverHomeScreen> {
             points: points,
             color: AppColors.primaryNavy,
             width: 5,
-            patterns: status == ActiveTripStatus.accepted ? [PatternItem.dash(20), PatternItem.gap(10)] : [],
+            patterns: status == ActiveTripStatus.enRouteToPickup ? [PatternItem.dash(20), PatternItem.gap(10)] : [],
           )
         };
       });

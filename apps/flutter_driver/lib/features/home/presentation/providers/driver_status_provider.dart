@@ -6,7 +6,7 @@ import '../../../../core/services/location_service.dart';
 
 import '../../../../core/network/providers.dart';
 import '../../../../core/config/app_config.dart';
-import '../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
 final locationServiceProvider = Provider((ref) => LocationService());
 

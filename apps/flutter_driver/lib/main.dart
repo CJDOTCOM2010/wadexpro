@@ -141,10 +141,10 @@ class _AppGate extends ConsumerWidget {
       );
     }
 
-    return _buildAuthScreen(authState);
+    return _buildAuthScreen(context, ref, authState);
   }
 
-  Widget _buildAuthScreen(AuthState authState) {
+  Widget _buildAuthScreen(BuildContext context, WidgetRef ref, AuthState authState) {
     switch (authState.status) {
       case AuthStatus.authenticated:
         // Once authenticated, go straight to the home screen.

@@ -22,6 +22,8 @@ class BrandConfig {
 
   // --- Brand Assets ---
   static String? logoUrl;
+  static String? appIconUrl;
+  static String? splashBackgroundColor;
 
   // --- Brand Colors ---
   static Color primaryColor = const Color(0xFF156400);
@@ -45,10 +47,12 @@ class BrandConfig {
     shortName = data['brand_short_name'] ?? shortName;
     tagline = data['brand_tagline'] ?? tagline;
     logoUrl = data['brand_logo_url'];
+    appIconUrl = data['customer_app_icon_url'] ?? data['app_icon_url'];
     customerAppName = data['customer_app_name'] ?? customerAppName;
     driverAppName = data['driver_app_name'] ?? driverAppName;
     supportEmail = data['support_email'] ?? supportEmail;
     supportPhone = data['support_phone'] ?? supportPhone;
+    splashBackgroundColor = data['customer_splash_background'] ?? data['splash_background_color'];
 
     // Parse colors
     if (data['brand_primary_color'] != null) {

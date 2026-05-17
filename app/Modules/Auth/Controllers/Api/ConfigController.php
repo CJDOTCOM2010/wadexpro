@@ -46,6 +46,8 @@ class ConfigController extends Controller
                     'brand_tagline' => SystemSetting::get('brand_tagline', 'Move. Deliver. Thrive.'),
                     'brand_logo_url' => $buildUrl(SystemSetting::get('brand_logo_url')),
                     'app_icon_url' => $buildUrl(SystemSetting::get('app_icon_url')),
+                    'driver_app_icon_url' => $buildUrl(SystemSetting::get('driver_app_icon_url')),
+                    'customer_app_icon_url' => $buildUrl(SystemSetting::get('customer_app_icon_url')),
                     'splash_background_color' => SystemSetting::get('splash_background_color', '#156400'),
 
                     'brand_primary_color' => SystemSetting::get('brand_primary_color', '#156400'),

@@ -94,6 +94,7 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::delete('/users/{userId}/revoke-role/{roleId}', [RolePermissionController::class, 'revokeRole'])->name('orchestrator.users.revoke-role');
         Route::get('/settings', [SystemSettingController::class, 'index'])->name('orchestrator.settings');
         Route::get('/settings/branding', [SystemSettingController::class, 'branding'])->name('orchestrator.settings.branding');
+        Route::get('/settings/apps-branding', [SystemSettingController::class, 'appsBranding'])->name('orchestrator.settings.apps_branding');
         Route::get('/settings/dashboard-branding', [SystemSettingController::class, 'dashboardBranding'])->name('orchestrator.settings.dashboard_branding');
 
         // Asset Management

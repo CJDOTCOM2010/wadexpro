@@ -38,6 +38,21 @@ class SystemSettingController extends Controller
     }
 
     /**
+     * Display app-specific branding settings page (icons for Driver/Customer apps).
+     */
+    public function appsBranding()
+    {
+        $appsKeys = [
+            'driver_app_icon_url', 'customer_app_icon_url',
+            'driver_splash_background', 'customer_splash_background',
+            'driver_app_display_name', 'customer_app_display_name',
+        ];
+        $settings = SystemSetting::whereIn('key', $appsKeys)->get()->keyBy('key');
+
+        return view('admin.settings.apps_branding', compact('settings'));
+    }
+
+    /**
      * Display dashboard branding settings page.
      */
     public function dashboardBranding()
@@ -208,6 +223,9 @@ class SystemSettingController extends Controller
             'play_store_customer_link' => 'branding', 'app_store_customer_link' => 'branding',
             'play_store_driver_link' => 'branding', 'app_store_driver_link' => 'branding',
             'min_customer_app_version' => 'branding', 'min_driver_app_version' => 'branding',
+            // app-specific branding
+            'driver_app_icon_url' => 'apps_branding', 'customer_app_icon_url' => 'apps_branding',
+            'driver_splash_background' => 'apps_branding', 'customer_splash_background' => 'apps_branding',
             // security
             'password_min_length' => 'security', 'password_require_special' => 'security',
             'password_require_numbers' => 'security', 'password_expiry_days' => 'security',
@@ -274,6 +292,26 @@ class SystemSettingController extends Controller
             SystemSetting::updateOrCreate(
                 ['key' => 'app_icon_url'],
                 ['value' => '/storage/'.$path, 'group' => 'branding']
+            );
+        }
+
+        // Handle Driver app icon upload
+        if ($request->hasFile('driver_app_icon')) {
+            $request->validate(['driver_app_icon' => 'image|mimes:png|max:2048']);
+            $path = $request->file('driver_app_icon')->store('branding/apps', 'public');
+            SystemSetting::updateOrCreate(
+                ['key' => 'driver_app_icon_url'],
+                ['value' => '/storage/'.$path, 'group' => 'apps_branding']
+            );
+        }
+
+        // Handle Customer app icon upload
+        if ($request->hasFile('customer_app_icon')) {
+            $request->validate(['customer_app_icon' => 'image|mimes:png|max:2048']);
+            $path = $request->file('customer_app_icon')->store('branding/apps', 'public');
+            SystemSetting::updateOrCreate(
+                ['key' => 'customer_app_icon_url'],
+                ['value' => '/storage/'.$path, 'group' => 'apps_branding']
             );
         }
 

@@ -194,20 +194,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           Positioned.fill(
             child: Container(
               color: backgroundColor,
-              child: (showBackground && config.backgroundUrl != null)
-                  ? Stack(
-                      children: [
-                        PlatformMediaWidget(
-                          url: config.backgroundUrl!,
-                          mediaType: config.backgroundMediaType ?? 'image',
-                          fit: BoxFit.cover,
-                        ),
-                        // Darken overlay
-                        Container(
-                          color: backgroundColor.withValues(alpha: 0.7),
-                        ),
-                      ],
-                    )
+child: (showBackground && config.backgroundUrl != null)
+                    ? Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Positioned.fill(
+                            child: PlatformMediaWidget(
+                              url: config.backgroundUrl!,
+                              mediaType: config.backgroundMediaType ?? 'image',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          // Darken overlay
+                          Positioned.fill(
+                            child: Container(
+                              color: backgroundColor.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
+                      )
                   : Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(

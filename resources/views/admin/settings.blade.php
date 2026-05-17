@@ -39,6 +39,22 @@
             <p class="text-[11px] text-brand-muted mt-0.5 leading-snug">Driver & Customer app icons, splash</p>
         </a>
 
+        <a href="{{ route('orchestrator.settings.onboarding', 'customer') }}" class="bg-white border border-gray-100 rounded-xl p-4 hover:border-accent/40 hover:bg-accent/[0.02] transition-colors">
+            <div class="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center text-orange-600 mb-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+            </div>
+            <h3 class="text-sm font-bold text-brand">Customer Launch Identity</h3>
+            <p class="text-[11px] text-brand-muted mt-0.5 leading-snug">Customer app splash, onboarding</p>
+        </a>
+
+        <a href="{{ route('orchestrator.settings.onboarding', 'driver') }}" class="bg-white border border-gray-100 rounded-xl p-4 hover:border-accent/40 hover:bg-accent/[0.02] transition-colors">
+            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 mb-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+            </div>
+            <h3 class="text-sm font-bold text-brand">Driver Launch Identity</h3>
+            <p class="text-[11px] text-brand-muted mt-0.5 leading-snug">Driver app splash, onboarding</p>
+        </a>
+
         <a href="{{ route('orchestrator.settings.dashboard_branding') }}" class="bg-white border border-gray-100 rounded-xl p-4 hover:border-accent/40 hover:bg-accent/[0.02] transition-colors">
             <div class="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center text-accent mb-3">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>

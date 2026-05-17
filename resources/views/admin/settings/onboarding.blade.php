@@ -70,7 +70,7 @@
         <button @click="activeTab = 'splash'" 
                 :class="activeTab === 'splash' ? 'bg-white text-brand shadow-sm' : 'text-brand-muted hover:text-brand'"
                 class="px-6 py-2.5 rounded-lg text-xs font-black transition-all">
-            Splash Screen
+            Launch Identity
         </button>
     </div>
 

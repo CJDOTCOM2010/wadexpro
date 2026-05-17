@@ -15,20 +15,21 @@ class OnboardingController extends Controller
      */
     public function index(string $appType)
     {
-        if (!in_array($appType, ['customer', 'driver'])) {
+        if (! in_array($appType, ['customer', 'driver'])) {
             abort(404);
         }
 
         $slides = OnboardingSlide::forApp($appType)->ordered()->get();
-        
+
         // Initialize or fetch splash screen config
         $splash = SplashScreen::firstOrCreate(
             ['app_type' => $appType],
             [
-                'tagline'        => 'Move. Deliver. Thrive.',
-                'duration_ms'    => 3000,
-                'show_ripple'    => true,
-                'bg_color'       => '#000B1E',
+                'tagline' => 'Move. Deliver. Thrive.',
+                'duration_ms' => 3000,
+                'show_ripple' => true,
+                'show_tagline' => true,
+                'bg_color' => '#000B1E',
                 'secondary_color' => '#FFB800',
             ]
         );
@@ -44,30 +45,31 @@ class OnboardingController extends Controller
     public function updateSplash(Request $request)
     {
         $request->validate([
-            'app_type'        => 'required|in:customer,driver',
-            'tagline'         => 'required|string|max:255',
-            'duration_ms'     => 'required|integer|min:1000|max:10000',
-            'bg_color'        => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'app_type' => 'required|in:customer,driver',
+            'tagline' => 'required|string|max:255',
+            'duration_ms' => 'required|integer|min:1000|max:10000',
+            'bg_color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'secondary_color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
-            'logo'            => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,mp4,mov,avi,webm|max:20480',
-            'background'      => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,mp4,mov,avi,webm|max:51200',
+            'logo' => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,mp4,mov,avi,webm|max:20480',
+            'background' => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,mp4,mov,avi,webm|max:51200',
         ]);
 
         $splash = SplashScreen::where('app_type', $request->app_type)->firstOrFail();
 
-        $splash->tagline         = $request->tagline;
-        $splash->duration_ms     = $request->duration_ms;
-        $splash->bg_color        = $request->bg_color;
+        $splash->tagline = $request->tagline;
+        $splash->duration_ms = $request->duration_ms;
+        $splash->bg_color = $request->bg_color;
         $splash->secondary_color = $request->secondary_color;
-        $splash->show_ripple     = $request->boolean('show_ripple');
-        $splash->show_logo       = $request->boolean('show_logo');
+        $splash->show_ripple = $request->boolean('show_ripple');
+        $splash->show_logo = $request->boolean('show_logo');
         $splash->show_background = $request->boolean('show_background');
+        $splash->show_tagline = $request->boolean('show_tagline');
 
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $path = $file->store('splash', 'public');
             $mimeType = $file->getMimeType();
-            $splash->logo_url = '/storage/' . $path;
+            $splash->logo_url = '/storage/'.$path;
             $splash->logo_media_type = str_contains($mimeType, 'video') ? 'video' : 'image';
         }
 
@@ -75,7 +77,7 @@ class OnboardingController extends Controller
             $file = $request->file('background');
             $path = $file->store('splash', 'public');
             $mimeType = $file->getMimeType();
-            $splash->background_url = '/storage/' . $path;
+            $splash->background_url = '/storage/'.$path;
             $splash->background_media_type = str_contains($mimeType, 'video') ? 'video' : 'image';
         }
 
@@ -90,15 +92,15 @@ class OnboardingController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'app_type'     => 'required|in:customer,driver',
-            'title'        => 'required|string|max:255',
-            'description'  => 'nullable|string|max:500',
-            'button_text'  => 'nullable|string|max:30',
-            'button_type'  => 'required|string|in:' . implode(',', array_keys(OnboardingSlide::BUTTON_TYPES)),
-            'image'        => 'required|file|mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm|max:51200',
-            'layout_style' => 'required|string|in:' . implode(',', array_keys(OnboardingSlide::LAYOUT_STYLES)),
-            'bg_color'     => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
-            'text_color'   => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'app_type' => 'required|in:customer,driver',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'button_text' => 'nullable|string|max:30',
+            'button_type' => 'required|string|in:'.implode(',', array_keys(OnboardingSlide::BUTTON_TYPES)),
+            'image' => 'required|file|mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm|max:51200',
+            'layout_style' => 'required|string|in:'.implode(',', array_keys(OnboardingSlide::LAYOUT_STYLES)),
+            'bg_color' => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'text_color' => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'button_color' => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
         ]);
 
@@ -110,19 +112,19 @@ class OnboardingController extends Controller
         $maxOrder = OnboardingSlide::forApp($request->app_type)->max('sort_order') ?? 0;
 
         OnboardingSlide::create([
-            'app_type'     => $request->app_type,
-            'title'        => $request->title,
-            'description'  => $request->description,
-            'button_text'  => $request->button_text ?? 'Next',
-            'button_type'  => $request->button_type ?? 'action_below_text',
-            'image_url'    => '/storage/' . $path,
-            'media_type'   => $mediaType,
+            'app_type' => $request->app_type,
+            'title' => $request->title,
+            'description' => $request->description,
+            'button_text' => $request->button_text ?? 'Next',
+            'button_type' => $request->button_type ?? 'action_below_text',
+            'image_url' => '/storage/'.$path,
+            'media_type' => $mediaType,
             'layout_style' => $request->layout_style,
-            'bg_color'     => $request->bg_color ?? '#FFFFFF',
-            'text_color'   => $request->text_color ?? '#000B1E',
+            'bg_color' => $request->bg_color ?? '#FFFFFF',
+            'text_color' => $request->text_color ?? '#000B1E',
             'button_color' => $request->button_color ?? '#FFB800',
-            'sort_order'   => $maxOrder + 1,
-            'is_active'    => true,
+            'sort_order' => $maxOrder + 1,
+            'is_active' => true,
         ]);
 
         return back()->with('success', 'Onboarding slide created successfully.');
@@ -136,24 +138,24 @@ class OnboardingController extends Controller
         $slide = OnboardingSlide::findOrFail($id);
 
         $request->validate([
-            'title'        => 'required|string|max:255',
-            'description'  => 'nullable|string|max:500',
-            'button_text'  => 'nullable|string|max:30',
-            'button_type'  => 'required|string|in:' . implode(',', array_keys(OnboardingSlide::BUTTON_TYPES)),
-            'image'        => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm|max:51200',
-            'layout_style' => 'required|string|in:' . implode(',', array_keys(OnboardingSlide::LAYOUT_STYLES)),
-            'bg_color'     => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
-            'text_color'   => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'button_text' => 'nullable|string|max:30',
+            'button_type' => 'required|string|in:'.implode(',', array_keys(OnboardingSlide::BUTTON_TYPES)),
+            'image' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm|max:51200',
+            'layout_style' => 'required|string|in:'.implode(',', array_keys(OnboardingSlide::LAYOUT_STYLES)),
+            'bg_color' => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'text_color' => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'button_color' => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
         ]);
 
-        $slide->title        = $request->title;
-        $slide->description  = $request->description;
-        $slide->button_text  = $request->button_text ?? 'Next';
-        $slide->button_type  = $request->button_type ?? 'action_below_text';
+        $slide->title = $request->title;
+        $slide->description = $request->description;
+        $slide->button_text = $request->button_text ?? 'Next';
+        $slide->button_type = $request->button_type ?? 'action_below_text';
         $slide->layout_style = $request->layout_style;
-        $slide->bg_color     = $request->bg_color ?? '#FFFFFF';
-        $slide->text_color   = $request->text_color ?? '#000B1E';
+        $slide->bg_color = $request->bg_color ?? '#FFFFFF';
+        $slide->text_color = $request->text_color ?? '#000B1E';
         $slide->button_color = $request->button_color ?? '#FFB800';
 
         if ($request->hasFile('image')) {
@@ -164,7 +166,7 @@ class OnboardingController extends Controller
             }
             $file = $request->file('image');
             $path = $file->store('onboarding', 'public');
-            $slide->image_url = '/storage/' . $path;
+            $slide->image_url = '/storage/'.$path;
             $slide->media_type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
         }
 
@@ -196,10 +198,10 @@ class OnboardingController extends Controller
     public function toggle(string $id)
     {
         $slide = OnboardingSlide::findOrFail($id);
-        $slide->is_active = !$slide->is_active;
+        $slide->is_active = ! $slide->is_active;
         $slide->save();
 
-        return back()->with('success', 'Slide ' . ($slide->is_active ? 'activated' : 'deactivated') . '.');
+        return back()->with('success', 'Slide '.($slide->is_active ? 'activated' : 'deactivated').'.');
     }
 
     /**
@@ -208,7 +210,7 @@ class OnboardingController extends Controller
     public function reorder(Request $request)
     {
         $request->validate([
-            'order'   => 'required|array',
+            'order' => 'required|array',
             'order.*' => 'required|string',
         ]);
 
@@ -224,7 +226,7 @@ class OnboardingController extends Controller
      */
     public function apiIndex(string $appType)
     {
-        if (!in_array($appType, ['customer', 'driver'])) {
+        if (! in_array($appType, ['customer', 'driver'])) {
             return response()->json(['status' => 'error', 'message' => 'Invalid app type'], 400);
         }
 
@@ -243,7 +245,7 @@ class OnboardingController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data'   => $slides,
+            'data' => $slides,
         ]);
     }
 
@@ -252,7 +254,7 @@ class OnboardingController extends Controller
      */
     public function apiSplash(string $appType)
     {
-        if (!in_array($appType, ['customer', 'driver'])) {
+        if (! in_array($appType, ['customer', 'driver'])) {
             return response()->json(['status' => 'error', 'message' => 'Invalid app type'], 400);
         }
 
@@ -260,7 +262,7 @@ class OnboardingController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data'   => $splash,
+            'data' => $splash,
         ]);
     }
 }

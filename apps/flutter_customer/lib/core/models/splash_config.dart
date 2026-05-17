@@ -8,6 +8,7 @@ class SplashConfig {
   final bool? showRipple;
   final bool? showLogo;
   final bool? showBackground;
+  final bool? showTagline;
   final String? logoUrl;
   final String? logoMediaType;
   final String? backgroundUrl;
@@ -21,6 +22,7 @@ class SplashConfig {
     this.showRipple,
     this.showLogo,
     this.showBackground,
+    this.showTagline,
     this.logoUrl,
     this.logoMediaType,
     this.backgroundUrl,
@@ -49,6 +51,7 @@ class SplashConfig {
       showRipple: json['show_ripple'] == true || json['show_ripple'] == 1,
       showLogo: json['show_logo'] == true || json['show_logo'] == 1,
       showBackground: json['show_background'] == true || json['show_background'] == 1,
+      showTagline: json['show_tagline'] == true || json['show_tagline'] == 1,
       logoUrl: logo,
       logoMediaType: json['logo_media_type'] as String?,
       backgroundUrl: background,

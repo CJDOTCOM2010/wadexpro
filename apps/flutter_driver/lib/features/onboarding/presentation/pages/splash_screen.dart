@@ -179,6 +179,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final showRipple = config.showRipple ?? true;
     final showLogo = config.showLogo ?? true;
     final showBackground = config.showBackground ?? true;
+    final showTagline = config.showTagline ?? true;
     final tagline = config.tagline;
 
     return Scaffold(
@@ -349,25 +350,26 @@ child: showBackground
                   ),
                 ),
 
-                const SizedBox(height: 12),
-
                 // Tagline
-                SlideTransition(
-                  position: _taglineSlide,
-                  child: FadeTransition(
-                    opacity: _taglineOpacity,
-                    child: Text(
-                      tagline ?? '',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white.withValues(alpha: 0.7),
-                        letterSpacing: 2,
+                if (showTagline) ...[
+                  const SizedBox(height: 12),
+                  SlideTransition(
+                    position: _taglineSlide,
+                    child: FadeTransition(
+                      opacity: _taglineOpacity,
+                      child: Text(
+                        tagline ?? '',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.white.withValues(alpha: 0.7),
+                          letterSpacing: 2,
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

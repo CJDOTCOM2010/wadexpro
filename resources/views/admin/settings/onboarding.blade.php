@@ -469,9 +469,9 @@
                                                     <p class="text-[9px] text-brand-muted mt-0.5">Show brand logo/shield.</p>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="show_logo" :value="splash.show_logo ? 1 : 0">
                                             <label class="premium-toggle">
-                                                <input type="hidden" name="show_logo" value="0">
-                                                <input type="checkbox" name="show_logo" value="1" :checked="splash.show_logo" @change="splash.show_logo = $event.target.checked">
+                                                <input type="checkbox" x-model="splash.show_logo" value="1">
                                                 <div class="track"></div>
                                             </label>
                                         </div>
@@ -487,9 +487,9 @@
                                                     <p class="text-[9px] text-brand-muted mt-0.5">Show background image/video.</p>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="show_background" :value="splash.show_background ? 1 : 0">
                                             <label class="premium-toggle">
-                                                <input type="hidden" name="show_background" value="0">
-                                                <input type="checkbox" name="show_background" value="1" :checked="splash.show_background" @change="splash.show_background = $event.target.checked">
+                                                <input type="checkbox" x-model="splash.show_background" value="1">
                                                 <div class="track"></div>
                                             </label>
                                         </div>
@@ -505,9 +505,27 @@
                                                     <p class="text-[9px] text-brand-muted mt-0.5">Pulsing logo circles on the splash screen.</p>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="show_ripple" :value="splash.show_ripple ? 1 : 0">
                                             <label class="premium-toggle">
-                                                <input type="hidden" name="show_ripple" value="0">
-                                                <input type="checkbox" name="show_ripple" value="1" :checked="splash.show_ripple" @change="splash.show_ripple = $event.target.checked">
+                                                <input type="checkbox" x-model="splash.show_ripple" value="1">
+                                                <div class="track"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="glass-panel rounded-2xl p-5 gradient-border sm:col-span-2">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-start gap-3">
+                                                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                                                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-black text-brand">Launch Tagline</p>
+                                                    <p class="text-[9px] text-brand-muted mt-0.5">Show tagline text on the splash screen.</p>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="show_tagline" :value="splash.show_tagline ? 1 : 0">
+                                            <label class="premium-toggle">
+                                                <input type="checkbox" x-model="splash.show_tagline" value="1">
                                                 <div class="track"></div>
                                             </label>
                                         </div>

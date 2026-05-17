@@ -26,9 +26,11 @@ class OnboardingController extends Controller
             ['app_type' => $appType],
             [
                 'tagline' => 'Move. Deliver. Thrive.',
+                'app_name' => 'WADEXPRO',
                 'duration_ms' => 3000,
                 'show_ripple' => true,
                 'show_tagline' => true,
+                'show_app_name' => true,
                 'bg_color' => '#000B1E',
                 'secondary_color' => '#FFB800',
             ]
@@ -57,6 +59,7 @@ class OnboardingController extends Controller
         $splash = SplashScreen::where('app_type', $request->app_type)->firstOrFail();
 
         $splash->tagline = $request->tagline;
+        $splash->app_name = $request->app_name;
         $splash->duration_ms = $request->duration_ms;
         $splash->bg_color = $request->bg_color;
         $splash->secondary_color = $request->secondary_color;
@@ -64,6 +67,7 @@ class OnboardingController extends Controller
         $splash->show_logo = $request->boolean('show_logo');
         $splash->show_background = $request->boolean('show_background');
         $splash->show_tagline = $request->boolean('show_tagline');
+        $splash->show_app_name = $request->boolean('show_app_name');
 
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');

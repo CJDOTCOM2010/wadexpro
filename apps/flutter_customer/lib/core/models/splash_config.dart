@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class SplashConfig {
   final String? tagline;
+  final String? appName;
   final int? durationMs;
   final String? bgColor;
   final String? secondaryColor;
@@ -9,6 +10,7 @@ class SplashConfig {
   final bool? showLogo;
   final bool? showBackground;
   final bool? showTagline;
+  final bool? showAppName;
   final String? logoUrl;
   final String? logoMediaType;
   final String? backgroundUrl;
@@ -16,6 +18,7 @@ class SplashConfig {
 
   SplashConfig({
     this.tagline,
+    this.appName,
     this.durationMs,
     this.bgColor,
     this.secondaryColor,
@@ -23,6 +26,7 @@ class SplashConfig {
     this.showLogo,
     this.showBackground,
     this.showTagline,
+    this.showAppName,
     this.logoUrl,
     this.logoMediaType,
     this.backgroundUrl,
@@ -45,6 +49,7 @@ class SplashConfig {
 
     return SplashConfig(
       tagline: json['tagline'] as String?,
+      appName: json['app_name'] as String?,
       durationMs: json['duration_ms'] as int?,
       bgColor: json['bg_color'] as String?,
       secondaryColor: json['secondary_color'] as String?,
@@ -52,6 +57,7 @@ class SplashConfig {
       showLogo: json['show_logo'] == true || json['show_logo'] == 1,
       showBackground: json['show_background'] == true || json['show_background'] == 1,
       showTagline: json['show_tagline'] == true || json['show_tagline'] == 1,
+      showAppName: json['show_app_name'] == true || json['show_app_name'] == 1,
       logoUrl: logo,
       logoMediaType: json['logo_media_type'] as String?,
       backgroundUrl: background,

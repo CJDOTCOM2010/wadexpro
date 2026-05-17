@@ -12,6 +12,7 @@ class SplashScreen extends Model
     protected $fillable = [
         'app_type',
         'tagline',
+        'app_name',
         'logo_url',
         'logo_media_type',
         'background_url',
@@ -23,6 +24,7 @@ class SplashScreen extends Model
         'show_logo',
         'show_background',
         'show_tagline',
+        'show_app_name',
         'is_active',
     ];
 
@@ -33,6 +35,7 @@ class SplashScreen extends Model
             'show_logo' => 'boolean',
             'show_background' => 'boolean',
             'show_tagline' => 'boolean',
+            'show_app_name' => 'boolean',
             'is_active' => 'boolean',
             'duration_ms' => 'integer',
         ];

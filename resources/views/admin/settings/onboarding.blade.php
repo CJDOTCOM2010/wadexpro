@@ -428,8 +428,15 @@
                                 <div>
                                     <label class="block text-[10px] font-black text-brand-muted uppercase tracking-widest mb-2.5">Launch Tagline</label>
                                     <div class="relative group">
-                                        <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-transparent rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+                                        <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-transparent rounded-xl opacity-0 group-focus-within:opacity-100 pointer-events-none transition-opacity duration-500"></div>
                                         <input type="text" name="tagline" x-model="splash.tagline" class="w-full bg-surface/80 border border-gray-100 focus:border-accent/50 focus:bg-white rounded-xl py-4 px-6 text-sm font-bold outline-none transition-all duration-300 premium-shadow focus:shadow-lg focus:shadow-accent/5">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-brand-muted uppercase tracking-widest mb-2.5">App Name</label>
+                                    <div class="relative group">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-transparent rounded-xl opacity-0 group-focus-within:opacity-100 pointer-events-none transition-opacity duration-500"></div>
+                                        <input type="text" name="app_name" x-model="splash.app_name" class="w-full bg-surface/80 border border-gray-100 focus:border-accent/50 focus:bg-white rounded-xl py-4 px-6 text-sm font-bold outline-none transition-all duration-300 premium-shadow focus:shadow-lg focus:shadow-accent/5">
                                     </div>
                                 </div>
                                 <div>
@@ -526,6 +533,24 @@
                                             <input type="hidden" name="show_tagline" :value="splash.show_tagline ? 1 : 0">
                                             <label class="premium-toggle">
                                                 <input type="checkbox" x-model="splash.show_tagline" value="1">
+                                                <div class="track"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="glass-panel rounded-2xl p-5 gradient-border sm:col-span-2">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-start gap-3">
+                                                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                                                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zm2 4h10M7 10h10M7 13h6"/></svg>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-black text-brand">App Name</p>
+                                                    <p class="text-[9px] text-brand-muted mt-0.5">Show app name on the splash screen.</p>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="show_app_name" :value="splash.show_app_name ? 1 : 0">
+                                            <label class="premium-toggle">
+                                                <input type="checkbox" x-model="splash.show_app_name" value="1">
                                                 <div class="track"></div>
                                             </label>
                                         </div>

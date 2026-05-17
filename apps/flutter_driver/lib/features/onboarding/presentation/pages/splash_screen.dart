@@ -180,7 +180,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final showLogo = config.showLogo ?? true;
     final showBackground = config.showBackground ?? true;
     final showTagline = config.showTagline ?? true;
+    final showAppName = config.showAppName ?? true;
     final tagline = config.tagline;
+    final appName = config.appName;
 
     return Scaffold(
       body: Stack(
@@ -334,21 +336,22 @@ child: showBackground
                 const SizedBox(height: 32),
 
                 // Brand Text
-                SlideTransition(
-                  position: _textSlide,
-                  child: FadeTransition(
-                    opacity: _textOpacity,
-                    child: Text(
-                      BrandConfig.appName,
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                        letterSpacing: 6,
+                if (showAppName)
+                  SlideTransition(
+                    position: _textSlide,
+                    child: FadeTransition(
+                      opacity: _textOpacity,
+                      child: Text(
+                        appName ?? BrandConfig.appName,
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 6,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
                 // Tagline
                 if (showTagline) ...[

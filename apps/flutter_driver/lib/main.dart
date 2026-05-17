@@ -8,12 +8,10 @@ import 'features/onboarding/presentation/pages/splash_screen.dart';
 import 'features/onboarding/presentation/pages/onboarding_screen.dart';
 
 import 'features/auth/presentation/pages/otp_screen.dart';
-import 'features/auth/presentation/pages/kyc_screen.dart';
 
 import 'core/config/app_config.dart';
 import 'core/config/brand_config.dart';
 import 'core/theme/app_colors.dart';
-import 'core/network/providers.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../providers/profile_provider.dart';
 import 'package:wadexpro_driver/features/wallet/presentation/pages/wallet_screen.dart';
@@ -285,15 +284,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Identity & License', style: TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: const Text('Required for verification'),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const KYCUploadScreen()));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6C63FF),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  trailing: SizedBox(
+                    width: 100,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const KYCUploadScreen()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6C63FF),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('UPLOAD', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
-                    child: const Text('UPLOAD', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

@@ -5,6 +5,10 @@ function getSetting($key, $default = null) {
     global $settings;
     return $settings[$key]->value ?? $default;
 }
+function hasSetting($key) {
+    global $settings;
+    return isset($settings[$key]) && !empty($settings[$key]->value);
+}
 function isChecked($key, $value = 'true') {
     return getSetting($key, 'false') === $value;
 }

@@ -29,11 +29,31 @@ class SystemSettingController extends Controller
     }
 
     /**
+     * Display branding settings page.
+     */
+    public function branding()
+    {
+        $brandingKeys = [
+            'brand_name', 'brand_short_name', 'brand_tagline', 'brand_logo_url', 'app_icon_url',
+            'brand_primary_color', 'brand_accent_color', 'brand_secondary_color', 'brand_dark_color',
+            'splash_background_color', 'customer_app_display_name', 'driver_app_display_name',
+            'support_email', 'brand_support_phone', 'enterprise_name',
+            'play_store_customer_link', 'app_store_customer_link',
+            'play_store_driver_link', 'app_store_driver_link',
+            'min_customer_app_version', 'min_driver_app_version',
+        ];
+        $settings = SystemSetting::whereIn('key', $brandingKeys)->get()->keyBy('key');
+
+        return view('admin.settings.branding', compact('settings'));
+    }
+
+    /**
      * Display dashboard branding settings page.
      */
     public function dashboardBranding()
     {
-        $settings = SystemSetting::where('group', 'dashboard')->get()->keyBy('key');
+        $dashboardKeys = ['dashboard_app_name', 'dashboard_tagline', 'dashboard_logo_url', 'dashboard_favicon_url'];
+        $settings = SystemSetting::whereIn('key', $dashboardKeys)->get()->keyBy('key');
 
         return view('admin.settings.dashboard_branding', compact('settings'));
     }

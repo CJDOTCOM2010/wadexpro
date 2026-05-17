@@ -5,6 +5,10 @@ function getSetting($key, $default = null) {
     global $settings;
     return $settings[$key]->value ?? $default;
 }
+function hasSetting($key) {
+    global $settings;
+    return isset($settings[$key]) && !empty($settings[$key]->value);
+}
 @endphp
 @section('content')
 
@@ -106,10 +110,9 @@ function getSetting($key, $default = null) {
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-3">Splash Screen Logo</label>
                         <div class="flex items-start gap-4">
-                            @php $currentLogo = getSetting('brand_logo_url', ''); @endphp
-                            <div class="w-20 h-20 rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden shrink-0" id="logo-preview-container">
-                                @if($currentLogo)
-                                    <img src="{{ $currentLogo }}" class="w-full h-full object-contain p-2">
+                            <div class="w-20 h-20 rounded-xl bg-gray-100 border-2 {{ hasSetting('brand_logo_url') ? 'border-green-300' : 'border-dashed border-gray-300' }} flex items-center justify-center overflow-hidden shrink-0" id="logo-preview-container">
+                                @if(hasSetting('brand_logo_url'))
+                                    <img src="{{ getSetting('brand_logo_url') }}" class="w-full h-full object-contain p-2">
                                 @else
                                     <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 @endif
@@ -117,8 +120,11 @@ function getSetting($key, $default = null) {
                             <div class="flex-1">
                                 <input type="file" name="brand_logo" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:bg-brand file:text-white file:text-xs file:font-medium cursor-pointer" onchange="previewLogo(this)">
                                 <p class="text-[10px] text-gray-400 mt-2">512×512px, transparent PNG recommended</p>
-                                @if($currentLogo)
-                                <span class="text-[10px] text-green-600 mt-1 block">Logo active</span>
+                                @if(hasSetting('brand_logo_url'))
+                                <span class="text-[10px] text-green-600 mt-1 block flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                    Logo active
+                                </span>
                                 @endif
                             </div>
                         </div>
@@ -128,10 +134,9 @@ function getSetting($key, $default = null) {
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-3">App Icon (Launcher)</label>
                         <div class="flex items-start gap-4">
-                            @php $appIcon = getSetting('app_icon_url', ''); @endphp
-                            <div class="w-20 h-20 rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden shrink-0" id="app-icon-preview-container">
-                                @if($appIcon)
-                                    <img src="{{ $appIcon }}" class="w-full h-full object-contain p-2">
+                            <div class="w-20 h-20 rounded-xl bg-gray-100 border-2 {{ hasSetting('app_icon_url') ? 'border-green-300' : 'border-dashed border-gray-300' }} flex items-center justify-center overflow-hidden shrink-0" id="app-icon-preview-container">
+                                @if(hasSetting('app_icon_url'))
+                                    <img src="{{ getSetting('app_icon_url') }}" class="w-full h-full object-contain p-2">
                                 @else
                                     <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg>
                                 @endif
@@ -139,8 +144,11 @@ function getSetting($key, $default = null) {
                             <div class="flex-1">
                                 <input type="file" name="app_icon" accept="image/png" class="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:bg-brand file:text-white file:text-xs file:font-medium cursor-pointer" onchange="previewAppIcon(this)">
                                 <p class="text-[10px] text-gray-400 mt-2">1024×1024px PNG (Play Store requirement)</p>
-                                @if($appIcon)
-                                <span class="text-[10px] text-green-600 mt-1 block">Icon active</span>
+                                @if(hasSetting('app_icon_url'))
+                                <span class="text-[10px] text-green-600 mt-1 block flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                    Icon active
+                                </span>
                                 @endif
                             </div>
                         </div>

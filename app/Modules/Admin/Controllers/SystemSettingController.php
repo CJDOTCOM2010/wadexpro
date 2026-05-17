@@ -23,16 +23,6 @@ class SystemSettingController extends Controller
      */
     public function branding()
     {
-        $settings = SystemSetting::where('group', 'branding')->get()->keyBy('key');
-
-        return view('admin.settings.branding', compact('settings'));
-    }
-
-    /**
-     * Display branding settings page.
-     */
-    public function branding()
-    {
         $brandingKeys = [
             'brand_name', 'brand_short_name', 'brand_tagline', 'brand_logo_url', 'app_icon_url',
             'brand_primary_color', 'brand_accent_color', 'brand_secondary_color', 'brand_dark_color',

@@ -140,17 +140,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       return;
     }
 
-    await Future.delayed(const Duration(milliseconds: 300));
+    // Brief pause then all elements animate in together
+    await Future.delayed(const Duration(milliseconds: 200));
     _logoController.forward();
-
-    await Future.delayed(const Duration(milliseconds: 800));
     _textController.forward();
-
-    await Future.delayed(const Duration(milliseconds: 400));
     _taglineController.forward();
 
     final duration = _config!.durationMs ?? 3000;
-    await Future.delayed(Duration(milliseconds: duration - 1500));
+    await Future.delayed(Duration(milliseconds: duration - 200));
 
     if (mounted) {
       Navigator.of(context).pushReplacement(

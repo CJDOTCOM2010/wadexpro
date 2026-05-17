@@ -83,26 +83,15 @@ class _PlatformMediaWidgetState extends State<PlatformMediaWidget> {
         if (videoSize.width <= 0 || videoSize.height <= 0) {
           return _buildPlaceholder();
         }
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final scaleX = constraints.maxWidth / videoSize.width;
-            final scaleY = constraints.maxHeight / videoSize.height;
-            final scale = widget.fit == BoxFit.cover
-                ? scaleX > scaleY ? scaleX : scaleY
-                : scaleX < scaleY ? scaleX : scaleY;
-            return ClipRect(
-              child: OverflowBox(
-                alignment: Alignment.center,
-                maxWidth: videoSize.width * scale,
-                maxHeight: videoSize.height * scale,
-                child: SizedBox(
-                  width: videoSize.width * scale,
-                  height: videoSize.height * scale,
-                  child: VideoPlayer(_videoController!),
-                ),
-              ),
-            );
-          },
+        return SizedBox.expand(
+          child: FittedBox(
+            fit: widget.fit,
+            child: SizedBox(
+              width: videoSize.width,
+              height: videoSize.height,
+              child: VideoPlayer(_videoController!),
+            ),
+          ),
         );
       }
       return _buildPlaceholder();

@@ -23,7 +23,9 @@ class SystemSettingController extends Controller
      */
     public function branding()
     {
-        return view('admin.settings.branding');
+        $settings = SystemSetting::where('group', 'branding')->get()->keyBy('key');
+
+        return view('admin.settings.branding', compact('settings'));
     }
 
     /**
@@ -31,7 +33,9 @@ class SystemSettingController extends Controller
      */
     public function dashboardBranding()
     {
-        return view('admin.settings.dashboard_branding');
+        $settings = SystemSetting::where('group', 'dashboard')->get()->keyBy('key');
+
+        return view('admin.settings.dashboard_branding', compact('settings'));
     }
 
     /**

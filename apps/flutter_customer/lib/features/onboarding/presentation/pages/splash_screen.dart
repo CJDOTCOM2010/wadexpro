@@ -190,47 +190,49 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // 1. Background Layer (Media or Gradient)
+          // 1. Background Layer
           Positioned.fill(
             child: Container(
               color: backgroundColor,
-child: (showBackground && config.backgroundUrl != null)
-                    ? Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Positioned.fill(
-                            child: PlatformMediaWidget(
-                              url: config.backgroundUrl!,
-                              mediaType: config.backgroundMediaType ?? 'image',
-                              fit: BoxFit.cover,
+              child: showBackground
+                  ? (config.backgroundUrl != null
+                      ? Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Positioned.fill(
+                              child: PlatformMediaWidget(
+                                url: config.backgroundUrl!,
+                                mediaType: config.backgroundMediaType ?? 'image',
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                          // Darken overlay
-                          Positioned.fill(
-                            child: Container(
-                              color: backgroundColor.withValues(alpha: 0.7),
+                            // Darken overlay
+                            Positioned.fill(
+                              child: Container(
+                                color: backgroundColor.withValues(alpha: 0.7),
+                              ),
                             ),
-                          ),
-                        ],
-                      )
-                  : Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            backgroundColor.withValues(alpha: 0.8),
-                            backgroundColor,
-                            backgroundColor.withValues(alpha: 0.9),
                           ],
-                          stops: const [0.0, 0.5, 1.0],
-                        ),
-                      ),
-                    ),
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                backgroundColor.withValues(alpha: 0.8),
+                                backgroundColor,
+                                backgroundColor.withValues(alpha: 0.9),
+                              ],
+                              stops: const [0.0, 0.5, 1.0],
+                            ),
+                          ),
+                        ))
+                  : null,
             ),
           ),
 
-          // 2. Decorative elements (Only if no background media)
+          // 2. Decorative elements (Only if backdrop media is enabled but no media uploaded)
           if (showBackground && config.backgroundUrl == null) ...[
             Positioned(
               top: -100,
@@ -259,7 +261,7 @@ child: (showBackground && config.backgroundUrl != null)
           ],
 
           // 3. Ripple effect behind logo
-          if (showRipple && showLogo)
+          if (showRipple)
             Center(
               child: AnimatedBuilder(
                 animation: _rippleController,

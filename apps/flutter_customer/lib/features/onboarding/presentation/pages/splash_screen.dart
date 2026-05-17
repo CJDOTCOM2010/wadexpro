@@ -173,8 +173,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    // No config — show nothing (will navigate away in _startSequence)
-    if (_config == null) return const Scaffold(body: SizedBox.shrink());
+    if (_config == null) return const SizedBox.shrink();
 
     final config = _config!;
     final backgroundColor = config.backgroundColor;
@@ -192,7 +191,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final appName = config.appName;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           // 1. Base background — ONLY when backdrop color is enabled, else transparent

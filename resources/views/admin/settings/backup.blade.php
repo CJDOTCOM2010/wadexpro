@@ -160,6 +160,10 @@ $storagePercent = min(round(($totalSize / 10737418240) * 100), 100); // assume 1
                             <p class="text-[10px] text-brand-muted">
                                 <span x-text="new Intl.NumberFormat().format(job.rows_dumped)"></span> rows dumped
                             </p>
+                            <p class="text-[10px] text-brand-muted mt-1 font-bold flex items-center justify-end gap-1" x-show="job.progress > 0 && job.progress < 100">
+                                <svg class="w-3 h-3 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span x-text="getETA(job)"></span>
+                            </p>
                         </div>
                         
                         <div class="ml-4">
@@ -396,6 +400,29 @@ function backupManager() {
         confirmCancel(id) {
             this.cancelUrl = '{{ route('orchestrator.settings.backups.cancel', ['id' => '__ID__']) }}'.replace('__ID__', id);
             this.showCancel = true;
+        },
+
+        getETA(job) {
+            if (!job.started_at || job.progress <= 0 || job.progress >= 100) return 'Calculating...';
+            
+            // Job started_at is string like "2026-05-18T02:40:00.000000Z"
+            let start = new Date(job.started_at).getTime();
+            let now = new Date().getTime();
+            
+            // If the start time is somehow in the future (due to server/client clock skew), fallback to a basic calculation
+            if (now <= start) return 'Calculating...';
+            
+            let elapsed = now - start;
+            let totalEstimated = elapsed / (job.progress / 100);
+            let remaining = totalEstimated - elapsed;
+            
+            if (remaining < 0) return 'Almost done...';
+            
+            let mins = Math.floor(remaining / 60000);
+            let secs = Math.floor((remaining % 60000) / 1000);
+            
+            if (mins > 0) return `~${mins}m ${secs}s left`;
+            return `~${secs}s left`;
         }
     };
 }

@@ -301,6 +301,10 @@
                         <svg class="w-4 h-4 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span class="text-xs font-semibold whitespace-nowrap">Backups</span>
                     </a>
+                    <a href="{{ route('orchestrator.settings.cron') }}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-white/5 transition group {{ request()->routeIs('orchestrator.settings.cron') ? 'bg-white/10 text-accent' : 'text-white/40 hover:text-white' }}">
+                        <svg class="w-4 h-4 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span class="text-xs font-semibold whitespace-nowrap">Cron Jobs</span>
+                    </a>
                 </div>
             </div>
         </nav>

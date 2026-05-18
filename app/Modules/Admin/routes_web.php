@@ -116,6 +116,17 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         Route::get('/settings/backups/download/{file}', [BackupController::class, 'download'])->name('orchestrator.settings.backups.download');
         Route::delete('/settings/backups/delete/{file}', [BackupController::class, 'delete'])->name('orchestrator.settings.backups.delete');
         Route::post('/settings/backups/clean', [BackupController::class, 'clean'])->name('orchestrator.settings.backups.clean');
+
+        // Cron Jobs
+        Route::get('/settings/cron', [CronJobController::class, 'index'])->name('orchestrator.settings.cron');
+        Route::post('/settings/cron', [CronJobController::class, 'store'])->name('orchestrator.settings.cron.store');
+        Route::put('/settings/cron/{id}', [CronJobController::class, 'update'])->name('orchestrator.settings.cron.update');
+        Route::delete('/settings/cron/{id}', [CronJobController::class, 'destroy'])->name('orchestrator.settings.cron.destroy');
+        Route::post('/settings/cron/{id}/toggle', [CronJobController::class, 'toggle'])->name('orchestrator.settings.cron.toggle');
+        Route::post('/settings/cron/{id}/run', [CronJobController::class, 'runNow'])->name('orchestrator.settings.cron.run');
+        Route::get('/settings/cron/generate', [CronJobController::class, 'generateCrontab'])->name('orchestrator.settings.cron.generate');
+        Route::post('/settings/cron/defaults', [CronJobController::class, 'installDefaults'])->name('orchestrator.settings.cron.defaults');
+
         Route::get('/settings/prefixes', [SystemSettingController::class, 'prefixes'])->name('orchestrator.settings.prefixes');
         Route::get('/settings/geolocation', [SystemSettingController::class, 'geolocation'])->name('orchestrator.settings.geolocation');
         Route::get('/settings/social-auth', [SystemSettingController::class, 'socialAuth'])->name('orchestrator.settings.social_auth');

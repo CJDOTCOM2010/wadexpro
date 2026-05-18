@@ -89,6 +89,11 @@ class RunDatabaseBackup implements ShouldQueue
             ]);
         });
 
+        // Add abort check so the dump stops if the job is cancelled
+        $dumper->withAbortCheck(function () use ($job) {
+            return BackupJob::where('id', $job->id)->where('status', 'failed')->where('current_step', 'Cancelled')->exists();
+        });
+
         $job->updateProgress(10, 'Analysing database schema…');
         $dumper->dump();
 

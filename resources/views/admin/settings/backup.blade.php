@@ -161,6 +161,12 @@ $storagePercent = min(round(($totalSize / 10737418240) * 100), 100); // assume 1
                                 <span x-text="new Intl.NumberFormat().format(job.rows_dumped)"></span> rows dumped
                             </p>
                         </div>
+                        
+                        <div class="ml-4">
+                            <button @click="confirmCancel(job.id)" x-show="job.status === 'pending' || job.status === 'running'" class="w-8 h-8 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors" title="Cancel Backup">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </template>
@@ -317,6 +323,25 @@ $storagePercent = min(round(($totalSize / 10737418240) * 100), 100); // assume 1
             </form>
         </div>
     </div>
+
+    <!-- Cancel Confirm Modal -->
+    <div x-show="showCancel" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-brand/40 backdrop-blur-sm" @click="showCancel = false"></div>
+        <div class="bg-white rounded-xl w-full max-w-sm relative z-10 shadow-2xl p-6 text-center" @click.outside="showCancel = false">
+            <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 class="text-lg font-bold text-brand mb-1">Cancel Backup?</h3>
+            <p class="text-xs text-brand-muted mb-6">Are you sure you want to cancel this backup process?</p>
+            <form method="POST" :action="cancelUrl">
+                @csrf
+                <div class="flex gap-2">
+                    <button type="button" @click="showCancel = false" class="flex-1 px-4 py-2.5 bg-surface text-brand-muted rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors">No, Continue</button>
+                    <button type="submit" class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700 transition-colors">Yes, Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -324,8 +349,10 @@ function backupManager() {
     return {
         showCreate: false,
         showDelete: false,
+        showCancel: false,
         deletingFile: '',
         deleteUrl: '',
+        cancelUrl: '',
         search: '',
         activeJobs: @json($activeJobs ?? []),
         pollingInterval: null,
@@ -364,6 +391,11 @@ function backupManager() {
             this.deletingFile = file;
             this.deleteUrl = '{{ route('orchestrator.settings.backups.delete', ['file' => '__FILE__']) }}'.replace('__FILE__', file);
             this.showDelete = true;
+        },
+
+        confirmCancel(id) {
+            this.cancelUrl = '{{ route('orchestrator.settings.backups.cancel', ['id' => '__ID__']) }}'.replace('__ID__', id);
+            this.showCancel = true;
         }
     };
 }

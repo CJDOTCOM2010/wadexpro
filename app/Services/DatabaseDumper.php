@@ -27,6 +27,8 @@ class DatabaseDumper
     protected int $tablesTotal = 0;
     /** @var callable|null */
     protected $progressCallback = null;
+    /** @var callable|null */
+    protected $abortCallback = null;
 
     public function __construct(string $outputPath)
     {
@@ -51,6 +53,15 @@ class DatabaseDumper
         return $this;
     }
 
+    /**
+     * Register an abort callback: fn() -> bool
+     */
+    public function withAbortCheck(callable $callback): self
+    {
+        $this->abortCallback = $callback;
+        return $this;
+    }
+
     protected function reportProgress(int $pct, string $step): void
     {
         if ($this->progressCallback) {
@@ -59,6 +70,10 @@ class DatabaseDumper
                 'tables_done'  => $this->tablesDumped,
                 'rows_dumped'  => $this->totalRowsDumped,
             ]);
+        }
+
+        if ($this->abortCallback && ($this->abortCallback)()) {
+            throw new \RuntimeException('Dump cancelled by user.');
         }
     }
 

@@ -69,6 +69,16 @@ class BackupJob extends Model
         ]);
     }
 
+    public function markCancelled(): void
+    {
+        $this->update([
+            'status' => 'failed',
+            'current_step' => 'Cancelled',
+            'error_message' => 'Cancelled by admin',
+            'completed_at' => now(),
+        ]);
+    }
+
     public function fileSizeHuman(): string
     {
         $bytes = $this->file_size;

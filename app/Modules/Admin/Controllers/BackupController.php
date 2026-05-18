@@ -123,6 +123,23 @@ class BackupController extends Controller
     }
 
     /**
+     * Cancel an active backup job.
+     */
+    public function cancel($id)
+    {
+        try {
+            $job = BackupJob::findOrFail($id);
+            if (in_array($job->status, ['pending', 'running'])) {
+                $job->markCancelled();
+                return back()->with('success', 'Backup job cancelled successfully.');
+            }
+            return back()->with('error', 'Job cannot be cancelled.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to cancel job: '.$e->getMessage());
+        }
+    }
+
+    /**
      * Download a backup.
      */
     public function download($fileName)

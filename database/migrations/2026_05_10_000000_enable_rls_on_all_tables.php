@@ -12,20 +12,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Enable RLS for all current tables
-        DB::statement("
-            DO $$ 
-            DECLARE 
-                r RECORD;
-            BEGIN
-                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-                    -- Skip migrations and password_reset tables to avoid internal conflicts
-                    IF r.tablename NOT IN ('migrations', 'password_reset_tokens', 'cache', 'cache_locks', 'sessions') THEN
-                        EXECUTE 'ALTER TABLE ' || quote_ident(r.tablename) || ' ENABLE ROW LEVEL SECURITY;';
-                    END IF;
-                END LOOP;
-            END $$;
-        ");
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement("
+                DO $$ 
+                DECLARE 
+                    r RECORD;
+                BEGIN
+                    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+                        IF r.tablename NOT IN ('migrations', 'password_reset_tokens', 'cache', 'cache_locks', 'sessions') THEN
+                            EXECUTE 'ALTER TABLE ' || quote_ident(r.tablename) || ' ENABLE ROW LEVEL SECURITY;';
+                        END IF;
+                    END LOOP;
+                END $$;
+            ");
+        }
     }
 
     /**
@@ -33,15 +33,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("
-            DO $$ 
-            DECLARE 
-                r RECORD;
-            BEGIN
-                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-                    EXECUTE 'ALTER TABLE ' || quote_ident(r.tablename) || ' DISABLE ROW LEVEL SECURITY;';
-                END LOOP;
-            END $$;
-        ");
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement("
+                DO $$ 
+                DECLARE 
+                    r RECORD;
+                BEGIN
+                    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+                        EXECUTE 'ALTER TABLE ' || quote_ident(r.tablename) || ' DISABLE ROW LEVEL SECURITY;';
+                    END LOOP;
+                END $$;
+            ");
+        }
     }
 };

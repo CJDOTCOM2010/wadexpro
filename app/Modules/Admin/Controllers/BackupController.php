@@ -3,9 +3,8 @@
 namespace App\Modules\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Services\DatabaseDumper;
-use App\Models\BackupJob;
 use App\Jobs\RunDatabaseBackup;
+use App\Models\BackupJob;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -23,7 +22,7 @@ class BackupController extends Controller
         try {
             $diskName = config('backup.backup.destination.disks')[0] ?? 'local';
             $disk = Storage::disk($diskName);
-            $backupName = config('backup.backup.name', 'Laravel');
+            $backupName = config('backup.backup.name', 'Wadexpro');
 
             $files = [];
             try {
@@ -81,18 +80,22 @@ class BackupController extends Controller
     public function create(Request $request)
     {
         $option = $request->get('option', 'all'); // 'all', 'only-db', 'only-files'
+        $dbDriver = config('database.default');
 
         try {
             if ($option === 'only-files') {
-                // Files-only backup uses spatie (no database involved)
                 $exitCode = Artisan::call('backup:run', ['--only-files' => true]);
                 if ($exitCode !== 0) {
-                    return back()->with('error', 'File backup failed with exit code ' . $exitCode . '. Check system logs.');
+                    return back()->with('error', 'File backup failed with exit code '.$exitCode.'. Check system logs.');
                 }
+
                 return back()->with('success', 'Media vault backup completed successfully.');
             }
 
-            // Dispatch async job
+            if ($dbDriver === 'sqlite') {
+                return back()->with('error', 'Database backup is not supported for SQLite. Please use PostgreSQL in production.');
+            }
+
             $job = BackupJob::create([
                 'type' => $option,
                 'status' => 'pending',
@@ -119,6 +122,7 @@ class BackupController extends Controller
     public function status()
     {
         $jobs = BackupJob::orderBy('created_at', 'desc')->take(5)->get();
+
         return response()->json($jobs);
     }
 
@@ -131,8 +135,10 @@ class BackupController extends Controller
             $job = BackupJob::findOrFail($id);
             if (in_array($job->status, ['pending', 'running'])) {
                 $job->markCancelled();
+
                 return back()->with('success', 'Backup job cancelled successfully.');
             }
+
             return back()->with('error', 'Job cannot be cancelled.');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to cancel job: '.$e->getMessage());
@@ -190,44 +196,82 @@ class BackupController extends Controller
      */
     protected function getDatabaseStats(): array
     {
+        $driver = config('database.default');
+
         try {
-            $tableCount = \DB::select("
-                SELECT count(*) as cnt
-                FROM information_schema.tables
-                WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
-            ");
+            if ($driver === 'pgsql') {
+                $tableCount = \DB::select("
+                    SELECT count(*) as cnt
+                    FROM information_schema.tables
+                    WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+                ");
 
-            $dbSize = \DB::selectOne("SELECT pg_size_pretty(pg_database_size(current_database())) as size");
+                $dbSize = \DB::selectOne('SELECT pg_size_pretty(pg_database_size(current_database())) as size');
 
-            $totalRows = 0;
-            $tables = \DB::select("
-                SELECT table_name
-                FROM information_schema.tables
-                WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
-            ");
-            foreach ($tables as $t) {
-                try {
-                    $rowCount = \DB::selectOne("SELECT count(*) as cnt FROM \"{$t->table_name}\"");
-                    $totalRows += $rowCount->cnt ?? 0;
-                } catch (\Exception $e) {
-                    // Skip tables we can't read
+                $totalRows = 0;
+                $tables = \DB::select("
+                    SELECT table_name
+                    FROM information_schema.tables
+                    WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+                ");
+                foreach ($tables as $t) {
+                    try {
+                        $rowCount = \DB::selectOne("SELECT count(*) as cnt FROM \"{$t->table_name}\"");
+                        $totalRows += $rowCount->cnt ?? 0;
+                    } catch (\Exception $e) {
+                        // Skip tables we can't read
+                    }
                 }
+
+                return [
+                    'table_count' => $tableCount[0]->cnt ?? 0,
+                    'db_size' => $dbSize->size ?? 'Unknown',
+                    'total_rows' => number_format($totalRows),
+                    'connection' => $driver,
+                    'host' => config('database.connections.pgsql.host', 'URL-based'),
+                ];
+            } elseif ($driver === 'sqlite') {
+                $tables = \DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+                $tableCount = count($tables);
+
+                $dbPath = config('database.connections.sqlite.database');
+                $dbSize = file_exists($dbPath) ? filesize($dbPath) : 0;
+                $dbSizeFormatted = $this->formatBytes($dbSize);
+
+                $totalRows = 0;
+                foreach ($tables as $t) {
+                    try {
+                        $rowCount = \DB::selectOne("SELECT count(*) as cnt FROM \"{$t->name}\"");
+                        $totalRows += $rowCount->cnt ?? 0;
+                    } catch (\Exception $e) {
+                        // Skip tables we can't read
+                    }
+                }
+
+                return [
+                    'table_count' => $tableCount,
+                    'db_size' => $dbSizeFormatted,
+                    'total_rows' => number_format($totalRows),
+                    'connection' => $driver,
+                    'host' => 'local',
+                ];
             }
 
-            return [
-                'table_count' => $tableCount[0]->cnt ?? 0,
-                'db_size' => $dbSize->size ?? 'Unknown',
-                'total_rows' => number_format($totalRows),
-                'connection' => config('database.default'),
-                'host' => config('database.connections.pgsql.host', 'URL-based'),
-            ];
-        } catch (\Exception $e) {
-            Log::warning('Could not fetch database stats: ' . $e->getMessage());
             return [
                 'table_count' => '—',
                 'db_size' => '—',
                 'total_rows' => '—',
-                'connection' => config('database.default'),
+                'connection' => $driver,
+                'host' => 'Unknown',
+            ];
+        } catch (\Exception $e) {
+            Log::warning('Could not fetch database stats: '.$e->getMessage());
+
+            return [
+                'table_count' => '—',
+                'db_size' => '—',
+                'total_rows' => '—',
+                'connection' => $driver,
                 'host' => 'Unknown',
             ];
         }
@@ -238,7 +282,9 @@ class BackupController extends Controller
      */
     protected function addDirectoryToZip(ZipArchive $zip, string $realPath, string $zipPath): void
     {
-        if (!is_dir($realPath)) return;
+        if (! is_dir($realPath)) {
+            return;
+        }
 
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($realPath, \RecursiveDirectoryIterator::SKIP_DOTS),
@@ -248,7 +294,7 @@ class BackupController extends Controller
         foreach ($files as $file) {
             if ($file->isFile()) {
                 $filePath = $file->getRealPath();
-                $relativePath = $zipPath . '/' . substr($filePath, strlen($realPath) + 1);
+                $relativePath = $zipPath.'/'.substr($filePath, strlen($realPath) + 1);
                 $zip->addFile($filePath, $relativePath);
             }
         }

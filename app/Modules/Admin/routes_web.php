@@ -108,6 +108,9 @@ Route::prefix(env('ORCHESTRATOR_PATH', 'orchestrator'))->group(function () {
         // System Backups
         Route::get('/settings/backups', [BackupController::class, 'index'])->name('orchestrator.settings.backups');
         Route::get('/settings/backups/status', [BackupController::class, 'status'])->name('orchestrator.settings.backups.status');
+        Route::get('/settings/backups/settings', [BackupController::class, 'getSettings'])->name('orchestrator.settings.backups.settings');
+        Route::post('/settings/backups/settings', [BackupController::class, 'updateSettings'])->name('orchestrator.settings.backups.settings.update');
+        Route::post('/settings/backups/test', [BackupController::class, 'testBackup'])->name('orchestrator.settings.backups.test');
         Route::post('/settings/backups/cancel/{id}', [BackupController::class, 'cancel'])->name('orchestrator.settings.backups.cancel');
         Route::post('/settings/backups/create', [BackupController::class, 'create'])->name('orchestrator.settings.backups.create');
         Route::get('/settings/backups/download/{file}', [BackupController::class, 'download'])->name('orchestrator.settings.backups.download');

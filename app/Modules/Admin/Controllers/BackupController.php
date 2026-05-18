@@ -5,6 +5,7 @@ namespace App\Modules\Admin\Controllers;
 use App\Http\Controllers\Controller;
 use App\Jobs\RunDatabaseBackup;
 use App\Models\BackupJob;
+use App\Models\BackupSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -328,10 +329,94 @@ class BackupController extends Controller
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = floor($bytes ? log($bytes) : 0) / log(1024);
         $pow = min($pow, count($units) - 1);
         $bytes /= pow(1024, $pow);
 
         return round($bytes, $precision).' '.$units[$pow];
+    }
+
+    /**
+     * Get backup settings.
+     */
+    public function getSettings()
+    {
+        try {
+            $settings = BackupSetting::getSettings();
+
+            return response()->json($settings);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Update backup settings.
+     */
+    public function updateSettings(Request $request)
+    {
+        try {
+            $settings = BackupSetting::getSettings();
+
+            $validated = $request->validate([
+                'auto_backup_enabled' => 'boolean',
+                'frequency' => 'in:daily,weekly,monthly',
+                'backup_type' => 'in:all,only-db,only-files',
+                'scheduled_time' => 'date_format:H:i:s',
+                'day_of_week' => 'nullable|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
+                'day_of_month' => 'nullable|integer|min:1|max:28',
+                'retention_days' => 'integer|min:1|max:365',
+                'notify_on_success' => 'boolean',
+                'notify_on_failure' => 'boolean',
+                'email' => 'nullable|email',
+            ]);
+
+            $settings->update($validated);
+
+            return back()->with('success', 'Backup schedule updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Failed to update backup settings: '.$e->getMessage());
+
+            return back()->with('error', 'Failed to update settings: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Test backup - trigger a manual backup immediately.
+     */
+    public function testBackup(Request $request)
+    {
+        $option = $request->get('option', 'all');
+        $dbDriver = config('database.default');
+
+        try {
+            if ($option === 'only-files') {
+                $exitCode = Artisan::call('backup:run', ['--only-files' => true]);
+                if ($exitCode !== 0) {
+                    return back()->with('error', 'File backup failed.');
+                }
+
+                return back()->with('success', 'Manual file backup completed.');
+            }
+
+            if ($dbDriver === 'sqlite') {
+                return back()->with('error', 'Database backup requires PostgreSQL.');
+            }
+
+            $job = BackupJob::create([
+                'type' => $option,
+                'status' => 'pending',
+                'progress' => 0,
+                'current_step' => 'Manual backup initiated...',
+            ]);
+
+            RunDatabaseBackup::dispatch($job->id, $option);
+
+            return back()->with('success', 'Manual backup started. Track progress on this page.');
+        } catch (\Exception $e) {
+            Log::error('Manual backup failed: '.$e->getMessage());
+
+            return back()->with('error', 'Backup failed: '.$e->getMessage());
+        }
     }
 }

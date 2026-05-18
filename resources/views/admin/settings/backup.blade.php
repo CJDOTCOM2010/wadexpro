@@ -119,6 +119,86 @@ $storagePercent = min(round(($totalSize / 10737418240) * 100), 100); // assume 1
         </div>
     </div>
 
+    <!-- Auto Backup Schedule -->
+    <div class="bg-white border border-gray-100 rounded-xl p-5 mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-brand to-accent rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-brand">Auto Backup Schedule</h3>
+                    <p class="text-[11px] text-brand-muted">Configure automatic backup schedule</p>
+                </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" x-model="scheduleEnabled" class="sr-only peer" @change="saveSchedule()">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+            </label>
+        </div>
+
+        <div x-show="scheduleEnabled" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-2">Frequency</label>
+                <select x-model="scheduleFrequency" @change="saveSchedule()" class="w-full px-3 py-2.5 bg-surface border border-gray-200 rounded-lg text-xs font-bold text-brand focus:outline-none focus:border-brand">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-2">Time</label>
+                <input type="time" x-model="scheduleTime" @change="saveSchedule()" class="w-full px-3 py-2.5 bg-surface border border-gray-200 rounded-lg text-xs font-bold text-brand focus:outline-none focus:border-brand">
+            </div>
+            <div x-show="scheduleFrequency === 'weekly'">
+                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-2">Day</label>
+                <select x-model="scheduleDay" @change="saveSchedule()" class="w-full px-3 py-2.5 bg-surface border border-gray-200 rounded-lg text-xs font-bold text-brand focus:outline-none focus:border-brand">
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                    <option value="sunday">Sunday</option>
+                </select>
+            </div>
+            <div x-show="scheduleFrequency === 'monthly'">
+                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-2">Day of Month</label>
+                <select x-model="scheduleDayOfMonth" @change="saveSchedule()" class="w-full px-3 py-2.5 bg-surface border border-gray-200 rounded-lg text-xs font-bold text-brand focus:outline-none focus:border-brand">
+                    @for($i = 1; $i <= 28; $i++)
+                    <option value="{{ $i }}">{{ $i }}</option>
+                    @endfor
+                </select>
+            </div>
+        </div>
+
+        <div x-show="scheduleEnabled" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-100">
+            <div>
+                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-2">Backup Type</label>
+                <select x-model="scheduleBackupType" @change="saveSchedule()" class="w-full px-3 py-2.5 bg-surface border border-gray-200 rounded-lg text-xs font-bold text-brand focus:outline-none focus:border-brand">
+                    <option value="all">Full System (DB + Files)</option>
+                    <option value="only-db">Database Only</option>
+                    <option value="only-files">Files Only</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-2">Retention (Days)</label>
+                <input type="number" x-model="scheduleRetention" @change="saveSchedule()" min="1" max="365" class="w-full px-3 py-2.5 bg-surface border border-gray-200 rounded-lg text-xs font-bold text-brand focus:outline-none focus:border-brand">
+            </div>
+            <div class="flex items-end">
+                <button @click="runManualBackup()" class="w-full bg-accent text-brand px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-brand hover:text-white transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    Backup Now
+                </button>
+            </div>
+        </div>
+
+        <div x-show="!scheduleEnabled" class="text-center py-4">
+            <p class="text-xs text-brand-muted">Enable automatic backups to schedule recurring backups</p>
+            <button @click="scheduleEnabled = true; saveSchedule()" class="mt-2 text-xs font-bold text-brand hover:text-accent">Enable Schedule →</button>
+        </div>
+    </div>
+
     <!-- Active Jobs Tracking -->
     <template x-if="activeJobs.length > 0">
         <div class="mb-8 space-y-3">
@@ -361,9 +441,94 @@ function backupManager() {
         activeJobs: @json($activeJobs ?? []),
         pollingInterval: null,
 
+        // Schedule settings
+        scheduleEnabled: false,
+        scheduleFrequency: 'daily',
+        scheduleTime: '02:00',
+        scheduleDay: 'monday',
+        scheduleDayOfMonth: 1,
+        scheduleBackupType: 'all',
+        scheduleRetention: 30,
+        savingSchedule: false,
+
         init() {
+            this.loadScheduleSettings();
             if (this.activeJobs.length > 0) {
                 this.startPolling();
+            }
+        },
+
+        async loadScheduleSettings() {
+            try {
+                const res = await fetch('{{ route('orchestrator.settings.backups.settings') }}');
+                const data = await res.json();
+                if (data && !data.error) {
+                    this.scheduleEnabled = data.auto_backup_enabled || false;
+                    this.scheduleFrequency = data.frequency || 'daily';
+                    this.scheduleTime = data.scheduled_time ? data.scheduled_time.substring(0, 5) : '02:00';
+                    this.scheduleDay = data.day_of_week || 'monday';
+                    this.scheduleDayOfMonth = data.day_of_month || 1;
+                    this.scheduleBackupType = data.backup_type || 'all';
+                    this.scheduleRetention = data.retention_days || 30;
+                }
+            } catch (e) {
+                console.error('Failed to load schedule settings', e);
+            }
+        },
+
+        async saveSchedule() {
+            if (this.savingSchedule) return;
+            this.savingSchedule = true;
+            try {
+                const formData = new FormData();
+                formData.append('auto_backup_enabled', this.scheduleEnabled ? '1' : '0');
+                formData.append('frequency', this.scheduleFrequency);
+                formData.append('scheduled_time', this.scheduleTime + ':00');
+                formData.append('backup_type', this.scheduleBackupType);
+                formData.append('retention_days', this.scheduleRetention);
+                formData.append('day_of_week', this.scheduleDay);
+                formData.append('day_of_month', this.scheduleDayOfMonth);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                const res = await fetch('{{ route('orchestrator.settings.backups.settings.update') }}', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await res.json();
+                if (!res.ok) {
+                    alert('Failed to save schedule: ' + (result.message || 'Unknown error'));
+                }
+            } catch (e) {
+                console.error('Failed to save schedule', e);
+                alert('Failed to save schedule settings');
+            } finally {
+                this.savingSchedule = false;
+            }
+        },
+
+        async runManualBackup() {
+            if (this.activeJobs.length > 0) {
+                alert('A backup is already in progress. Please wait for it to complete.');
+                return;
+            }
+            try {
+                const formData = new FormData();
+                formData.append('option', this.scheduleBackupType);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                const res = await fetch('{{ route('orchestrator.settings.backups.test') }}', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (res.ok) {
+                    window.location.reload();
+                } else {
+                    const result = await res.json();
+                    alert('Backup failed: ' + (result.message || 'Unknown error'));
+                }
+            } catch (e) {
+                console.error('Failed to run backup', e);
+                alert('Failed to start backup');
             }
         },
 

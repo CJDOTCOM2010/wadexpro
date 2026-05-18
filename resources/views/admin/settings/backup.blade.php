@@ -119,6 +119,54 @@ $storagePercent = min(round(($totalSize / 10737418240) * 100), 100); // assume 1
         </div>
     </div>
 
+    <!-- Active Jobs Tracking -->
+    <template x-if="activeJobs.length > 0">
+        <div class="mb-8 space-y-3">
+            <template x-for="job in activeJobs" :key="job.id">
+                <div class="bg-white border border-brand/10 rounded-xl p-5 shadow-sm relative overflow-hidden">
+                    <!-- Progress Bar Background -->
+                    <div class="absolute bottom-0 left-0 h-1 bg-brand/10 w-full">
+                        <div class="h-full bg-brand transition-all duration-500" :style="`width: ${job.progress}%`"></div>
+                    </div>
+
+                    <div class="flex items-center justify-between relative z-10">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                                 :class="job.status === 'failed' ? 'bg-red-50 text-red-600' : 'bg-brand/10 text-brand'">
+                                <svg x-show="job.status === 'running' || job.status === 'pending'" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <svg x-show="job.status === 'failed'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-brand flex items-center gap-2">
+                                    <span x-text="job.type === 'only-db' ? 'Database Dump' : (job.type === 'only-files' ? 'Media Backup' : 'Full System Backup')"></span>
+                                    <span x-show="job.status === 'running'" class="px-2 py-0.5 rounded text-[9px] font-black tracking-wider uppercase bg-brand/10 text-brand" x-text="`${job.progress}%`"></span>
+                                    <span x-show="job.status === 'failed'" class="px-2 py-0.5 rounded text-[9px] font-black tracking-wider uppercase bg-red-100 text-red-600">Failed</span>
+                                </h4>
+                                <p class="text-[11px] font-medium mt-0.5"
+                                   :class="job.status === 'failed' ? 'text-red-500' : 'text-brand-muted'"
+                                   x-text="job.status === 'failed' ? job.error_message : job.current_step"></p>
+                            </div>
+                        </div>
+
+                        <!-- Extended Stats for DB Dumps -->
+                        <div x-show="job.tables_total > 0 && job.status === 'running'" class="text-right hidden sm:block">
+                            <p class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1">Live Progress</p>
+                            <p class="text-xs font-medium text-brand">
+                                <span x-text="job.tables_done"></span> / <span x-text="job.tables_total"></span> tables
+                            </p>
+                            <p class="text-[10px] text-brand-muted">
+                                <span x-text="new Intl.NumberFormat().format(job.rows_dumped)"></span> rows dumped
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+
     <!-- Backup Table -->
     <div class="bg-white border border-gray-100 rounded-xl overflow-hidden">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -279,6 +327,39 @@ function backupManager() {
         deletingFile: '',
         deleteUrl: '',
         search: '',
+        activeJobs: @json($activeJobs ?? []),
+        pollingInterval: null,
+
+        init() {
+            if (this.activeJobs.length > 0) {
+                this.startPolling();
+            }
+        },
+
+        startPolling() {
+            this.pollingInterval = setInterval(async () => {
+                try {
+                    const res = await fetch('{{ route('orchestrator.settings.backups.status') }}');
+                    const jobs = await res.json();
+                    
+                    // Update jobs
+                    this.activeJobs = jobs.filter(j => j.status === 'pending' || j.status === 'running');
+                    
+                    // If a job just completed, refresh the page to show the new file
+                    const justCompleted = jobs.some(j => j.status === 'completed' && !this.activeJobs.find(aj => aj.id === j.id));
+                    if (justCompleted) {
+                        window.location.reload();
+                    }
+
+                    if (this.activeJobs.length === 0) {
+                        clearInterval(this.pollingInterval);
+                    }
+                } catch (e) {
+                    console.error('Failed to poll backup status', e);
+                }
+            }, 2000); // poll every 2 seconds
+        },
+
         confirmDelete(file) {
             this.deletingFile = file;
             this.deleteUrl = '{{ route('orchestrator.settings.backups.delete', ['file' => '__FILE__']) }}'.replace('__FILE__', file);

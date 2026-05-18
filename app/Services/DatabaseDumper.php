@@ -24,6 +24,9 @@ class DatabaseDumper
     protected int $chunkSize = 1000;
     protected int $tablesDumped = 0;
     protected int $totalRowsDumped = 0;
+    protected int $tablesTotal = 0;
+    /** @var callable|null */
+    protected $progressCallback = null;
 
     public function __construct(string $outputPath)
     {
@@ -37,6 +40,26 @@ class DatabaseDumper
     {
         $this->excludeTables = $tables;
         return $this;
+    }
+
+    /**
+     * Register a progress callback: fn(int $pct, string $step, array $stats)
+     */
+    public function onProgress(callable $callback): self
+    {
+        $this->progressCallback = $callback;
+        return $this;
+    }
+
+    protected function reportProgress(int $pct, string $step): void
+    {
+        if ($this->progressCallback) {
+            ($this->progressCallback)($pct, $step, [
+                'tables_total' => $this->tablesTotal,
+                'tables_done'  => $this->tablesDumped,
+                'rows_dumped'  => $this->totalRowsDumped,
+            ]);
+        }
     }
 
     /**
@@ -57,10 +80,18 @@ class DatabaseDumper
             // Discover all user schemas (not just 'public')
             $this->discoverSchemas();
 
+            // Pre-count total tables across all schemas for accurate progress
+            $this->discoverSchemas();
+            foreach ($this->schemas as $s) {
+                $this->tablesTotal += count($this->getTables($s));
+            }
+
+            $this->reportProgress(5, 'Analysing schema…');
             $this->writeHeader($handle);
             $this->dumpExtensions($handle);
+            $this->reportProgress(8, 'Extensions done — dumping sequences & types…');
 
-            foreach ($this->schemas as $schema) {
+            foreach ($this->schemas as $schemaIndex => $schema) {
                 fwrite($handle, "\n-- ============================================\n");
                 fwrite($handle, "-- Schema: {$schema}\n");
                 fwrite($handle, "-- ============================================\n\n");
@@ -80,8 +111,10 @@ class DatabaseDumper
                 $this->dumpSequenceValues($handle, $schema);
             }
 
+            $this->reportProgress(88, 'Dumping functions & triggers…');
             $this->dumpFunctions($handle);
             $this->dumpTriggers($handle);
+            $this->reportProgress(95, 'Finalising SQL file…');
             $this->writeFooter($handle);
         } finally {
             fclose($handle);
@@ -260,6 +293,8 @@ class DatabaseDumper
         foreach ($tables as $table) {
             $this->dumpTableStructure($handle, $table, $schema);
             $this->tablesDumped++;
+            $pct = $this->tablesTotal > 0 ? (int)(10 + (($this->tablesDumped / $this->tablesTotal) * 30)) : 10;
+            $this->reportProgress($pct, "Schema: {$schema}.{$table}");
         }
     }
 
@@ -407,6 +442,7 @@ class DatabaseDumper
         foreach ($tables as $table) {
             $this->dumpSingleTableData($handle, $table, $schema);
         }
+        fflush($handle);
     }
 
     /**
@@ -424,6 +460,8 @@ class DatabaseDumper
             return;
         }
 
+        $pct = $this->tablesTotal > 0 ? (int)(40 + (($this->tablesDumped / max($this->tablesTotal, 1)) * 45)) : 40;
+        $this->reportProgress(min($pct, 87), "Exporting data: {$schema}.{$table} ({$count} rows)…");
         fwrite($handle, "--\n-- Data for: {$schema}.{$table} ({$count} rows)\n--\n\n");
 
         // Get column metadata

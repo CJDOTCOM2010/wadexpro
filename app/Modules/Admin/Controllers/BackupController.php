@@ -4,6 +4,8 @@ namespace App\Modules\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Services\DatabaseDumper;
+use App\Models\BackupJob;
+use App\Jobs\RunDatabaseBackup;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -55,7 +57,10 @@ class BackupController extends Controller
             // Get live database stats for the UI
             $dbStats = $this->getDatabaseStats();
 
-            return view('admin.settings.backup', compact('backups', 'dbStats'));
+            // Get active backup jobs
+            $activeJobs = BackupJob::whereIn('status', ['pending', 'running'])->orderBy('created_at', 'desc')->get();
+
+            return view('admin.settings.backup', compact('backups', 'dbStats', 'activeJobs'));
         } catch (\Throwable $e) {
             Log::error('Backup Index Critical Error: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
@@ -87,70 +92,34 @@ class BackupController extends Controller
                 return back()->with('success', 'Media vault backup completed successfully.');
             }
 
-            // For "only-db" or "all", use the custom PHP-based database dumper
-            $timestamp = now()->format('Y-m-d-H-i-s');
-            $backupName = config('backup.backup.name', 'Laravel');
-            $diskName = config('backup.backup.destination.disks')[0] ?? 'local';
-            $disk = Storage::disk($diskName);
+            // Dispatch async job
+            $job = BackupJob::create([
+                'type' => $option,
+                'status' => 'pending',
+                'progress' => 0,
+                'current_step' => 'Queued…',
+            ]);
 
-            // Ensure the backup directory exists
-            $backupDir = $backupName;
-            if (!$disk->directoryExists($backupDir)) {
-                $disk->makeDirectory($backupDir);
-            }
+            RunDatabaseBackup::dispatch($job->id, $option);
 
-            // Step 1: Generate SQL dump using our custom PHP dumper
-            $tempDir = storage_path('app/backup-temp');
-            if (!is_dir($tempDir)) {
-                mkdir($tempDir, 0755, true);
-            }
-
-            $sqlFile = $tempDir . '/database-dump.sql';
-            $dumper = new DatabaseDumper($sqlFile);
-            $dumper->dump();
-
-            // Step 2: Create a ZIP archive
-            if ($option === 'only-db') {
-                $zipFileName = "{$backupDir}/{$timestamp}-database.zip";
-            } else {
-                $zipFileName = "{$backupDir}/{$timestamp}-full-system.zip";
-            }
-
-            $tempZipPath = $tempDir . '/backup.zip';
-            $zip = new ZipArchive();
-
-            if ($zip->open($tempZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-                throw new \RuntimeException('Failed to create ZIP archive.');
-            }
-
-            // Always add the database dump
-            $zip->addFile($sqlFile, 'db-dumps/database-dump.sql');
-
-            // If "all", also include application files
-            if ($option === 'all') {
-                $this->addDirectoryToZip($zip, storage_path('app/public'), 'storage/app/public');
-            }
-
-            $zip->close();
-
-            // Step 3: Move the ZIP to the backup disk
-            $disk->put($zipFileName, file_get_contents($tempZipPath));
-
-            // Step 4: Clean up temp files
-            @unlink($sqlFile);
-            @unlink($tempZipPath);
-
-            $sizeFormatted = $this->formatBytes($disk->size($zipFileName));
-
-            return back()->with('success', "Backup completed successfully! ({$sizeFormatted}) — All database tables, sequences, indexes, and constraints have been captured.");
+            return back()->with('success', 'Backup started in the background. You can track its progress on this page.');
 
         } catch (\Exception $e) {
             Log::error('Backup Error: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return back()->with('error', 'Failed to execute backup: '.$e->getMessage());
+            return back()->with('error', 'Failed to start backup: '.$e->getMessage());
         }
+    }
+
+    /**
+     * Check status of active backup jobs.
+     */
+    public function status()
+    {
+        $jobs = BackupJob::orderBy('created_at', 'desc')->take(5)->get();
+        return response()->json($jobs);
     }
 
     /**

@@ -67,40 +67,40 @@ $storagePercent = min(round(($totalSize / 10737418240) * 100), 100); // assume 1
                 <div class="w-8 h-8 bg-brand/5 rounded-lg flex items-center justify-center text-brand">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
                 </div>
-                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Snapshots</span>
+                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">DB Tables</span>
             </div>
-            <p class="text-2xl font-black text-brand mt-1">{{ $backupCount }}</p>
-            <p class="text-[11px] text-brand-muted">total in vault</p>
+            <p class="text-2xl font-black text-brand mt-1">{{ $dbStats['table_count'] ?? '—' }}</p>
+            <p class="text-[11px] text-brand-muted">in public schema</p>
         </div>
         <div class="bg-white border border-gray-100 rounded-xl p-4">
             <div class="flex items-center gap-2 mb-1">
                 <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center text-green-600">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 </div>
-                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Storage</span>
+                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">DB Size</span>
             </div>
-            <p class="text-2xl font-black text-brand mt-1">{{ $totalSizeFormatted }}</p>
-            <p class="text-[11px] text-brand-muted">total consumed</p>
+            <p class="text-2xl font-black text-brand mt-1">{{ $dbStats['db_size'] ?? '—' }}</p>
+            <p class="text-[11px] text-brand-muted">live database size</p>
         </div>
         <div class="bg-white border border-gray-100 rounded-xl p-4">
             <div class="flex items-center gap-2 mb-1">
                 <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 </div>
-                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Latest</span>
+                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Total Rows</span>
             </div>
-            <p class="text-base font-black text-brand mt-1 truncate">{{ $backups[0]['age'] ?? 'N/A' }}</p>
-            <p class="text-[11px] text-brand-muted">last snapshot</p>
+            <p class="text-2xl font-black text-brand mt-1">{{ $dbStats['total_rows'] ?? '—' }}</p>
+            <p class="text-[11px] text-brand-muted">records across all tables</p>
         </div>
         <div class="bg-white border border-gray-100 rounded-xl p-4">
             <div class="flex items-center gap-2 mb-1">
                 <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
                 </div>
-                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Schedule</span>
+                <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Snapshots</span>
             </div>
-            <p class="text-base font-black text-brand mt-1">Daily</p>
-            <p class="text-[11px] text-brand-muted">01:00 AM server time</p>
+            <p class="text-2xl font-black text-brand mt-1">{{ $backupCount }}</p>
+            <p class="text-[11px] text-brand-muted">saved in vault</p>
         </div>
     </div>
 

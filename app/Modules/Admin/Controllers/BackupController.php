@@ -56,8 +56,13 @@ class BackupController extends Controller
             // Get live database stats for the UI
             $dbStats = $this->getDatabaseStats();
 
-            // Get active backup jobs
-            $activeJobs = BackupJob::whereIn('status', ['pending', 'running'])->orderBy('created_at', 'desc')->get();
+            // Get active backup jobs - wrapped in try-catch for connection issues
+            $activeJobs = collect([]);
+            try {
+                $activeJobs = BackupJob::whereIn('status', ['pending', 'running'])->orderBy('created_at', 'desc')->get();
+            } catch (\Exception $e) {
+                Log::warning('Could not fetch backup jobs: '.$e->getMessage());
+            }
 
             return view('admin.settings.backup', compact('backups', 'dbStats', 'activeJobs'));
         } catch (\Throwable $e) {
@@ -65,7 +70,17 @@ class BackupController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return response('Critical System Error: '.$e->getMessage(), 500);
+            return view('admin.settings.backup', [
+                'backups' => [],
+                'dbStats' => [
+                    'table_count' => '—',
+                    'db_size' => '—',
+                    'total_rows' => '—',
+                    'connection' => config('database.default'),
+                    'host' => 'Connection failed',
+                ],
+                'activeJobs' => collect([]),
+            ])->with('error', 'Database connection failed. Backup features may be limited.');
         }
     }
 
@@ -121,9 +136,15 @@ class BackupController extends Controller
      */
     public function status()
     {
-        $jobs = BackupJob::orderBy('created_at', 'desc')->take(5)->get();
+        try {
+            $jobs = BackupJob::orderBy('created_at', 'desc')->take(5)->get();
 
-        return response()->json($jobs);
+            return response()->json($jobs);
+        } catch (\Exception $e) {
+            Log::warning('Backup status check failed: '.$e->getMessage());
+
+            return response()->json(['error' => 'Database connection failed'], 503);
+        }
     }
 
     /**
